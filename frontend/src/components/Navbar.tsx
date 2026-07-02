@@ -7,6 +7,10 @@ interface NavLink {
   href: string
 }
 
+interface NavbarProps {
+  onLoginClick?: () => void
+}
+
 const navLinks: NavLink[] = [
   { label: 'Home', href: '#home' },
   { label: 'Services', href: '#services' },
@@ -14,7 +18,7 @@ const navLinks: NavLink[] = [
   { label: 'Contact', href: '#contact' },
 ]
 
-export default function Navbar() {
+export default function Navbar({ onLoginClick }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -55,12 +59,12 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <a
-            href="#login"
-            className="h-12 px-7 text-sm font-semibold text-royal border border-royal rounded-xl inline-flex items-center justify-center hover:bg-royal hover:text-white transition-all duration-300"
+          <button
+            onClick={onLoginClick}
+            className="h-12 px-7 text-sm font-semibold text-royal border border-royal rounded-xl inline-flex items-center justify-center hover:bg-royal hover:text-white transition-all duration-300 cursor-pointer"
           >
             Login
-          </a>
+          </button>
           <a
             href="#get-started"
             className="h-12 px-7 text-sm font-semibold text-white bg-royal rounded-xl inline-flex items-center justify-center hover:bg-gold hover:text-royal transition-all duration-300"
@@ -95,13 +99,15 @@ export default function Navbar() {
             </a>
           ))}
           <div className="pt-2 flex flex-col gap-3">
-            <a
-              href="#login"
-              onClick={() => setIsOpen(false)}
-              className="text-center px-7 py-3 text-sm font-semibold text-royal border border-royal rounded-xl hover:bg-royal hover:text-white transition-all"
+            <button
+              onClick={() => {
+                setIsOpen(false)
+                onLoginClick?.()
+              }}
+              className="w-full text-center px-7 py-3 text-sm font-semibold text-royal border border-royal rounded-xl hover:bg-royal hover:text-white transition-all cursor-pointer"
             >
               Login
-            </a>
+            </button>
             <a
               href="#get-started"
               onClick={() => setIsOpen(false)}
