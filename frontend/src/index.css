@@ -55,6 +55,7 @@ body {
   background-color: var(--color-ivory);
   color: var(--color-royal);
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 #root {

@@ -10,7 +10,7 @@ interface ServiceSectionProps {
 
 export default function ServiceSection({ id, title, services }: ServiceSectionProps) {
   return (
-    <section id={id} className="max-w-7xl mx-auto px-6 py-6 sm:py-8 animate-fade-in">
+    <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-6 sm:py-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-heading text-2xl sm:text-3xl font-bold text-royal">{title}</h2>
         <button className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">

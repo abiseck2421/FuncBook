@@ -94,7 +94,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           : 'bg-ivory/90 backdrop-blur-md'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between gap-4 py-2.5 sm:py-3">
           <a href="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
             Func<span className="text-gold">Book</span>

@@ -7,7 +7,7 @@ const supportLinks = ['Help Center', 'Contact', 'FAQs', 'Terms', 'Privacy Policy
 export default function Footer() {
   return (
     <footer className="bg-royal text-white mt-20">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div>
             <div className="font-heading text-2xl font-bold tracking-tight">
@@ -77,7 +77,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-xs text-white/40">
             © 2026 FuncBook. All Rights Reserved.
           </p>
