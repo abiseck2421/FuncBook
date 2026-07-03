@@ -46,10 +46,18 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-ivory);
 }
 
+html,
 body {
   font-family: var(--font-body);
   background-color: var(--color-ivory);
   color: var(--color-royal);
+  min-height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--color-ivory);
 }

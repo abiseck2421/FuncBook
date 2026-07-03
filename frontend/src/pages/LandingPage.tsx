@@ -1,19 +1,29 @@
-import { useState } from 'react'
 import Navbar from '../components/Navbar'
-import HeroSection from '../components/HeroSection'
-import LoginModal from '../components/LoginModal'
+import Footer from '../components/Footer'
+import ServiceSection from '../components/ServiceSection'
+import { categories, servicesByCategory } from '../data/categories'
 
 export default function LandingPage() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false)
-
   return (
     <div className="min-h-screen bg-ivory">
-      <Navbar onLoginClick={() => setIsLoginOpen(true)} />
-      <HeroSection />
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-      />
+      <Navbar onMenuClick={() => {}} />
+
+      <main className="pt-2 sm:pt-3">
+        {categories.map((cat) => {
+          const services = servicesByCategory[cat.id]
+          if (!services) return null
+          return (
+            <ServiceSection
+              key={cat.id}
+              id={cat.id}
+              title={cat.name}
+              services={services}
+            />
+          )
+        })}
+      </main>
+
+      <Footer />
     </div>
   )
 }
