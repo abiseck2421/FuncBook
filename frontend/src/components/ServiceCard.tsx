@@ -10,7 +10,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   const [wishlisted, setWishlisted] = useState(false)
 
   return (
-    <div className="group relative w-full bg-white rounded-[16px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1">
+    <div className="group relative w-full bg-white rounded-[16px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1 cursor-pointer">
       <div className="relative h-48 overflow-hidden">
         <img
           src={service.image}

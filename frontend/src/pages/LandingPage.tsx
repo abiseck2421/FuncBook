@@ -6,9 +6,9 @@ import { categories, servicesByCategory } from '../data/categories'
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-ivory">
-      <Navbar onMenuClick={() => {}} />
+      <Navbar />
 
-      <main className="pt-2 sm:pt-3">
+      <main className="pt-22 sm:pt-28">
         {categories.map((cat) => {
           const services = servicesByCategory[cat.id]
           if (!services) return null

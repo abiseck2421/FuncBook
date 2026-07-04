@@ -10,7 +10,7 @@ interface ServiceSectionProps {
 
 export default function ServiceSection({ id, title, services }: ServiceSectionProps) {
   return (
-    <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-6 sm:py-8 animate-fade-in">
+    <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-6 sm:pb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-heading text-2xl sm:text-3xl font-bold text-royal">{title}</h2>
         <button className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">
@@ -19,7 +19,7 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
         </button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-4">
         {services.map((service) => (
           <ServiceCard key={service.id} service={service} />
         ))}

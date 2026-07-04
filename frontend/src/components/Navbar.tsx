@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { ChevronDown, Globe, Menu } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { ChevronDown, Globe, Menu, LogIn, UserPlus, X } from 'lucide-react'
 
 type MenuKey = 'services' | 'about' | 'contact' | 'help'
 
@@ -72,35 +72,32 @@ const navItems: Array<{ key: MenuKey; label: string }> = [
   { key: 'help', label: 'Help' },
 ]
 
-interface NavbarProps {
-  onMenuClick: () => void
-}
-
-export default function Navbar({ onMenuClick }: NavbarProps) {
-  const [scrolled, setScrolled] = useState(false)
+export default function Navbar() {
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMobileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
   return (
     <header
-      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]'
-          : 'bg-ivory/90 backdrop-blur-md'
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]"
     >
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between gap-4 py-2.5 sm:py-3">
-          <a href="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
+        <div className="flex items-center justify-between gap-4 py-4.5 sm:py-5">
+          <span className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
             Func<span className="text-gold">Book</span>
-          </a>
+          </span>
 
-          <nav className="hidden lg:flex flex-1 items-center justify-center gap-1 xl:gap-2">
+          <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
             {navItems.map((item) => {
               const menu = megaMenuItems[item.key]
               const isOpen = activeMenu === item.key
@@ -175,13 +172,30 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
               <Globe size={16} />
               <span className="hidden sm:inline">Language</span>
             </button>
-            <button
-              onClick={onMenuClick}
-              className="p-2 text-charcoal hover:text-royal transition-colors"
-              aria-label="Menu"
-            >
-              <Menu size={20} />
-            </button>
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-charcoal hover:text-royal transition-colors"
+                aria-label="Menu"
+              >
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+
+              {mobileMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 overflow-hidden">
+                  <div className="p-2 space-y-1">
+                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal bg-ivory hover:bg-gold-deep hover:text-white rounded-xl transition-colors">
+                      <LogIn size={18} />
+                      <span>Login or Sign In</span>
+                    </a>
+                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal bg-ivory hover:bg-gold-deep hover:text-white rounded-xl transition-colors">
+                      <UserPlus size={18} />
+                      <span>Become a Host</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
