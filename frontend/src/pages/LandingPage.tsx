@@ -3,10 +3,14 @@ import Footer from '../components/Footer'
 import ServiceSection from '../components/ServiceSection'
 import { categories, servicesByCategory } from '../data/categories'
 
-export default function LandingPage() {
+type LandingPageProps = {
+  onAuthSuccess: () => void
+}
+
+export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-ivory">
-      <Navbar />
+      <Navbar onAuthSuccess={onAuthSuccess} />
 
       <main className="pt-22 sm:pt-28">
         {categories.map((cat) => {
