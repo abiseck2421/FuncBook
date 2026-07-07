@@ -4,13 +4,15 @@ import ServiceSection from '../components/ServiceSection'
 import { categories, servicesByCategory } from '../data/categories'
 
 type LandingPageProps = {
-  onAuthSuccess: () => void
+  onAuthSuccess: (email: string) => void
+  isAuthenticated: boolean
+  userEmail: string
 }
 
-export default function LandingPage({ onAuthSuccess }: LandingPageProps) {
+export default function LandingPage({ onAuthSuccess, isAuthenticated, userEmail }: LandingPageProps) {
   return (
     <div className="min-h-screen bg-ivory">
-      <Navbar onAuthSuccess={onAuthSuccess} />
+      <Navbar onAuthSuccess={onAuthSuccess} isAuthenticated={isAuthenticated} userEmail={userEmail} />
 
       <main className="pt-22 sm:pt-28">
         {categories.map((cat) => {

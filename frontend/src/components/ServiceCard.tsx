@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Heart, MapPin, Star, BadgeCheck } from 'lucide-react'
+import { Heart, Star, BadgeCheck } from 'lucide-react'
 import type { Service } from '../data/categories'
 
 interface ServiceCardProps {
@@ -10,8 +10,8 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   const [wishlisted, setWishlisted] = useState(false)
 
   return (
-    <div className="group relative w-full bg-white rounded-[16px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] transition-all duration-500 hover:-translate-y-1 cursor-pointer">
-      <div className="relative h-48 overflow-hidden">
+    <div className="group relative w-full overflow-hidden rounded-[18px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] cursor-pointer">
+      <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={service.image}
           alt={service.name}
@@ -38,29 +38,28 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         )}
       </div>
 
-      <div className="p-4">
-        <h3 className="font-heading text-base font-bold text-royal truncate">{service.name}</h3>
+      <div className="p-3.5">
+        <h3 className="font-heading text-[15px] font-bold text-royal truncate">{service.name}</h3>
 
-        <div className="mt-1 flex items-center gap-1 text-xs text-secondary-text">
-          <MapPin size={12} />
-          <span className="truncate">{service.location}</span>
+        <p className="mt-1 text-[12px] leading-4.5 text-secondary-text truncate">
+          {service.description ?? service.location}
+        </p>
+
+        <div className="mt-1.5 flex items-center gap-1">
+          <Star size={13} className="fill-gold text-gold" />
+          <span className="text-[13px] font-semibold text-royal">{service.rating}</span>
+          <span className="text-[11px] text-secondary-text">({service.reviewCount})</span>
         </div>
 
-        <div className="mt-2 flex items-center gap-1">
-          <Star size={14} className="fill-gold text-gold" />
-          <span className="text-sm font-semibold text-royal">{service.rating}</span>
-          <span className="text-xs text-secondary-text">({service.reviewCount})</span>
+        <div className="mt-1.5">
+          <span className="text-[13px] font-bold text-royal">From ₹{service.price.toLocaleString()}</span>
         </div>
 
-        <div className="mt-2">
-          <span className="text-sm font-bold text-royal">From ₹{service.price.toLocaleString()}</span>
-        </div>
-
-        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <div className="mt-1.5 flex flex-wrap items-center gap-1">
           {service.tags.map((tag) => (
             <span
               key={tag}
-              className="px-2 py-0.5 text-[10px] font-medium text-charcoal bg-ivory rounded-full"
+              className="px-2 py-0.5 text-[9px] font-medium text-charcoal bg-ivory rounded-full"
             >
               {tag}
             </span>

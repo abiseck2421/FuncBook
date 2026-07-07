@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ChevronDown, Globe, Menu, LogIn, UserPlus, X } from 'lucide-react'
+import { ChevronDown, Globe, Menu, LogIn, X } from 'lucide-react'
 
 type MenuKey = 'services' | 'about' | 'contact' | 'help'
 
@@ -72,24 +72,37 @@ const navItems: Array<{ key: MenuKey; label: string }> = [
   { key: 'help', label: 'Help' },
 ]
 
-const authMenuItems: Array<{
-  key: 'login' | 'signup'
-  label: string
-  icon: typeof LogIn
-}> = [
-  { key: 'login', label: 'Login or Sign In', icon: LogIn },
-  { key: 'signup', label: 'Sign Up', icon: UserPlus },
+const dashboardNavItems = [
+  { label: 'Dashboard', active: true },
+  { label: 'Services', active: false },
+  { label: 'Payout History', active: false },
+  { label: 'Wishlist', active: false },
+  { label: 'Review', active: false },
+]
+
+const accountMenuItems = [
+  'Wishlists',
+  'Messages',
+  'Profile',
+  'Notifications',
+  'Account settings',
+  'Languages & currency',
+  'Help Centre',
+  'Become a host',
+  'Refer a host',
 ]
 
 type NavbarProps = {
-  onAuthSuccess: () => void
+  onAuthSuccess: (email: string) => void
+  isAuthenticated: boolean
+  userEmail: string
 }
 
-export default function Navbar({ onAuthSuccess }: NavbarProps) {
+export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: NavbarProps) {
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const authSubmitLocked = useRef(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -97,6 +110,7 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMobileMenuOpen(false)
+        setAccountMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
@@ -107,6 +121,7 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setAuthModalOpen(false)
+        setAccountMenuOpen(false)
       }
     }
 
@@ -121,13 +136,113 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
       return
     }
 
+    const form = event?.currentTarget instanceof HTMLFormElement ? event.currentTarget : undefined
+    const emailValue = form ? new FormData(form).get('auth-email')?.toString().trim() : ''
+
     authSubmitLocked.current = true
     setAuthModalOpen(false)
-    onAuthSuccess()
+    onAuthSuccess(emailValue || 'user@example.com')
 
     window.setTimeout(() => {
       authSubmitLocked.current = false
     }, 0)
+  }
+
+  const userInitial = (userEmail.trim().charAt(0) || 'U').toUpperCase()
+
+  if (isAuthenticated) {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
+        <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
+            <span className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
+              Func<span className="text-gold">Book</span>
+            </span>
+
+            <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
+              {dashboardNavItems.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
+                    item.active
+                      ? 'text-royal bg-white/80 shadow-[0_4px_18px_rgba(0,0,0,0.06)]'
+                      : 'text-charcoal hover:text-royal hover:bg-white/60'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="relative flex items-center gap-2 shrink-0" ref={menuRef}>
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white ring-1 ring-black/5">
+                {userInitial}
+              </div>
+              <button
+                type="button"
+                onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                className="grid h-10 w-10 place-items-center rounded-full bg-white text-charcoal ring-1 ring-black/5 transition hover:text-royal"
+                aria-label="Open account menu"
+                aria-expanded={accountMenuOpen}
+              >
+                <Menu size={18} />
+              </button>
+
+              {accountMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+                  <div className="max-h-[70vh] overflow-auto py-2">
+                    <div className="px-4 pb-3 pt-2">
+                      <p className="text-sm font-semibold text-royal">{userEmail || 'Akhil'}</p>
+                      <p className="text-xs text-secondary-text">Your account</p>
+                    </div>
+
+                    <div className="border-t border-black/5" />
+
+                    <div>
+                      {accountMenuItems.map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                          onClick={() => setAccountMenuOpen(false)}
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="border-t border-black/5" />
+
+                    <button
+                      type="button"
+                      className="flex w-full items-center px-4 py-3 text-left text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                      onClick={() => setAccountMenuOpen(false)}
+                    >
+                      Log out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="lg:hidden pb-1">
+            <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold text-charcoal">
+              {dashboardNavItems.map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  className={`rounded-full px-3 py-2 transition-colors ${item.active ? 'bg-royal text-white' : 'bg-transparent hover:text-royal'}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </header>
+    )
   }
 
   return (
@@ -211,10 +326,61 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
           </nav>
 
           <div className="flex items-center gap-4 shrink-0">
-            <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
-              <Globe size={16} />
-              <span className="hidden sm:inline">Language</span>
-            </button>
+            {isAuthenticated ? (
+              <div className="relative" ref={menuRef}>
+                <button
+                  type="button"
+                  onClick={() => setAccountMenuOpen(!accountMenuOpen)}
+                  className="flex items-center gap-2 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5 transition hover:shadow-[0_4px_18px_rgba(0,0,0,0.06)]"
+                  aria-label="Open account menu"
+                  aria-expanded={accountMenuOpen}
+                >
+                  <div className="grid h-9 w-9 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white">{userInitial}</div>
+                  <Menu size={18} className="text-charcoal" />
+                </button>
+
+                {accountMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+                    <div className="max-h-[70vh] overflow-auto py-2">
+                      <div className="px-4 pb-3 pt-2">
+                        <p className="text-sm font-semibold text-royal">{userEmail || 'Akhil'}</p>
+                        <p className="text-xs text-secondary-text">Your account</p>
+                      </div>
+
+                      <div className="border-t border-black/5" />
+
+                      <div>
+                        {accountMenuItems.map((item) => (
+                          <button
+                            key={item}
+                            type="button"
+                            className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                            onClick={() => setAccountMenuOpen(false)}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="border-t border-black/5" />
+
+                      <button
+                        type="button"
+                        className="flex w-full items-center px-4 py-3 text-left text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                        onClick={() => setAccountMenuOpen(false)}
+                      >
+                        Log out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
+                <Globe size={16} />
+                <span className="hidden sm:inline">Language</span>
+              </button>
+            )}
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -224,27 +390,28 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
                 {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
-              {mobileMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 overflow-hidden">
-                  <div className="p-2 space-y-1">
-                    {authMenuItems.map((item) => {
-                      const Icon = item.icon
-                      return (
-                        <button
-                          key={item.key}
-                          type="button"
-                          onClick={() => {
-                            setAuthMode(item.key)
-                            setAuthModalOpen(true)
-                            setMobileMenuOpen(false)
-                          }}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal bg-ivory hover:bg-gold-deep hover:text-white rounded-xl transition-colors"
-                        >
-                          <Icon size={18} />
-                          <span>{item.label}</span>
-                        </button>
-                      )
-                    })}
+              {mobileMenuOpen && !isAuthenticated && (
+                <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+                  <div className="divide-y divide-black/5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthModalOpen(true)
+                        setMobileMenuOpen(false)
+                      }}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                    >
+                      <LogIn size={18} />
+                      <span>Login</span>
+                    </button>
+                    <a href="#" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
+                      <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">B</span>
+                      <span>Become host</span>
+                    </a>
+                    <a href="#" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
+                      <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">?</span>
+                      <span>Help Center</span>
+                    </a>
                   </div>
                 </div>
               )}
@@ -280,81 +447,29 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
               <div className="flex flex-col justify-between bg-[linear-gradient(135deg,rgba(214,169,97,0.18),rgba(255,255,255,0.96))] p-7 sm:p-10 lg:p-12">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-deep">
-                    {authMode === 'login' ? 'Welcome back' : 'Create account'}
+                    Welcome back
                   </p>
                   <h2 className="mt-4 font-heading text-4xl font-bold tracking-tight text-royal sm:text-5xl">
-                    {authMode === 'login'
-                      ? 'Log in to continue your event planning.'
-                      : 'Join FuncBook and start planning faster.'}
+                    Log in to continue your event planning.
                   </h2>
                   <p className="mt-4 max-w-md text-sm leading-6 text-secondary-text sm:text-base">
-                    {authMode === 'login'
-                      ? 'Access your saved vendors, shortlist, and booking progress from one secure place.'
-                      : 'Create an account to save vendors, compare services, and manage your booking workflow.'}
+                    Access your saved vendors, shortlist, and booking progress from one secure place.
                   </p>
-                </div>
-
-                <div className="mt-8 rounded-[24px] bg-white/75 p-5 ring-1 ring-black/5 backdrop-blur-sm">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gold-deep">
-                    {authMode === 'login' ? 'Need an account?' : 'Already have an account?'}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-secondary-text">
-                    {authMode === 'login'
-                      ? 'Use the Sign Up tab to create your FuncBook profile and save your vendor shortlist.'
-                      : 'Switch to Login to continue with your existing booking details and saved preferences.'}
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-royal px-4 py-2 text-sm font-semibold text-white transition hover:bg-charcoal"
-                  >
-                    {authMode === 'login' ? 'Go to Sign Up' : 'Go to Login'}
-                  </button>
                 </div>
               </div>
 
               <div className="flex flex-col justify-center p-7 pb-14 sm:p-10 lg:p-12 lg:pb-16">
-                <div className="mb-6 flex rounded-full bg-ivory p-1 text-sm font-semibold">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('login')}
-                    className={`flex-1 rounded-full px-4 py-2 transition ${authMode === 'login' ? 'bg-white text-royal shadow-sm' : 'text-secondary-text'}`}
-                  >
-                    Login
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('signup')}
-                    className={`flex-1 rounded-full px-4 py-2 transition ${authMode === 'signup' ? 'bg-white text-royal shadow-sm' : 'text-secondary-text'}`}
-                  >
-                    Sign Up
-                  </button>
-                </div>
-
                 <form
                   className="space-y-4"
                   onSubmit={handleAuthSubmit}
                 >
-                  {authMode === 'signup' && (
-                    <div>
-                      <label htmlFor="name" className="text-sm font-medium text-charcoal">
-                        Full name
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        placeholder="Your name"
-                        className="mt-2 w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
-                      />
-                    </div>
-                  )}
-
                   <div>
                     <label htmlFor="auth-email" className="text-sm font-medium text-charcoal">
                       Email address
                     </label>
                     <input
                       id="auth-email"
+                      name="auth-email"
                       type="email"
                       placeholder="you@example.com"
                       className="mt-2 w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
@@ -368,33 +483,27 @@ export default function Navbar({ onAuthSuccess }: NavbarProps) {
                     <input
                       id="auth-password"
                       type="password"
-                      placeholder={authMode === 'login' ? 'Enter your password' : 'Create a password'}
+                      placeholder="Enter your password"
                       className="mt-2 w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
                     />
                   </div>
 
-                  {authMode === 'login' ? (
-                    <div className="flex items-center justify-between gap-4 text-sm">
-                      <label className="flex items-center gap-2 text-secondary-text">
-                        <input type="checkbox" className="h-4 w-4 rounded border-black/20 text-gold-deep focus:ring-gold-deep" />
-                        Remember me
-                      </label>
-                      <a href="#" className="font-medium text-royal hover:text-gold-deep">
-                        Forgot password?
-                      </a>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-secondary-text">
-                      By signing up, you agree to our terms and privacy policy.
-                    </p>
-                  )}
+                  <div className="flex items-center justify-between gap-4 text-sm">
+                    <label className="flex items-center gap-2 text-secondary-text">
+                      <input type="checkbox" className="h-4 w-4 rounded border-black/20 text-gold-deep focus:ring-gold-deep" />
+                      Remember me
+                    </label>
+                    <a href="#" className="font-medium text-royal hover:text-gold-deep">
+                      Forgot password?
+                    </a>
+                  </div>
 
                   <button
                     type="submit"
                     onClick={handleAuthSubmit}
                     className="w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal"
                   >
-                    {authMode === 'login' ? 'Login' : 'Create Account'}
+                    Login
                   </button>
                 </form>
               </div>

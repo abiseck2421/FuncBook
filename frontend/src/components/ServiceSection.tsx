@@ -9,6 +9,8 @@ interface ServiceSectionProps {
 }
 
 export default function ServiceSection({ id, title, services }: ServiceSectionProps) {
+  const gridClassName = 'grid gap-x-4 gap-y-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7'
+
   return (
     <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-6 sm:pb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
@@ -19,7 +21,7 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
         </button>
       </div>
 
-      <div className="grid gap-x-8 gap-y-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className={gridClassName}>
         {services.map((service) => (
           <ServiceCard key={service.id} service={service} />
         ))}

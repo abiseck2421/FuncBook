@@ -1,31 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import LandingPage from './pages/LandingPage'
-import DashboardPage from './pages/DashboardPage'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
 
-  useEffect(() => {
-    window.history.replaceState({ view: 'landing' }, '', window.location.pathname + window.location.search)
-
-    const handlePopState = (event: PopStateEvent) => {
-      setIsAuthenticated(event.state?.view === 'dashboard')
-    }
-
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
-
-  const handleAuthSuccess = () => {
-    window.history.pushState({ view: 'dashboard' }, '', window.location.pathname + window.location.search)
+  const handleAuthSuccess = (email: string) => {
+    setUserEmail(email)
     setIsAuthenticated(true)
   }
 
-  if (isAuthenticated) {
-    return <DashboardPage />
-  }
-
-  return <LandingPage onAuthSuccess={handleAuthSuccess} />
+  return <LandingPage onAuthSuccess={handleAuthSuccess} isAuthenticated={isAuthenticated} userEmail={userEmail} />
 }
 
 export default App
