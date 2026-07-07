@@ -355,8 +355,39 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
               </button>
 
               {mobileMenuOpen && !isAuthenticated && (
-                <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+                <div className="absolute right-0 top-full mt-2 w-72 lg:w-48 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
                   <div className="divide-y divide-black/5">
+                    <div className="lg:hidden">
+                      {navItems.map((item) => {
+                        const menu = megaMenuItems[item.key]
+                        const isOpen = activeMenu === item.key
+                        return (
+                          <div key={item.key}>
+                            <button
+                              type="button"
+                              onClick={() => setActiveMenu(isOpen ? null : item.key)}
+                              className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                            >
+                              <span>{item.label}</span>
+                              <ChevronDown size={15} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            {isOpen && (
+                              <div className="bg-ivory/40 px-4 pb-2 pt-1 space-y-0.5">
+                                {menu.links.map((link) => (
+                                  <a
+                                    key={link}
+                                    href="#"
+                                    className="block rounded-lg px-3 py-2 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
+                                  >
+                                    {link}
+                                  </a>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
                     <button
                       type="button"
                       onClick={() => {
@@ -380,17 +411,6 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className="lg:hidden pb-1">
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold text-charcoal">
-            {navItems.map((item) => (
-              <a key={item.key} href="#" className="flex items-center gap-1 hover:text-royal transition-colors">
-                <span>{item.label}</span>
-                <ChevronDown size={14} />
-              </a>
-            ))}
           </div>
         </div>
       </div>
