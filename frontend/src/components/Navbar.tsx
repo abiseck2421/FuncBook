@@ -298,7 +298,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                   </button>
 
                   <div
-                    className={`absolute left-1/2 top-full w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2 pt-3 transition-all duration-300 ${
+                    className={`fixed left-1/2 top-[72px] w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2 before:content-[''] before:absolute before:top-[-16px] before:left-0 before:right-0 before:h-4 transition-all duration-300 ${
                       isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'pointer-events-none opacity-0 -translate-y-2'
                     }`}
                   >
