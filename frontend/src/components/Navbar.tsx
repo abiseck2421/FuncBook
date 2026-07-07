@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ChevronDown, Globe, Menu, LogIn, X } from 'lucide-react'
 
 type MenuKey = 'services' | 'about' | 'contact' | 'help'
@@ -72,12 +73,12 @@ const navItems: Array<{ key: MenuKey; label: string }> = [
   { key: 'help', label: 'Help' },
 ]
 
-const dashboardNavItems = [
-  { label: 'Dashboard', active: true },
-  { label: 'Services', active: false },
-  { label: 'Payout History', active: false },
-  { label: 'Wishlist', active: false },
-  { label: 'Review', active: false },
+const dashboardNavItems: Array<{ label: string; page: 'home' | 'services' | 'payout' | 'wishlist' | 'review' }> = [
+  { label: 'Dashboard', page: 'home' },
+  { label: 'Services', page: 'services' },
+  { label: 'Payout History', page: 'payout' },
+  { label: 'Wishlist', page: 'wishlist' },
+  { label: 'Review', page: 'review' },
 ]
 
 const accountMenuItems = [
@@ -96,9 +97,12 @@ type NavbarProps = {
   onAuthSuccess: (email: string) => void
   isAuthenticated: boolean
   userEmail: string
+  currentPage: string
+  onLogout?: () => void
 }
 
-export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: NavbarProps) {
+export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, currentPage, onLogout }: NavbarProps) {
+  const navigate = useNavigate()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
@@ -155,24 +159,28 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: Na
       <header className="fixed top-0 left-0 right-0 z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
           <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
-            <span className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
+            <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
               Func<span className="text-gold">Book</span>
-            </span>
+            </Link>
 
             <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
-              {dashboardNavItems.map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
-                    item.active
-                      ? 'text-royal bg-white/80 shadow-[0_4px_18px_rgba(0,0,0,0.06)]'
-                      : 'text-charcoal hover:text-royal hover:bg-white/60'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {dashboardNavItems.map((item) => {
+                const isActive = currentPage === item.page
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => navigate('/' + (item.page === 'home' ? '' : item.page))}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
+                      isActive
+                        ? 'text-royal bg-white/80 shadow-[0_4px_18px_rgba(0,0,0,0.06)]'
+                        : 'text-charcoal hover:text-royal hover:bg-white/60'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                )
+              })}
             </nav>
 
             <div className="relative flex items-center gap-2 shrink-0" ref={menuRef}>
@@ -217,7 +225,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: Na
                     <button
                       type="button"
                       className="flex w-full items-center px-4 py-3 text-left text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                      onClick={() => setAccountMenuOpen(false)}
+                      onClick={() => {
+                        setAccountMenuOpen(false)
+                        onLogout?.()
+                      }}
                     >
                       Log out
                     </button>
@@ -229,15 +240,19 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: Na
 
           <div className="lg:hidden pb-1">
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold text-charcoal">
-              {dashboardNavItems.map((item) => (
-                <button
-                  key={item.label}
-                  type="button"
-                  className={`rounded-full px-3 py-2 transition-colors ${item.active ? 'bg-royal text-white' : 'bg-transparent hover:text-royal'}`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {dashboardNavItems.map((item) => {
+                const isActive = currentPage === item.page
+                return (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => navigate('/' + (item.page === 'home' ? '' : item.page))}
+                    className={`rounded-full px-3 py-2 transition-colors ${isActive ? 'bg-royal text-white' : 'bg-transparent hover:text-royal'}`}
+                  >
+                    {item.label}
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -251,9 +266,9 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: Na
     >
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
         <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
-          <span className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
+          <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
             Func<span className="text-gold">Book</span>
-          </span>
+          </Link>
 
           <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
             {navItems.map((item) => {
@@ -326,61 +341,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail }: Na
           </nav>
 
           <div className="flex items-center gap-4 shrink-0">
-            {isAuthenticated ? (
-              <div className="relative" ref={menuRef}>
-                <button
-                  type="button"
-                  onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                  className="flex items-center gap-2 rounded-full bg-white px-2 py-1.5 ring-1 ring-black/5 transition hover:shadow-[0_4px_18px_rgba(0,0,0,0.06)]"
-                  aria-label="Open account menu"
-                  aria-expanded={accountMenuOpen}
-                >
-                  <div className="grid h-9 w-9 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white">{userInitial}</div>
-                  <Menu size={18} className="text-charcoal" />
-                </button>
-
-                {accountMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
-                    <div className="max-h-[70vh] overflow-auto py-2">
-                      <div className="px-4 pb-3 pt-2">
-                        <p className="text-sm font-semibold text-royal">{userEmail || 'Akhil'}</p>
-                        <p className="text-xs text-secondary-text">Your account</p>
-                      </div>
-
-                      <div className="border-t border-black/5" />
-
-                      <div>
-                        {accountMenuItems.map((item) => (
-                          <button
-                            key={item}
-                            type="button"
-                            className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                            onClick={() => setAccountMenuOpen(false)}
-                          >
-                            {item}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="border-t border-black/5" />
-
-                      <button
-                        type="button"
-                        className="flex w-full items-center px-4 py-3 text-left text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                        onClick={() => setAccountMenuOpen(false)}
-                      >
-                        Log out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
+            <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
                 <Globe size={16} />
                 <span className="hidden sm:inline">Language</span>
               </button>
-            )}
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

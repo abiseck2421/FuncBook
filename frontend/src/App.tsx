@@ -1,16 +1,19 @@
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './Layout'
 import LandingPage from './pages/LandingPage'
+import ServicesPage from './pages/ServicesPage'
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userEmail, setUserEmail] = useState('')
-
-  const handleAuthSuccess = (email: string) => {
-    setUserEmail(email)
-    setIsAuthenticated(true)
-  }
-
-  return <LandingPage onAuthSuccess={handleAuthSuccess} isAuthenticated={isAuthenticated} userEmail={userEmail} />
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App
