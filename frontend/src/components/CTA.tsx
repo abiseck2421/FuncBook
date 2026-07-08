@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { ArrowRight, Sparkles } from 'lucide-react'
 
 export default function CTA() {
@@ -25,13 +26,13 @@ export default function CTA() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
-          <a
-            href="#"
+          <Link
+            to="/services"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-white hover:text-royal transition-all duration-500"
           >
             Book Your Event
             <ArrowRight size={18} />
-          </a>
+          </Link>
           <a
             href="#categories"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white/10 text-white font-semibold text-sm ring-1 ring-white/20 hover:bg-white/20 hover:ring-gold/40 transition-all duration-500"

@@ -1,4 +1,5 @@
-import { ArrowRight, Sparkles, ShieldCheck, Award, Building2, Palette, UtensilsCrossed, Camera, Music, Layout, Plus, Star } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Sparkles, ShieldCheck, Award, Building2, Palette, UtensilsCrossed, Camera, Music, Layout, Star } from 'lucide-react'
 
 export default function HeroSection() {
   return (
@@ -37,12 +38,12 @@ export default function HeroSection() {
                 Explore Services
                 <ArrowRight size={18} />
               </a>
-              <a
-                href="#featured-halls"
+              <Link
+                to="/services"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-500"
               >
                 Book Your Event
-              </a>
+              </Link>
             </div>
 
             <div className="flex flex-wrap items-center gap-6 pt-4">
@@ -102,15 +103,7 @@ export default function HeroSection() {
                 })}
               </div>
 
-              <div
-                className="mt-3 group flex items-center justify-center gap-2 p-3 rounded-xl bg-gold/5 border border-dashed border-gold/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(184,134,11,0.1)] hover:border-gold/40 hover:scale-[1.02] cursor-pointer"
-              >
-                <div className="w-9 h-9 rounded-lg bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
-                  <Plus size={17} className="text-gold-deep" />
-                </div>
-                <span className="text-xs font-semibold text-charcoal group-hover:text-royal transition-colors">+20 More Services</span>
-              </div>
-
+              
               <div className="mt-6 pt-5 border-t border-black/5 flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5">
                   <div className="flex">
