@@ -307,7 +307,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                       onMouseEnter={() => setActiveMenu(item.key)}
                       onMouseLeave={() => setActiveMenu(null)}
                     >
-                      <div className="grid gap-px bg-black/5 lg:grid-cols-[1.1fr_1fr_1fr_1fr] items-stretch">
+                      <div className="grid lg:grid-cols-[1.1fr_1fr_1fr_1fr] items-stretch">
                         <div className="bg-ivory/70 p-7 sm:p-9 min-h-[260px]">
                           <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-deep">
                             {menu.title}
@@ -320,15 +320,15 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                           </p>
                         </div>
 
-                        <div className={`grid gap-px bg-black/5 p-4 sm:p-5 sm:grid-cols-2 lg:col-span-3 ${menu.contentGridClass}`}>
+                        <div className={`grid p-0 sm:grid-cols-2 lg:col-span-3 ${menu.contentGridClass}`}>
                           {menu.links.map((link) => (
                             <a
                               key={link}
                               href="#"
-                              className="group/item flex min-h-[56px] items-center justify-between rounded-[14px] bg-white px-5 py-4 text-left text-sm font-medium text-charcoal transition-all duration-200 hover:bg-ivory hover:text-royal"
+                              className="group/item flex items-center justify-between border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
                             >
                               <span>{link}</span>
-                              <span className="h-2 w-2 rounded-full bg-gold/0 transition-all duration-200 group-hover/item:bg-gold" />
+                              <span className="h-1.5 w-1.5 rounded-full bg-transparent transition-all duration-200 group-hover/item:bg-gold-deep/50" />
                             </a>
                           ))}
                         </div>
