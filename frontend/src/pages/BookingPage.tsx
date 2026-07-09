@@ -3,13 +3,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   ArrowLeft, Star, BadgeCheck, CalendarCheck, MapPin, IndianRupee, Users,
   X, ChevronLeft, ChevronRight, Heart, Clock, Wifi, Car, Snowflake,
-  Sun, LampDesk, Monitor, Music, UtensilsCrossed, Camera, ArmchairIcon,
+  Sun, LampDesk, Monitor, UtensilsCrossed,
   Building2, Shield, MessageCircle, ChevronDown, Check,
-  Phone, Globe, Sparkles,
+  Phone, Globe,
 } from 'lucide-react'
 import ServiceCard from '../components/ServiceCard'
 import { servicesByCategory, categoryGalleries } from '../data/categories'
-import type { Service, Package, Review } from '../data/categories'
+import type { Service, Review } from '../data/categories'
 
 function findService(serviceId: string) {
   for (const cid in servicesByCategory) {
@@ -42,13 +42,7 @@ function generateMockData(service: Service & { categoryId?: string }) {
     workingHours: 'Mon–Sun: 9:00 AM – 10:00 PM',
     contactAvailable: '24/7 via phone & email',
     languages: ['English', 'Hindi', service.location.includes('Chennai') ? 'Tamil' : service.location.includes('Bangalore') ? 'Kannada' : service.location.includes('Hyderabad') ? 'Telugu' : 'English'],
-    packages: [
-      { name: 'Silver', price: Math.round(service.price * 0.7), features: ['Basic setup', 'Standard decoration', '4 hours coverage'], duration: '4 hours', popular: false },
-      { name: 'Gold', price: service.price, features: ['Premium setup', 'Full decoration', '8 hours coverage', 'Priority support'], duration: '8 hours', popular: true },
-      { name: 'Platinum', price: Math.round(service.price * 1.4), features: ['VIP setup', 'Luxury decoration', '12 hours coverage', 'Dedicated manager', 'All add-ons included'], duration: '12 hours', popular: false },
-    ] as Package[],
     amenities: ['Parking', 'AC', 'Generator Backup', 'Dining Hall', 'Bridal Room', 'WiFi', 'CCTV', 'Stage', 'Lighting', 'Wheelchair Accessible'],
-    servicesIncluded: cat === 'function-halls' ? ['Decoration', 'Catering', 'Photography', 'Music', 'Seating Arrangement', 'Lighting', 'Sound System'] : ['Decoration', 'Lighting', 'Sound System', 'Seating Arrangement'],
     availableDates: ['2026-07-15', '2026-07-20', '2026-07-25', '2026-08-01', '2026-08-10', '2026-08-18', '2026-09-05', '2026-09-12'],
     bookedDates: ['2026-07-10', '2026-07-18', '2026-07-28', '2026-08-05', '2026-08-22'],
     reviews: [
@@ -86,12 +80,6 @@ const amenityKeyIcons: Record<string, React.ComponentType<{ size?: number; class
   Lighting: LampDesk, 'Wheelchair Accessible': Users,
 }
 
-const serviceKeyIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  Decoration: Sparkles, Catering: UtensilsCrossed, Photography: Camera,
-  Music: Music, 'Seating Arrangement': ArmchairIcon, Lighting: LampDesk,
-  'Sound System': Monitor,
-}
-
 export default function BookingPage() {
   const { serviceId } = useParams<{ serviceId: string }>()
   const navigate = useNavigate()
@@ -100,7 +88,6 @@ export default function BookingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [guestCount, setGuestCount] = useState(100)
-  const [selectedPackage, setSelectedPackage] = useState<number>(1)
 
   const service = useMemo(() => {
     if (!serviceId) return null
