@@ -5,25 +5,25 @@ const steps = [
     icon: Search,
     title: 'Search Services',
     desc: 'Browse through our curated collection of premium event vendors and venues.',
-    color: 'from-gold/20 to-gold/5',
+    color: 'from-gold/25 to-gold/8',
   },
   {
     icon: ArrowRightLeft,
     title: 'Compare Vendors',
     desc: 'Review ratings, pricing, and portfolios to find your perfect match.',
-    color: 'from-gold-deep/20 to-gold-deep/5',
+    color: 'from-gold-deep/25 to-gold-deep/8',
   },
   {
     icon: CalendarCheck,
     title: 'Book Instantly',
     desc: 'Secure your booking with transparent pricing and easy payment options.',
-    color: 'from-gold/20 to-gold/5',
+    color: 'from-gold/25 to-gold/8',
   },
   {
     icon: PartyPopper,
     title: 'Celebrate Your Event',
     desc: 'Relax and enjoy your special day while we handle the rest.',
-    color: 'from-gold-deep/20 to-gold-deep/5',
+    color: 'from-gold-deep/25 to-gold-deep/8',
   },
 ]
 
@@ -46,14 +46,15 @@ export default function HowItWorks() {
         {steps.map((step, i) => {
           const Icon = step.icon
           return (
-            <div key={step.title} className="relative group">
-              <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${step.color} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
+            <div key={step.title} className="relative group bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] transition-all duration-500 group-hover:border-gold-deep/30 group-hover:shadow-[0_8px_32px_rgba(184,134,11,0.15)]">
+              <div className={`absolute inset-0 rounded-3xl bg-gradient-to-b ${step.color} opacity-100 transition-opacity duration-500`} />
+              <div className="absolute inset-0 rounded-3xl bg-black/8 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative p-8 text-center">
-                <div className="w-16 h-16 mx-auto rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)] flex items-center justify-center group-hover:shadow-[0_8px_32px_rgba(184,134,11,0.15)] transition-shadow duration-500">
+                <div className="w-16 h-16 mx-auto rounded-2xl bg-ivory border border-gold-deep/15 shadow-[0_8px_24px_rgba(0,0,0,0.04)] flex items-center justify-center group-hover:shadow-[0_8px_32px_rgba(184,134,11,0.12)] transition-all duration-500">
                   <Icon size={28} className="text-gold-deep" />
                 </div>
 
-                <div className="mt-6 w-8 h-8 mx-auto rounded-full bg-gold/10 text-gold-deep text-sm font-bold flex items-center justify-center">
+                <div className="mt-6 w-8 h-8 mx-auto rounded-full bg-gold-deep/15 text-gold-deep text-sm font-bold flex items-center justify-center">
                   {i + 1}
                 </div>
 
@@ -62,7 +63,7 @@ export default function HowItWorks() {
               </div>
 
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-gold/40 to-transparent" />
+                <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-gold-deep/30 to-transparent" />
               )}
             </div>
           )

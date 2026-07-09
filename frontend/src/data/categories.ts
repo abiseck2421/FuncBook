@@ -1,3 +1,30 @@
+export interface Package {
+  name: string
+  price: number
+  features: string[]
+  duration: string
+  popular?: boolean
+}
+
+export interface Review {
+  id: string
+  name: string
+  avatar: string
+  rating: number
+  date: string
+  comment: string
+  photos?: string[]
+}
+
+export interface Vendor {
+  name: string
+  photo: string
+  verified: boolean
+  experience: string
+  completedBookings: number
+  responseTime: string
+}
+
 export interface Service {
   id: string
   name: string
@@ -9,6 +36,25 @@ export interface Service {
   image: string
   tags: string[]
   verified: boolean
+  gallery?: string[]
+  categoryId?: string
+  capacity?: string
+  serviceArea?: string
+  workingHours?: string
+  contactAvailable?: string
+  languages?: string[]
+  packages?: Package[]
+  amenities?: string[]
+  servicesIncluded?: string[]
+  availableDates?: string[]
+  bookedDates?: string[]
+  reviews?: Review[]
+  vendor?: Vendor
+  address?: string
+  landmarks?: string[]
+  faqs?: { q: string; a: string }[]
+  experience?: string
+  whyChoose?: string[]
 }
 
 export const categories = [
@@ -114,5 +160,98 @@ export const servicesByCategory: Record<string, Service[]> = {
     { id: 'fd-5', name: 'Flora Frame Co', location: 'North Hub', description: 'Flower walls and decorative entrances with a luxury feel.', rating: 4.8, reviewCount: 91, price: 14000, image: 'https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?w=400&h=300&fit=crop', tags: ['Flower Wall', 'Luxury'], verified: true },
     { id: 'fd-6', name: 'Garden Grace Decor', location: 'Lake Road', description: 'Soft floral styling for intimate gatherings and stage fronts.', rating: 4.7, reviewCount: 76, price: 11000, image: 'https://images.unsplash.com/photo-1523694921611-6b9b1a8b8f8e?w=400&h=300&fit=crop', tags: ['Soft', 'Stage'], verified: true },
     { id: 'fd-7', name: 'Orchid Aura Studio', location: 'Business District', description: 'Orchid-rich decor bundles with refined color palettes.', rating: 4.8, reviewCount: 98, price: 16000, image: 'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=400&h=300&fit=crop&sat=-20', tags: ['Orchid', 'Palette'], verified: true },
+  ],
+}
+
+export const categoryGalleries: Record<string, string[]> = {
+  'function-halls': [
+    'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&h=500&fit=crop',
+  ],
+  catering: [
+    'https://images.unsplash.com/photo-1555244162-803834f70033?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=800&h=500&fit=crop',
+  ],
+  decoration: [
+    'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1478146059778-1ea5d3ccb4cf?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519379157579-e6c3459be4c4?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=500&fit=crop&sat=-15',
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop&sat=-25',
+  ],
+  'lighting-sound': [
+    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop',
+  ],
+  makeup: [
+    'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1526045478517-99145907023c?w=800&h=500&fit=crop',
+  ],
+  photographers: [
+    'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1452827073306-6e6e5396a6f9?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1456428199391-a3b1cb5e93ab?w=800&h=500&fit=crop',
+  ],
+  'chairs-furniture': [
+    'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=500&fit=crop&sat=-10',
+    'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&h=500&fit=crop&sat=-10',
+    'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=800&h=500&fit=crop&sat=-25',
+  ],
+  'event-planners': [
+    'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1528605248644-14dd04022da1?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=500&fit=crop&sat=-20',
+    'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800&h=500&fit=crop',
+  ],
+  djs: [
+    'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&h=500&fit=crop',
+  ],
+  'flower-decorators': [
+    'https://images.unsplash.com/photo-1519379157579-e6c3459be4c4?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1522748906645-95d8adfd52c7?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1478145046317-39f10e56b5e9?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1523694921611-6b9b1a8b8f8e?w=800&h=500&fit=crop',
+    'https://images.unsplash.com/photo-1490750967868-88aa4f44baee?w=800&h=500&fit=crop&sat=-20',
   ],
 }

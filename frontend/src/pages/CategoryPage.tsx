@@ -49,8 +49,8 @@ export default function CategoryPage() {
   return (
     <div className="pt-22 sm:pt-28 pb-16">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
-        <div className="flex items-start justify-between mb-8">
-          <div>
+        <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-amber-200 via-amber-100 to-amber-50 p-8 sm:p-10 border border-gold-deep/10">
+          <div className="relative z-10">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2">
               {category.name}
             </p>
@@ -63,20 +63,20 @@ export default function CategoryPage() {
           </div>
           <button
             onClick={() => navigate('/services')}
-            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gold-deep text-white text-sm font-semibold shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-500 shrink-0"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-deep/10 backdrop-blur-sm text-gold-deep text-sm font-semibold hover:bg-gold-deep/20 transition-all duration-300"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={15} />
             All Services
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-3 mb-8 p-4 rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
+        <div className="flex flex-wrap items-center gap-3 mb-8 p-4 rounded-2xl bg-white border border-gold-deep/10 shadow-[0_2px_12px_rgba(184,134,11,0.06)]">
           <div className="relative flex-1 min-w-[200px]">
-            <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-text" />
+            <MapPin size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-deep" />
             <select
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-black/10 text-sm text-royal bg-white focus:outline-none focus:ring-2 focus:ring-gold/40 appearance-none cursor-pointer"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gold-deep/15 text-sm text-royal bg-ivory/50 focus:outline-none focus:ring-2 focus:ring-gold/40 appearance-none cursor-pointer"
             >
               <option value="">All Locations</option>
               {locations.map((loc) => (
@@ -86,11 +86,11 @@ export default function CategoryPage() {
           </div>
 
           <div className="relative flex-1 min-w-[180px]">
-            <IndianRupee size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-text" />
+            <IndianRupee size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gold-deep" />
             <select
               value={budgetIndex}
               onChange={(e) => setBudgetIndex(Number(e.target.value))}
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-black/10 text-sm text-royal bg-white focus:outline-none focus:ring-2 focus:ring-gold/40 appearance-none cursor-pointer"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gold-deep/15 text-sm text-royal bg-ivory/50 focus:outline-none focus:ring-2 focus:ring-gold/40 appearance-none cursor-pointer"
             >
               {priceRanges.map((r, i) => (
                 <option key={i} value={i}>{r.label}</option>
@@ -101,14 +101,14 @@ export default function CategoryPage() {
           {hasFilters && (
             <button
               onClick={() => { setLocation(''); setBudgetIndex(0) }}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-black/10 text-sm text-secondary-text hover:text-royal hover:border-gold/40 transition-colors"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gold-deep/15 text-sm text-secondary-text hover:text-royal hover:bg-ivory transition-colors"
             >
               <X size={14} />
               Clear
             </button>
           )}
 
-          <div className="flex items-center text-sm text-secondary-text">
+          <div className="flex items-center text-sm font-medium text-gold-deep ml-auto">
             {filtered.length} result{filtered.length !== 1 ? 's' : ''}
           </div>
         </div>
