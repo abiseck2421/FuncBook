@@ -5,18 +5,18 @@ import {
 } from 'lucide-react'
 
 const categories = [
-  { name: 'Function Halls', icon: Building2, desc: 'Premium venues for every occasion', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop' },
-  { name: 'Catering', icon: UtensilsCrossed, desc: 'Exquisite cuisine for your guests', image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop' },
-  { name: 'Decoration', icon: Palette, desc: 'Transform your vision into reality', image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
-  { name: 'Lighting & Sound', icon: Lightbulb, desc: 'Set the perfect atmosphere', image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop' },
-  { name: 'Photography', icon: Camera, desc: 'Capture every precious moment', image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
-  { name: 'Makeup Artists', icon: Sparkles, desc: 'Look your absolute best', image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=400&h=300&fit=crop' },
-  { name: 'Cakes', icon: CakeSlice, desc: 'Delicious creations for celebrations', image: 'https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?w=400&h=300&fit=crop' },
-  { name: 'Transportation', icon: Car, desc: 'Luxury rides for your guests', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=300&fit=crop' },
-  { name: 'Chairs & Furniture', icon: ArmchairIcon, desc: 'Elegant seating arrangements', image: 'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=400&h=300&fit=crop' },
-  { name: 'Stage Setup', icon: Layout, desc: 'Stunning stages for your events', image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop' },
-  { name: 'DJ & Music', icon: Music, desc: 'Keep the energy alive', image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
-  { name: 'Videography', icon: Video, desc: 'Cinematic memories forever', image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=300&fit=crop' },
+  { name: 'Function Halls', icon: Building2, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop' },
+  { name: 'Catering', icon: UtensilsCrossed, image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop' },
+  { name: 'Decoration', icon: Palette, image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
+  { name: 'Lighting & Sound', icon: Lightbulb, image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop' },
+  { name: 'Photography', icon: Camera, image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
+  { name: 'Makeup Artists', icon: Sparkles, image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=400&h=300&fit=crop' },
+  { name: 'Cakes', icon: CakeSlice, image: 'https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?w=400&h=300&fit=crop' },
+  { name: 'Transportation', icon: Car, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=300&fit=crop' },
+  { name: 'Chairs & Furniture', icon: ArmchairIcon, image: 'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=400&h=300&fit=crop' },
+  { name: 'Stage Setup', icon: Layout, image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop' },
+  { name: 'DJ & Music', icon: Music, image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
+  { name: 'Videography', icon: Video, image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=300&fit=crop' },
 ]
 
 export default function BrowseCategories() {
@@ -59,7 +59,6 @@ export default function BrowseCategories() {
                   <Icon size={16} />
                 </div>
                 <h3 className="text-sm font-bold text-white">{cat.name}</h3>
-                <p className="text-xs text-white/70 mt-0.5">{cat.desc}</p>
               </div>
             </button>
           )
