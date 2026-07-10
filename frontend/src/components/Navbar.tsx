@@ -188,18 +188,19 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
               })}
             </nav>
 
-            <div className="relative flex items-center gap-2 shrink-0" ref={menuRef}>
-              <div className="grid h-10 w-10 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white ring-1 ring-black/5">
-                {userInitial}
-              </div>
+            <div className="flex items-center gap-4 shrink-0" ref={menuRef}>
+              <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
+                <Globe size={16} />
+                <span className="hidden sm:inline">Language</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                className="grid h-10 w-10 place-items-center rounded-full bg-white text-charcoal ring-1 ring-black/5 transition hover:text-royal"
+                className="grid h-10 w-10 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white ring-1 ring-black/5 transition hover:ring-gold-deep"
                 aria-label="Open account menu"
                 aria-expanded={accountMenuOpen}
               >
-                <Menu size={18} />
+                {userInitial}
               </button>
 
               {accountMenuOpen && (
