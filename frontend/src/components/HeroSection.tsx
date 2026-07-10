@@ -17,7 +17,7 @@ export default function HeroSection() {
               Premium Event Booking Platform
             </div>
 
-            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-royal leading-[1.08] tracking-tight">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-royal leading-[1.08] tracking-tight">
               Plan Your
               <br />
               <span className="text-gold">Dream Event</span>
