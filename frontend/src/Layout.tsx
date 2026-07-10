@@ -6,12 +6,14 @@ import Footer from './components/Footer'
 export default function Layout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userEmail, setUserEmail] = useState('')
+  const [authModalOpen, setAuthModalOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
   const handleAuthSuccess = (email: string) => {
     setUserEmail(email)
     setIsAuthenticated(true)
+    setAuthModalOpen(false)
     navigate('/services')
   }
 
@@ -31,10 +33,12 @@ export default function Layout() {
         userEmail={userEmail}
         currentPage={currentPage}
         onLogout={handleLogout}
+        authModalOpen={authModalOpen}
+        setAuthModalOpen={setAuthModalOpen}
       />
 
       <main>
-        <Outlet context={{ isAuthenticated }} />
+        <Outlet context={{ isAuthenticated, authModalOpen, setAuthModalOpen, handleAuthSuccess }} />
       </main>
 
       {(!isAuthenticated || currentPage === 'home') && <Footer />}

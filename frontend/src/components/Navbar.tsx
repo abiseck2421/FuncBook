@@ -99,16 +99,21 @@ type NavbarProps = {
   userEmail: string
   currentPage: string
   onLogout?: () => void
+  authModalOpen?: boolean
+  setAuthModalOpen?: (open: boolean) => void
 }
 
-export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, currentPage, onLogout }: NavbarProps) {
+export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, currentPage, onLogout, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen }: NavbarProps) {
   const navigate = useNavigate()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const authSubmitLocked = useRef(false)
   const menuRef = useRef<HTMLDivElement>(null)
+
+  const authModalOpen = controlledAuthModalOpen !== undefined ? controlledAuthModalOpen : internalAuthModalOpen
+  const setAuthModalOpen = controlledSetAuthModalOpen !== undefined ? controlledSetAuthModalOpen : setInternalAuthModalOpen
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -213,7 +218,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                           key={item}
                           type="button"
                           className="flex w-full items-center px-4 py-3 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                          onClick={() => setAccountMenuOpen(false)}
+                          onClick={() => {
+                            setAccountMenuOpen(false)
+                            if (item === 'Become a host') navigate('/become-host')
+                          }}
                         >
                           {item}
                         </button>
@@ -399,10 +407,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                       <LogIn size={18} />
                       <span>Login</span>
                     </button>
-                    <a href="#" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/become-host" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
                       <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">B</span>
                       <span>Become host</span>
-                    </a>
+                    </Link>
                     <a href="#" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
                       <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">?</span>
                       <span>Help Center</span>

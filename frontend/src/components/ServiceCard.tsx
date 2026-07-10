@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Heart, Star, BadgeCheck, MapPin } from 'lucide-react'
+import { Heart, Star, BadgeCheck } from 'lucide-react'
 import type { Service } from '../data/categories'
 
 interface ServiceCardProps {

@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useState, useMemo, useRef } from 'react'
+import { useParams, useNavigate, Link, useOutletContext } from 'react-router-dom'
 import {
-  ArrowLeft, Star, BadgeCheck, CalendarCheck, MapPin, IndianRupee, Users,
+  ArrowLeft, Star, BadgeCheck, CalendarCheck, Calendar, MapPin, IndianRupee, Users,
   X, ChevronLeft, ChevronRight, Heart, Clock, Wifi, Car, Snowflake,
   Sun, LampDesk, Monitor, UtensilsCrossed,
   Building2, Shield, MessageCircle, ChevronDown, Check,
@@ -89,11 +89,17 @@ const amenityKeyIcons: Record<string, React.ComponentType<{ size?: number; class
 export default function BookingPage() {
   const { serviceId } = useParams<{ serviceId: string }>()
   const navigate = useNavigate()
+  const { setAuthModalOpen } = useOutletContext<{
+    authModalOpen: boolean
+    setAuthModalOpen: (open: boolean) => void
+    handleAuthSuccess: (email: string) => void
+  }>()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [wishlisted, setWishlisted] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [guestCount, setGuestCount] = useState(100)
+  const dateInputRef = useRef<HTMLInputElement>(null)
 
   const service = useMemo(() => {
     if (!serviceId) return null
@@ -223,7 +229,7 @@ export default function BookingPage() {
       <div className="w-full px-6 mt-8">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto space-y-8">
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">About This Service</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">About This Service</h2>
             <p className="mt-4 text-sm text-charcoal leading-relaxed">{service.description}</p>
             <p className="mt-3 text-sm text-charcoal leading-relaxed">{mock.experience}</p>
             <div className="mt-5">
@@ -240,7 +246,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Service Information</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Service Information</h2>
             <div className="mt-5 space-y-3">
               {[
                 { label: 'Category', value: categoryNames[service.categoryId || ''] || 'Service', icon: Building2 },
@@ -265,7 +271,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Amenities & Features</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Amenities & Features</h2>
             <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {mock.amenities.map((amenity) => {
                 const Icon = amenityKeyIcons[amenity] || Shield
@@ -280,45 +286,62 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Availability</h2>
-            <p className="mt-2 text-sm text-secondary-text">Select your preferred event date</p>
-            <div className="mt-5">
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-full max-w-xs rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40"
-              />
-            </div>
-            <div className="mt-5">
-              <h3 className="text-sm font-semibold text-royal mb-3">Upcoming Available Dates</h3>
-              <div className="flex flex-wrap gap-2">
-                {mock.availableDates.map((d) => {
-                  const booked = mock.bookedDates.includes(d)
-                  const selected = d === selectedDate
-                  return (
-                    <button
-                      key={d}
-                      onClick={() => !booked && setSelectedDate(d)}
-                      disabled={booked}
-                      className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 ${selected ? 'bg-gold-deep text-white shadow-[0_4px_12px_rgba(184,134,11,0.2)]' : booked ? 'bg-red-50 text-red-400 line-through cursor-not-allowed border border-red-200' : 'bg-ivory text-charcoal hover:border-gold-deep/30 border border-gold-deep/10 cursor-pointer'}`}
-                    >
-                      {new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      {booked && <span className="ml-1 text-[10px]">Booked</span>}
-                    </button>
-                  )
-                })}
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Availability</h2>
+            <div className="mt-5 flex flex-col sm:flex-row gap-8 sm:gap-16 items-start">
+              <div className="w-full sm:w-[220px] flex-shrink-0">
+                <p className="text-sm text-secondary-text mb-2">Select your preferred event date</p>
+                <div className="relative w-full">
+                  <input
+                    ref={dateInputRef}
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="w-full rounded-xl border border-gold-deep/15 bg-ivory/50 pl-4 pr-10 py-3 text-base text-royal focus:outline-none focus:ring-2 focus:ring-gold/40 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (dateInputRef.current) {
+                        ;(dateInputRef.current as any).showPicker?.() || dateInputRef.current.focus()
+                      }
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-deep hover:text-gold transition-colors cursor-pointer"
+                  >
+                    <Calendar size={18} />
+                  </button>
+                </div>
               </div>
-              <div className="mt-3 flex items-center gap-4 text-xs text-secondary-text">
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-ivory border border-gold-deep/10" /> Available</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-50 border border-red-200" /> Booked</span>
-                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gold-deep" /> Selected</span>
+              <div className="hidden sm:block w-px bg-gold-deep/10 min-h-[120px]"></div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-royal mb-3">Upcoming Available Dates</h3>
+                <div className="flex flex-wrap gap-4">
+                  {mock.availableDates.map((d) => {
+                    const booked = mock.bookedDates.includes(d)
+                    const selected = d === selectedDate
+                    return (
+                      <button
+                        key={d}
+                        onClick={() => !booked && setSelectedDate(d)}
+                        disabled={booked}
+                        className={`min-w-[100px] px-6 py-4 rounded-xl text-base font-medium transition-all duration-300 ${selected ? 'bg-gold-deep text-white shadow-[0_4px_12px_rgba(184,134,11,0.2)]' : booked ? 'bg-red-50 text-red-400 line-through cursor-not-allowed border border-red-200' : 'bg-ivory text-gray-500 hover:border-gold-deep/30 border border-gold-deep/10 cursor-pointer'}`}
+                      >
+                        {new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {booked && <span className="ml-1 text-xs">Booked</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+                <div className="mt-3 flex items-center gap-4 text-xs text-secondary-text">
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-ivory border border-gold-deep/10" /> Available</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-red-50 border border-red-200" /> Booked</span>
+                  <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-gold-deep" /> Selected</span>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Customer Reviews</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Customer Reviews</h2>
             <div className="mt-5 flex flex-wrap items-start gap-6 p-5 rounded-xl bg-ivory/60 border border-gold-deep/10">
               <div className="text-center">
                 <div className="text-4xl font-bold text-royal">{service.rating}</div>
@@ -376,7 +399,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Vendor Profile</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Vendor Profile</h2>
             <div className="mt-5 flex flex-col sm:flex-row items-start gap-5 p-5 rounded-xl bg-ivory/60 border border-gold-deep/10">
               <img src={mock.vendor.photo} alt="" className="w-16 h-16 rounded-2xl object-cover shrink-0" />
               <div className="flex-1">
@@ -404,7 +427,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Location</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Location</h2>
             <div className="mt-4 rounded-xl overflow-hidden border border-gold-deep/10 h-[250px] bg-ivory/60 flex items-center justify-center">
               <div className="text-center p-6">
                 <MapPin size={32} className="text-gold-deep mx-auto" />
@@ -423,7 +446,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Frequently Asked Questions</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Frequently Asked Questions</h2>
             <div className="mt-5 space-y-2">
               {mock.faqs.map((faq, i) => (
                 <div key={i} className="rounded-xl border border-gold-deep/10 overflow-hidden">
@@ -480,7 +503,7 @@ export default function BookingPage() {
                   className="mt-1.5 w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40"
                 />
               </div>
-              <button className="w-full py-3 rounded-xl bg-gold-deep text-white text-sm font-semibold shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-500 flex items-center justify-center gap-2">
+              <button onClick={() => setAuthModalOpen(true)} className="w-full py-3 rounded-xl bg-gold-deep text-white text-sm font-semibold shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-500 flex items-center justify-center gap-2">
                 <CalendarCheck size={18} />
                 Book Now
               </button>
@@ -493,7 +516,7 @@ export default function BookingPage() {
           </div>
 
           <div className="w-full">
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">Similar Services</h2>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">Similar Services</h2>
             <p className="mt-1 text-sm text-secondary-text">Explore other premium options in the same category</p>
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 w-full">
               {similarServices.map((s) => (
