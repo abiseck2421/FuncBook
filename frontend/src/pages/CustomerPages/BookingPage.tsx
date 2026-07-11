@@ -7,9 +7,9 @@ import {
   Building2, Shield, MessageCircle, ChevronDown, Check,
   Phone, Globe,
 } from 'lucide-react'
-import ServiceCard from '../components/ServiceCard'
-import { servicesByCategory, categoryGalleries } from '../data/categories'
-import type { Service, Review } from '../data/categories'
+import ServiceCard from '../../components/ServiceCard'
+import { servicesByCategory, categoryGalleries } from '../../data/categories'
+import type { Service, Review } from '../../data/categories'
 
 function findService(serviceId: string) {
   for (const cid in servicesByCategory) {

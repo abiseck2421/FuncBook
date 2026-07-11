@@ -1,5 +1,5 @@
-import ServiceSection from '../components/ServiceSection'
-import { categories, servicesByCategory } from '../data/categories'
+import ServiceSection from '../../components/ServiceSection'
+import { categories, servicesByCategory } from '../../data/categories'
 
 export default function ServicesPage() {
   return (

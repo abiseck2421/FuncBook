@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './Layout'
-import LandingPage from './pages/LandingPage'
-import ServicesPage from './pages/ServicesPage'
-import CategoryPage from './pages/CategoryPage'
-import BookingPage from './pages/BookingPage'
-import BecomeHostPage from './pages/BecomeHostPage'
-import AddServicePage from './pages/AddServicePage'
+import LandingPage from './pages/CustomerPages/LandingPage'
+import ServicesPage from './pages/CustomerPages/ServicesPage'
+import CategoryPage from './pages/CustomerPages/CategoryPage'
+import BookingPage from './pages/CustomerPages/BookingPage'
+import BecomeHostPage from './pages/HostPages/BecomeHostPage'
+import AddServicePage from './pages/HostPages/AddServicePage'
 
 function App() {
   return (

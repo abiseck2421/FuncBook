@@ -1,67 +1,68 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ChevronDown, Globe, Menu, LogIn, X } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { ChevronDown, Globe, Menu, LogIn, X, Building2, UtensilsCrossed, Sparkles, Camera, Video, Palette, Lightbulb, LayoutTemplate, Armchair, CalendarDays, Mail, Gift, BookOpen, Target, Star, Users, Briefcase, FileText, Quote, Phone, Headphones, Handshake, UserPlus, MapPin, HelpCircle, MessageCircleQuestion, BookCheck, Ban, Shield, FileCheck, AlertTriangle } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 type MenuKey = 'services' | 'about' | 'contact' | 'help'
 
 const megaMenuItems: Record<
   MenuKey,
-  { title: string; links: string[]; contentGridClass: string }
+  { title: string; links: { label: string; icon: LucideIcon }[]; contentGridClass: string }
 > = {
   services: {
     title: 'Services',
     contentGridClass: 'lg:grid-cols-4',
     links: [
-      'Function Halls',
-      'Catering',
-      'Decoration',
-      'Photography',
-      'Videography',
-      'Makeup Artists',
-      'Lighting & Sound',
-      'Stage Setup',
-      'Chairs & Tables',
-      'Event Planners',
-      'Invitation Cards',
-      'Return Gifts',
+      { label: 'Function Halls', icon: Building2 },
+      { label: 'Catering', icon: UtensilsCrossed },
+      { label: 'Decoration', icon: Sparkles },
+      { label: 'Photography', icon: Camera },
+      { label: 'Videography', icon: Video },
+      { label: 'Makeup Artists', icon: Palette },
+      { label: 'Lighting & Sound', icon: Lightbulb },
+      { label: 'Stage Setup', icon: LayoutTemplate },
+      { label: 'Chairs & Tables', icon: Armchair },
+      { label: 'Event Planners', icon: CalendarDays },
+      { label: 'Invitation Cards', icon: Mail },
+      { label: 'Return Gifts', icon: Gift },
     ],
   },
   about: {
     title: 'About Us',
     contentGridClass: 'lg:grid-cols-3',
     links: [
-      'Our Story',
-      'Mission & Vision',
-      'Why Choose FuncBook',
-      'Our Team',
-      'Careers',
-      'Blog',
-      'Testimonials',
+      { label: 'Our Story', icon: BookOpen },
+      { label: 'Mission & Vision', icon: Target },
+      { label: 'Why Choose FuncBook', icon: Star },
+      { label: 'Our Team', icon: Users },
+      { label: 'Careers', icon: Briefcase },
+      { label: 'Blog', icon: FileText },
+      { label: 'Testimonials', icon: Quote },
     ],
   },
   contact: {
     title: 'Contact',
     contentGridClass: 'lg:grid-cols-3',
     links: [
-      'Contact Us',
-      'Customer Support',
-      'Vendor Support',
-      'Business Enquiries',
-      'Partner With Us',
-      'Office Locations',
+      { label: 'Contact Us', icon: Phone },
+      { label: 'Customer Support', icon: Headphones },
+      { label: 'Vendor Support', icon: Handshake },
+      { label: 'Business Enquiries', icon: Building2 },
+      { label: 'Partner With Us', icon: UserPlus },
+      { label: 'Office Locations', icon: MapPin },
     ],
   },
   help: {
     title: 'Help',
     contentGridClass: 'lg:grid-cols-3',
     links: [
-      'Help Center',
-      'FAQs',
-      'Booking Guide',
-      'Cancellation Policy',
-      'Privacy Policy',
-      'Terms & Conditions',
-      'Report an Issue',
+      { label: 'Help Center', icon: HelpCircle },
+      { label: 'FAQs', icon: MessageCircleQuestion },
+      { label: 'Booking Guide', icon: BookCheck },
+      { label: 'Cancellation Policy', icon: Ban },
+      { label: 'Privacy Policy', icon: Shield },
+      { label: 'Terms & Conditions', icon: FileCheck },
+      { label: 'Report an Issue', icon: AlertTriangle },
     ],
   },
 }
@@ -105,6 +106,7 @@ type NavbarProps = {
 
 export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, currentPage, onLogout, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen }: NavbarProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false)
@@ -280,7 +282,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
           </Link>
 
           <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
-            {navItems.map((item) => {
+            {location.pathname === '/' && navItems.map((item) => {
               const menu = megaMenuItems[item.key]
               const isOpen = activeMenu === item.key
 
@@ -332,12 +334,12 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                         <div className={`grid p-0 sm:grid-cols-2 lg:col-span-3 ${menu.contentGridClass}`}>
                           {menu.links.map((link) => (
                             <a
-                              key={link}
+                              key={link.label}
                               href="#"
-                              className="group/item flex items-center justify-between border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
+                              className="group/item flex items-center gap-3 border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
                             >
-                              <span>{link}</span>
-                              <span className="h-1.5 w-1.5 rounded-full bg-transparent transition-all duration-200 group-hover/item:bg-gold-deep/50" />
+                              <link.icon size={16} className="shrink-0 text-gold-deep/60 group-hover/item:text-gold-deep transition-colors" />
+                              <span>{link.label}</span>
                             </a>
                           ))}
                         </div>
@@ -367,7 +369,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                 <div className="absolute right-0 top-full mt-2 w-72 lg:w-48 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
                   <div className="divide-y divide-black/5">
                     <div className="lg:hidden">
-                      {navItems.map((item) => {
+                      {location.pathname === '/' && navItems.map((item) => {
                         const menu = megaMenuItems[item.key]
                         const isOpen = activeMenu === item.key
                         return (
@@ -384,11 +386,12 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                               <div className="bg-ivory/40 px-4 pb-2 pt-1 space-y-0.5">
                                 {menu.links.map((link) => (
                                   <a
-                                    key={link}
+                                    key={link.label}
                                     href="#"
-                                    className="block rounded-lg px-3 py-2 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
+                                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
                                   >
-                                    {link}
+                                    <link.icon size={14} className="shrink-0 text-gold-deep/60" />
+                                    {link.label}
                                   </a>
                                 ))}
                               </div>
@@ -425,12 +428,12 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
       </div>
 
       {authModalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-charcoal/55 px-4 py-6 backdrop-blur-[2px]">
-          <div className="relative w-full max-w-[min(92vw,980px)] overflow-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-charcoal/55 px-4 py-6 backdrop-blur-[2px]" onClick={() => setAuthModalOpen(false)}>
+          <div className="relative w-full max-w-[min(92vw,980px)] overflow-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
-              onClick={() => setAuthModalOpen(false)}
-              className="absolute right-4 top-4 rounded-full bg-ivory p-2 text-charcoal transition hover:bg-gold-deep hover:text-white"
+              onClick={(e) => { e.stopPropagation(); setAuthModalOpen(false) }}
+              className="absolute right-4 top-4 z-10 rounded-full bg-ivory p-2 text-charcoal transition hover:bg-gold-deep hover:text-white cursor-pointer"
               aria-label="Close login dialog"
             >
               <X size={18} />
@@ -451,7 +454,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, curr
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center p-7 pb-14 sm:p-10 lg:p-12 lg:pb-16">
+              <div className="relative flex flex-col justify-center p-7 pb-14 sm:p-10 lg:p-12 lg:pb-16">
+                <div className="absolute left-1/2 top-12 -translate-x-1/2 font-heading text-[26px] font-bold tracking-tight text-royal">
+                  Func<span className="text-gold">Book</span>
+                </div>
                 <form
                   className="space-y-4"
                   onSubmit={handleAuthSubmit}

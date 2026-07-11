@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, MapPin, IndianRupee, X } from 'lucide-react'
-import ServiceCard from '../components/ServiceCard'
-import { categories, servicesByCategory } from '../data/categories'
+import ServiceCard from '../../components/ServiceCard'
+import { categories, servicesByCategory } from '../../data/categories'
 
 const priceRanges = [
   { label: 'Any', min: 0, max: Infinity },

@@ -41,7 +41,7 @@ export default function Layout() {
         <Outlet context={{ isAuthenticated, authModalOpen, setAuthModalOpen, handleAuthSuccess }} />
       </main>
 
-      {(!isAuthenticated || currentPage === 'home') && <Footer />}
+      {location.pathname === '/' && <Footer />}
     </div>
   )
 }
