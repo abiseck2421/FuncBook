@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import ServiceCard from './ServiceCard'
 import type { Service } from '../data/categories'
@@ -54,15 +55,19 @@ const halls: Service[] = [
   },
 ]
 
-const SCROLL_AMOUNT = 280
-
 export default function FeaturedHalls() {
+  const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return
-    const amount = direction === 'left' ? -SCROLL_AMOUNT : SCROLL_AMOUNT
-    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+    const container = scrollRef.current
+    const firstChild = container.children[0] as HTMLElement
+    if (!firstChild) return
+    const gap = parseInt(getComputedStyle(container).gap) || 16
+    const cardWidth = firstChild.offsetWidth + gap
+    const amount = direction === 'left' ? -cardWidth : cardWidth
+    container.scrollBy({ left: amount, behavior: 'smooth' })
   }
 
   return (
@@ -98,7 +103,7 @@ export default function FeaturedHalls() {
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide"
+        className="flex md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide"
       >
         {halls.map((hall) => (
           <div
@@ -108,6 +113,12 @@ export default function FeaturedHalls() {
             <ServiceCard service={hall} />
           </div>
         ))}
+        <button
+          onClick={() => navigate('/services/function-halls')}
+          className="flex md:hidden w-[calc(50%-0.5rem)] shrink-0 snap-start items-center justify-center rounded-[18px] border-2 border-dashed border-gold/30 bg-gold/5 hover:bg-gold/10 transition-colors"
+        >
+          <span className="text-sm font-semibold text-gold-deep">View More</span>
+        </button>
       </div>
     </section>
   )

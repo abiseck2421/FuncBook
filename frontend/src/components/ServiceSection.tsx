@@ -11,7 +11,6 @@ interface ServiceSectionProps {
 }
 
 const INITIAL_COUNT = 6
-const SCROLL_AMOUNT = 280
 
 export default function ServiceSection({ id, title, services }: ServiceSectionProps) {
   const navigate = useNavigate()
@@ -20,8 +19,13 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return
-    const amount = direction === 'left' ? -SCROLL_AMOUNT : SCROLL_AMOUNT
-    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+    const container = scrollRef.current
+    const firstChild = container.children[0] as HTMLElement
+    if (!firstChild) return
+    const gap = parseInt(getComputedStyle(container).gap) || 16
+    const cardWidth = firstChild.offsetWidth + gap
+    const amount = direction === 'left' ? -cardWidth : cardWidth
+    container.scrollBy({ left: amount, behavior: 'smooth' })
   }
 
   return (
@@ -55,7 +59,7 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide"
+        className="flex md:grid md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide"
       >
         {displayed.map((service) => (
           <div
@@ -65,6 +69,12 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
             <ServiceCard service={service} />
           </div>
         ))}
+        <button
+          onClick={() => navigate(`/services/${id}`)}
+          className="flex md:hidden w-[calc(50%-0.5rem)] shrink-0 snap-start items-center justify-center rounded-[18px] border-2 border-dashed border-gold/30 bg-gold/5 hover:bg-gold/10 transition-colors"
+        >
+          <span className="text-sm font-semibold text-gold-deep">View More</span>
+        </button>
       </div>
     </section>
   )

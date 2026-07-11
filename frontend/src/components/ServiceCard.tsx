@@ -60,16 +60,6 @@ export default function ServiceCard({ service }: ServiceCardProps) {
           <span className="text-[13px] font-bold text-royal">From ₹{service.price.toLocaleString()}</span>
         </div>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-1">
-          {service.tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-0.5 text-[9px] font-medium text-charcoal bg-ivory rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
   )
