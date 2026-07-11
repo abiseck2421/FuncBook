@@ -103,7 +103,7 @@ export default function FeaturedHalls() {
         {halls.map((hall) => (
           <div
             key={hall.id}
-            className="w-[calc(44%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
+            className="w-[calc(50%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
           >
             <ServiceCard service={hall} />
           </div>

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowLeft, ArrowRight, Check, Sparkles, Building2, UtensilsCrossed,
-  Palette, Camera, Music, Lightbulb, Armchair, Package, MapPin, Phone,
+  Palette, Camera, Music, Armchair, Package, MapPin, Phone,
   IndianRupee, Briefcase, FileText, AlertCircle, Plus, X, Upload,
   Save, Send, CalendarDays, Clock, Image, ChevronDown, Star, Trash2,
 } from 'lucide-react'

@@ -60,7 +60,7 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
         {displayed.map((service) => (
           <div
             key={service.id}
-            className="w-[calc(44%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
+            className="w-[calc(50%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
           >
             <ServiceCard service={service} />
           </div>
