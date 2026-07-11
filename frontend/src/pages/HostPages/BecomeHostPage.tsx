@@ -124,7 +124,7 @@ export default function BecomeHostPage() {
   const selectedCount = selected.size
 
   return (
-    <div className="min-h-screen bg-ivory pt-22 sm:pt-28 pb-28 lg:pb-8">
+    <div className="min-h-screen bg-ivory pb-28 lg:pb-8">
       {/* ─── Hero Section ─── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-ivory via-ivory to-white">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -132,7 +132,7 @@ export default function BecomeHostPage() {
           <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-gold/8 blur-[80px]" />
         </div>
 
-        <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 py-16 sm:py-20 lg:py-24">
+        <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pt-28 pb-16 sm:py-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left — Copy */}
             <div className="space-y-8">
