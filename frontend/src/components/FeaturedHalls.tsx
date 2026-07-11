@@ -1,118 +1,112 @@
-import { Star, MapPin, Users, Eye } from 'lucide-react'
+import { useRef } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import ServiceCard from './ServiceCard'
+import type { Service } from '../data/categories'
 
-const halls = [
+const halls: Service[] = [
   {
+    id: 'fh-featured-1',
     name: 'Royal Grand Palace',
     location: 'Chennai',
-    capacity: '500 Guests',
+    description: '500 Guests capacity venue',
     rating: 5.0,
+    reviewCount: 128,
     price: 150000,
-    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&h=500&fit=crop',
-    reviews: 128,
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop',
+    tags: ['Premium', 'AC', 'Valet'],
+    verified: true,
   },
   {
+    id: 'fh-featured-2',
     name: 'Crystal Convention Centre',
     location: 'Bangalore',
-    capacity: '800 Guests',
+    description: '800 Guests capacity venue',
     rating: 4.9,
+    reviewCount: 215,
     price: 200000,
-    image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=500&fit=crop',
-    reviews: 215,
+    image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&h=300&fit=crop',
+    tags: ['Convention', 'Premium'],
+    verified: true,
   },
   {
+    id: 'fh-featured-3',
     name: 'The Golden Pearl Hall',
     location: 'Hyderabad',
-    capacity: '350 Guests',
+    description: '350 Guests capacity venue',
     rating: 4.8,
+    reviewCount: 96,
     price: 120000,
-    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&h=500&fit=crop',
-    reviews: 96,
+    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop',
+    tags: ['Elegant', 'AC'],
+    verified: true,
   },
   {
+    id: 'fh-featured-4',
     name: 'Emerald Garden Estate',
     location: 'Mumbai',
-    capacity: '600 Guests',
+    description: '600 Guests capacity venue',
     rating: 4.9,
+    reviewCount: 183,
     price: 250000,
-    image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&h=500&fit=crop',
-    reviews: 183,
+    image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=400&h=300&fit=crop',
+    tags: ['Garden', 'Premium'],
+    verified: true,
   },
 ]
 
+const SCROLL_AMOUNT = 280
+
 export default function FeaturedHalls() {
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return
+    const amount = direction === 'left' ? -SCROLL_AMOUNT : SCROLL_AMOUNT
+    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+  }
+
   return (
-    <section id="featured-halls" className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-12 sm:py-16">
-      <div className="flex items-end justify-between mb-8">
+    <section id="featured-halls" className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-12 sm:py-16 animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-3">
             Featured Venues
           </p>
-          <h2 className="font-heading text-4xl sm:text-5xl font-bold text-royal">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-royal">
             Premium Function Halls
           </h2>
         </div>
-        <a href="#" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">
-          View All
-          <Eye size={16} className="group-hover:translate-x-1 transition-transform" />
-        </a>
+        <div className="flex items-center gap-3">
+          <a href="#" className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">
+            View All
+            <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+          </a>
+          <button
+            onClick={() => scroll('left')}
+            className="flex md:hidden w-10 h-10 rounded-full border border-border items-center justify-center text-royal/40 hover:text-royal hover:border-royal transition-colors"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="flex md:hidden w-10 h-10 rounded-full border border-border items-center justify-center text-royal/40 hover:text-royal hover:border-royal transition-colors"
+          >
+            <ChevronRight size={20} />
+          </button>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div
+        ref={scrollRef}
+        className="flex md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide"
+      >
         {halls.map((hall) => (
-          <a
-            key={hall.name}
-            href="#"
-            className="group flex flex-col sm:flex-row overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12)]"
+          <div
+            key={hall.id}
+            className="w-[calc(44%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
           >
-            <div className="relative sm:w-[280px] shrink-0 aspect-[4/3] sm:aspect-auto overflow-hidden">
-              <img
-                src={hall.image}
-                alt={hall.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent sm:bg-gradient-to-t" />
-            </div>
-
-            <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between">
-              <div>
-                <h3 className="font-heading text-xl font-bold text-royal">{hall.name}</h3>
-
-                <div className="flex items-center gap-1 mt-1">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      size={14}
-                      className={i < Math.floor(hall.rating) ? 'fill-gold text-gold' : 'text-black/10'}
-                    />
-                  ))}
-                  <span className="text-sm font-semibold text-royal ml-1">{hall.rating}</span>
-                  <span className="text-xs text-secondary-text ml-1">({hall.reviews} reviews)</span>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4 mt-3">
-                  <div className="flex items-center gap-1.5 text-sm text-secondary-text">
-                    <MapPin size={14} className="text-gold" />
-                    {hall.location}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-sm text-secondary-text">
-                    <Users size={14} className="text-gold" />
-                    {hall.capacity}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-black/5">
-                <div>
-                  <p className="text-xs text-secondary-text">Starting from</p>
-                  <p className="text-lg font-bold text-royal">₹{hall.price.toLocaleString()}</p>
-                </div>
-                <span className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gold-deep text-white text-xs font-semibold hover:bg-royal transition-colors duration-300">
-                  View Details
-                </span>
-              </div>
-            </div>
-          </a>
+            <ServiceCard service={hall} />
+          </div>
         ))}
       </div>
     </section>
