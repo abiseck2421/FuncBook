@@ -4,6 +4,7 @@ import LandingPage from './pages/CustomerPages/LandingPage'
 import ServicesPage from './pages/CustomerPages/ServicesPage'
 import CategoryPage from './pages/CustomerPages/CategoryPage'
 import BookingPage from './pages/CustomerPages/BookingPage'
+import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
 import AddServicePage from './pages/HostPages/AddServicePage'
 
@@ -16,6 +17,7 @@ function App() {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:categoryId" element={<CategoryPage />} />
           <Route path="/booking/:serviceId" element={<BookingPage />} />
+          <Route path="/checkout/:serviceId" element={<CustomerBookingPage />} />
           <Route path="/become-host" element={<BecomeHostPage />} />
           <Route path="/become-host/details" element={<AddServicePage />} />
         </Route>

@@ -7,6 +7,7 @@ export default function Layout() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userEmail, setUserEmail] = useState('')
   const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authRedirectPath, setAuthRedirectPath] = useState<string | null>(null)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -14,7 +15,9 @@ export default function Layout() {
     setUserEmail(email)
     setIsAuthenticated(true)
     setAuthModalOpen(false)
-    navigate('/services')
+    const redirect = authRedirectPath || '/services'
+    setAuthRedirectPath(null)
+    navigate(redirect)
   }
 
   const handleLogout = () => {
@@ -38,7 +41,7 @@ export default function Layout() {
       />
 
       <main>
-        <Outlet context={{ isAuthenticated, authModalOpen, setAuthModalOpen, handleAuthSuccess }} />
+        <Outlet context={{ isAuthenticated, authModalOpen, setAuthModalOpen, handleAuthSuccess, setAuthRedirectPath }} />
       </main>
 
       {location.pathname === '/' && <Footer />}

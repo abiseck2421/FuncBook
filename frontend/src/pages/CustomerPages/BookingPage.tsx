@@ -89,10 +89,11 @@ const amenityKeyIcons: Record<string, React.ComponentType<{ size?: number; class
 export default function BookingPage() {
   const { serviceId } = useParams<{ serviceId: string }>()
   const navigate = useNavigate()
-  const { setAuthModalOpen } = useOutletContext<{
+  const { setAuthModalOpen, setAuthRedirectPath } = useOutletContext<{
     authModalOpen: boolean
     setAuthModalOpen: (open: boolean) => void
     handleAuthSuccess: (email: string) => void
+    setAuthRedirectPath: (path: string | null) => void
   }>()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [wishlisted, setWishlisted] = useState(false)
@@ -503,7 +504,10 @@ export default function BookingPage() {
                   className="mt-1.5 w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40"
                 />
               </div>
-              <button onClick={() => setAuthModalOpen(true)} className="w-full py-3 rounded-xl bg-gold-deep text-white text-sm font-semibold shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-500 flex items-center justify-center gap-2">
+              <button onClick={() => {
+                setAuthRedirectPath(`/checkout/${service.id}`)
+                setAuthModalOpen(true)
+              }} className="w-full py-3 rounded-xl bg-gold-deep text-white text-sm font-semibold shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-500 flex items-center justify-center gap-2">
                 <CalendarCheck size={18} />
                 Book Now
               </button>
