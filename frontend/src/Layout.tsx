@@ -26,15 +26,12 @@ export default function Layout() {
     navigate('/')
   }
 
-  const currentPage = location.pathname === '/services' ? 'services' : 'home'
-
   return (
     <div className="min-h-screen bg-ivory">
       <Navbar
         onAuthSuccess={handleAuthSuccess}
         isAuthenticated={isAuthenticated}
         userEmail={userEmail}
-        currentPage={currentPage}
         onLogout={handleLogout}
         authModalOpen={authModalOpen}
         setAuthModalOpen={setAuthModalOpen}
