@@ -7,6 +7,7 @@ import BookingPage from './pages/CustomerPages/BookingPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
 import AddServicePage from './pages/HostPages/AddServicePage'
+import HostDashboardPage from './pages/HostPages/HostDashboardPage'
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           <Route path="/booking/:serviceId" element={<BookingPage />} />
           <Route path="/checkout/:serviceId" element={<CustomerBookingPage />} />
           <Route path="/become-host" element={<BecomeHostPage />} />
-          <Route path="/become-host/details" element={<AddServicePage />} />
+          <Route path="/host/dashboard" element={<HostDashboardPage />} />
+          <Route path="/host/add-service" element={<AddServicePage />} />
+          <Route path="/host/services" element={<HostDashboardPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
