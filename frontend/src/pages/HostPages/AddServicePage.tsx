@@ -355,11 +355,11 @@ export default function AddServicePage() {
               Your service is now live. Customers can discover and book it from the FuncBook marketplace.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-10">
-              <Link to="/services" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-500">
-                View Services <ArrowRight size={18} />
+              <Link to="/host/dashboard" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-500">
+                Go to Dashboard <ArrowRight size={18} />
               </Link>
-              <Link to="/" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-500">
-                Back to Home
+              <Link to="/services" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-500">
+                View All Services
               </Link>
             </div>
           </div>
@@ -967,7 +967,7 @@ export default function AddServicePage() {
       <section className="pt-28 sm:pt-24">
         <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10">
           <div className="flex items-center gap-3 mb-6">
-            <Link to="/become-host" className="inline-flex items-center gap-2 text-sm font-medium text-secondary-text hover:text-gold-deep transition-colors shrink-0">
+            <Link to="/host/dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-secondary-text hover:text-gold-deep transition-colors shrink-0">
               <ArrowLeft size={16} /> Back
             </Link>
             <div className="h-3 w-px bg-black/10" />
@@ -1020,7 +1020,7 @@ export default function AddServicePage() {
                 <ArrowLeft size={16} /> Back
               </button>
             ) : (
-              <Link to="/become-host" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
+              <Link to="/host/dashboard" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
                 <ArrowLeft size={16} /> Back
               </Link>
             )}
