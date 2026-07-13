@@ -442,7 +442,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
                       className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
                     >
                       <LogIn size={18} />
-                      <span>Login</span>
+                      <span>Login / Sign up</span>
                     </button>
                     <Link to="/become-host" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
                       <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">B</span>
