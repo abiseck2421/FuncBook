@@ -193,7 +193,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
                         <button
                           type="button"
                           className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                          onClick={() => { setAccountMenuOpen(false); navigate('/host/dashboard') }}
+                          onClick={() => { setAccountMenuOpen(false); navigate('/customer/dashboard') }}
                         >
                           <LayoutDashboard size={16} className="text-gold-deep/60" />
                           Dashboard
@@ -265,11 +265,11 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
 
           {/* Sidebar nav — static */}
           <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
+            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/customer/dashboard') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
               <LayoutDashboard size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
               Dashboard
             </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
+            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/services') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
               <Building2 size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
               Services
             </button>

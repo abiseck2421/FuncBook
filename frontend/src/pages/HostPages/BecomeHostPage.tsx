@@ -5,7 +5,6 @@ import {
   Phone, MapPin, Star, Users, TrendingUp,
   Camera, Mail, Globe, AlertCircle, Upload, X, LayoutDashboard,
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
 
 const inputCls = 'w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white placeholder:text-secondary-text/40'
 const labelCls = 'text-sm font-medium text-charcoal'
