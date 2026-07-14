@@ -10,12 +10,16 @@ import {
 import ServiceCard from '../../components/ServiceCard'
 import { servicesByCategory, categoryGalleries } from '../../data/categories'
 import type { Service, Review } from '../../data/categories'
+import { getHostServices, mergeServices } from '../../data/hostServices'
 
 function findService(serviceId: string) {
   for (const cid in servicesByCategory) {
     const found = servicesByCategory[cid].find((s) => s.id === serviceId)
     if (found) return { ...found, categoryId: cid }
   }
+  const hostServices = getHostServices()
+  const hostFound = hostServices.find((s) => s.id === serviceId)
+  if (hostFound) return { ...hostFound, categoryId: hostFound.categoryId || 'event-planners' }
   return null
 }
 
@@ -118,7 +122,8 @@ export default function BookingPage() {
 
   const similarServices = useMemo(() => {
     if (!service || !service.categoryId) return []
-    return servicesByCategory[service.categoryId]
+    const merged = mergeServices(servicesByCategory)
+    return merged[service.categoryId]
       ?.filter((s) => s.id !== service.id)
       ?.slice(0, 4) ?? []
   }, [service])

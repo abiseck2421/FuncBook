@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, MapPin, IndianRupee, X } from 'lucide-react'
 import ServiceCard from '../../components/ServiceCard'
 import { categories, servicesByCategory } from '../../data/categories'
+import { mergeServices } from '../../data/hostServices'
 
 const priceRanges = [
   { label: 'Any', min: 0, max: Infinity },
@@ -16,7 +17,7 @@ export default function CategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>()
   const navigate = useNavigate()
   const category = categories.find((c) => c.id === categoryId)
-  const allServices = categoryId ? servicesByCategory[categoryId] ?? [] : []
+  const allServices = categoryId ? mergeServices(servicesByCategory)[categoryId] ?? [] : []
 
   const [location, setLocation] = useState('')
   const [budgetIndex, setBudgetIndex] = useState(0)

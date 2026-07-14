@@ -6,6 +6,7 @@ import CategoryPage from './pages/CustomerPages/CategoryPage'
 import BookingPage from './pages/CustomerPages/BookingPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import CustomerDashboardPage from './pages/CustomerPages/CustomerDashboardPage'
+import MyBookingsPage from './pages/CustomerPages/MyBookingsPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
 import AddServicePage from './pages/HostPages/AddServicePage'
 import HostDashboardPage from './pages/HostPages/HostDashboardPage'
@@ -21,6 +22,7 @@ function App() {
           <Route path="/booking/:serviceId" element={<BookingPage />} />
           <Route path="/checkout/:serviceId" element={<CustomerBookingPage />} />
           <Route path="/customer/dashboard" element={<CustomerDashboardPage />} />
+          <Route path="/customer/bookings" element={<MyBookingsPage />} />
           <Route path="/become-host" element={<BecomeHostPage />} />
           <Route path="/host/dashboard" element={<HostDashboardPage />} />
           <Route path="/host/add-service" element={<AddServicePage />} />

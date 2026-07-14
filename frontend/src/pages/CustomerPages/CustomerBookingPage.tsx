@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import { servicesByCategory, categories } from '../../data/categories'
 import type { Service } from '../../data/categories'
+import { getHostServices } from '../../data/hostServices'
 
 const STEPS = ['Service', 'Details', 'Review', 'Payment', 'Confirmed']
 
@@ -33,6 +34,9 @@ function findService(serviceId: string): (Service & { categoryId: string }) | nu
     const found = servicesByCategory[cid].find((s) => s.id === serviceId)
     if (found) return { ...found, categoryId: cid }
   }
+  const hostServices = getHostServices()
+  const hostFound = hostServices.find((s) => s.id === serviceId)
+  if (hostFound) return { ...hostFound, categoryId: hostFound.categoryId || 'event-planners' }
   return null
 }
 

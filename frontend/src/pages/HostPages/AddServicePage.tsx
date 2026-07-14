@@ -6,6 +6,8 @@ import {
   IndianRupee, Briefcase, FileText, AlertCircle, Plus, X, Upload,
   Save, Send, CalendarDays, Clock, Image, ChevronDown, Star, Trash2,
 } from 'lucide-react'
+import { saveHostService, mapCategoryId } from '../../data/hostServices'
+import type { Service } from '../../data/categories'
 
 // ─── Category definitions ──────────────────────────────────────────────────────
 
@@ -282,6 +284,35 @@ export default function AddServicePage() {
   const [availDates, setAvailDates] = useState('')
   const [noticePeriod, setNoticePeriod] = useState('')
   const [blockedDates, setBlockedDates] = useState('')
+
+  const handlePublish = () => {
+    if (!category) return
+    const serviceId = `host-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    const newService: Service = {
+      id: serviceId,
+      name: title || 'Untitled Service',
+      location: city || 'Location TBD',
+      description: shortDesc || detailedDesc || '',
+      rating: 0,
+      reviewCount: 0,
+      price: Number(basePrice) || Number(startingPrice) || 0,
+      image: coverImage[0] || 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop',
+      tags: Object.values(catFields).flat().filter(v => typeof v === 'string' && v).slice(0, 5) as string[],
+      verified: false,
+      gallery: galleryImages.length > 0 ? galleryImages : undefined,
+      categoryId: mapCategoryId(category),
+      address: address || undefined,
+      serviceArea: serviceArea || undefined,
+      packages: packages.length > 0 ? packages.map(p => ({
+        name: p.name || 'Custom Package',
+        price: Number(p.price) || 0,
+        features: p.services ? p.services.split(',').map(s => s.trim()) : [],
+        duration: '',
+      })) : undefined,
+    }
+    saveHostService(newService)
+    setSubmitted(true)
+  }
 
   const catDef = categories.find(c => c.id === category)
   const catFieldDefs = category ? categoryFields[category] || [] : []
@@ -1036,13 +1067,13 @@ export default function AddServicePage() {
             {step === 5 ? (
               <>
                 <button
-                  onClick={() => { setSubmitted(true) }}
+                  onClick={handlePublish}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300"
                 >
                   <Save size={16} /> Save Draft
                 </button>
                 <button
-                  onClick={() => { setSubmitted(true) }}
+                  onClick={handlePublish}
                   className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-300"
                 >
                   <Send size={16} /> Publish Service

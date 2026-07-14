@@ -1,7 +1,10 @@
 import ServiceSection from '../../components/ServiceSection'
 import { categories, servicesByCategory } from '../../data/categories'
+import { mergeServices } from '../../data/hostServices'
 
 export default function ServicesPage() {
+  const allServices = mergeServices(servicesByCategory)
+
   return (
     <div className="pt-22 sm:pt-28 pb-16">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
@@ -19,7 +22,7 @@ export default function ServicesPage() {
       </div>
 
       {categories.map((cat) => {
-        const services = servicesByCategory[cat.id]
+        const services = allServices[cat.id]
         if (!services) return null
         return (
           <ServiceSection

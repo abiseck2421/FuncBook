@@ -1,22 +1,20 @@
 import { useNavigate } from 'react-router-dom'
 import {
   Building2, UtensilsCrossed, Palette, Lightbulb, Camera,
-  Sparkles, CakeSlice, Car, ArmchairIcon, Layout, Music, Video
+  Sparkles, ArmchairIcon, CalendarCheck, Music, Flower2
 } from 'lucide-react'
 
 const categories = [
   { name: 'Function Halls', icon: Building2, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop' },
   { name: 'Catering', icon: UtensilsCrossed, image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop' },
-  { name: 'Decoration', icon: Palette, image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
+  { name: 'Decoration Setups', icon: Palette, image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
   { name: 'Lighting & Sound', icon: Lightbulb, image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop' },
-  { name: 'Photography', icon: Camera, image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
   { name: 'Makeup Artists', icon: Sparkles, image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=400&h=300&fit=crop' },
-  { name: 'Cakes', icon: CakeSlice, image: 'https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?w=400&h=300&fit=crop' },
-  { name: 'Transportation', icon: Car, image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=300&fit=crop' },
+  { name: 'Photographers', icon: Camera, image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
   { name: 'Chairs & Furniture', icon: ArmchairIcon, image: 'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=400&h=300&fit=crop' },
-  { name: 'Stage Setup', icon: Layout, image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=400&h=300&fit=crop' },
-  { name: 'DJ & Music', icon: Music, image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
-  { name: 'Videography', icon: Video, image: 'https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400&h=300&fit=crop' },
+  { name: 'Event Planners', icon: CalendarCheck, image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=300&fit=crop' },
+  { name: 'DJs', icon: Music, image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
+  { name: 'Flower Decorators', icon: Flower2, image: 'https://images.unsplash.com/photo-1519379157579-e6c3459be4c4?w=400&h=300&fit=crop' },
 ]
 
 export default function BrowseCategories() {
@@ -35,7 +33,7 @@ export default function BrowseCategories() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5 sm:gap-6">
         {categories.map((cat) => {
           const Icon = cat.icon
           return (

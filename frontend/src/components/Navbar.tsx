@@ -202,10 +202,10 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
                       <div className="border-t border-black/5" />
                       <button
                         type="button"
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-red-500 bg-red-50/80 hover:bg-red-50 hover:text-red-600 transition-colors"
                         onClick={() => { setAccountMenuOpen(false); onLogout?.() }}
                       >
-                        <LogOut size={16} className="text-gold-deep/60" />
+                        <LogOut size={16} />
                         Log out
                       </button>
                     </div>
@@ -257,7 +257,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
               <Building2 size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
               Services
             </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
+            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/customer/bookings') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
               <CalendarCheck size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
               My Bookings
             </button>
