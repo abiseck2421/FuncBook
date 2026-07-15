@@ -124,8 +124,7 @@ export default function MyBookingsPage() {
   }
 
   return (
-    <div className="pt-20 sm:pt-28 pb-12 sm:pb-16">
-      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-8 sm:py-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
           <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
@@ -285,6 +284,5 @@ export default function MyBookingsPage() {
           </div>
         )}
       </div>
-    </div>
   )
 }

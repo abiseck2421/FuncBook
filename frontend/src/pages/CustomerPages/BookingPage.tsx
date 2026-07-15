@@ -11,6 +11,7 @@ import ServiceCard from '../../components/ServiceCard'
 import { servicesByCategory, categoryGalleries } from '../../data/categories'
 import type { Service, Review } from '../../data/categories'
 import { getHostServices, mergeServices } from '../../data/hostServices'
+import { useWishlist } from '../../contexts/WishlistContext'
 
 function findService(serviceId: string) {
   for (const cid in servicesByCategory) {
@@ -100,11 +101,11 @@ export default function BookingPage() {
     setAuthRedirectPath: (path: string | null) => void
   }>()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [wishlisted, setWishlisted] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [guestCount, setGuestCount] = useState(100)
   const dateInputRef = useRef<HTMLInputElement>(null)
+  const { toggleWishlist, isWishlisted } = useWishlist()
 
   const service = useMemo(() => {
     if (!serviceId) return null
@@ -482,10 +483,10 @@ export default function BookingPage() {
                   <p className="text-[10px] text-secondary-text mt-0.5">Starting price</p>
                 </div>
                 <button
-                  onClick={() => setWishlisted(!wishlisted)}
+                  onClick={() => toggleWishlist(service)}
                   className="w-9 h-9 rounded-xl bg-ivory/60 border border-gold-deep/10 flex items-center justify-center hover:scale-110 transition-transform"
                 >
-                  <Heart size={16} className={wishlisted ? 'fill-gold text-gold' : 'text-charcoal'} />
+                  <Heart size={16} className={isWishlisted(service.id) ? 'fill-gold text-gold' : 'text-charcoal'} />
                 </button>
               </div>
             </div>

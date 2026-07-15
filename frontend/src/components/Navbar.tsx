@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { ChevronDown, Globe, Menu, LogIn, X, Building2, UtensilsCrossed, Sparkles, Camera, Video, Palette, Lightbulb, LayoutTemplate, Armchair, CalendarDays, Mail, Gift, BookOpen, Target, Star, Users, Briefcase, FileText, Quote, Phone, Headphones, Handshake, UserPlus, MapPin, HelpCircle, MessageCircleQuestion, BookCheck, Ban, Shield, FileCheck, AlertTriangle, LayoutDashboard, CalendarCheck, Heart, CreditCard, Settings, LogOut } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { ChevronDown, Globe, Menu, LogIn, X, Building2, UtensilsCrossed, Sparkles, Camera, Video, Palette, Lightbulb, LayoutTemplate, Armchair, CalendarDays, Mail, Gift, BookOpen, Target, Star, Users, Briefcase, FileText, Quote, Phone, Headphones, Handshake, UserPlus, MapPin, HelpCircle, MessageCircleQuestion, BookCheck, Ban, Shield, FileCheck, AlertTriangle } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import AuthModal from './AuthModal'
 
@@ -77,25 +77,17 @@ const navItems: Array<{ key: MenuKey; label: string }> = [
 
 type NavbarProps = {
   onAuthSuccess: (email: string) => void
-  isAuthenticated: boolean
-  userEmail: string
-  onLogout?: () => void
   authModalOpen?: boolean
   setAuthModalOpen?: (open: boolean) => void
 }
 
-export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLogout, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen }: NavbarProps) {
-  const navigate = useNavigate()
+export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen }: NavbarProps) {
   const location = useLocation()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false)
-  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
 
   const menuRef = useRef<HTMLDivElement>(null)
-  const sidebarRef = useRef<HTMLDivElement>(null)
 
   const authModalOpen = controlledAuthModalOpen !== undefined ? controlledAuthModalOpen : internalAuthModalOpen
   const setAuthModalOpen = controlledSetAuthModalOpen !== undefined ? controlledSetAuthModalOpen : setInternalAuthModalOpen
@@ -104,210 +96,24 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
     const handleClick = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMobileMenuOpen(false)
-        setAccountMenuOpen(false)
-      }
-      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && sidebarOpen) {
-        setSidebarOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [sidebarOpen])
+  }, [])
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setAuthModalOpen(false)
-        setAccountMenuOpen(false)
-        setSidebarOpen(false)
       }
     }
-
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [setAuthModalOpen])
 
-
-  const userInitial = (userEmail.trim().charAt(0) || 'U').toUpperCase()
-
-  if (isAuthenticated) {
-    return (
-      <>
-        <header className="fixed top-0 left-0 right-0 z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
-          <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
-            <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
-              <div className="flex items-center gap-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="p-2 -ml-2 rounded-xl text-charcoal hover:text-royal hover:bg-white/80 transition-colors"
-                  aria-label="Open navigation menu"
-                >
-                  <Menu size={22} />
-                </button>
-                <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
-                  Func<span className="text-gold">Book</span>
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-4 shrink-0" ref={menuRef}>
-                <button className="flex items-center gap-1.5 text-sm font-medium text-charcoal hover:text-royal transition-colors">
-                  <Globe size={16} />
-                  <span className="hidden sm:inline">Language</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAccountMenuOpen(!accountMenuOpen)}
-                  className="grid h-10 w-10 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white ring-1 ring-black/5 transition hover:ring-gold-deep"
-                  aria-label="Open account menu"
-                  aria-expanded={accountMenuOpen}
-                >
-                  {userInitial}
-                </button>
-
-                {accountMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
-                    <div className="max-h-[70vh] overflow-auto py-2">
-                      <div className="px-4 pb-3 pt-2">
-                        <p className="text-sm font-semibold text-royal">{userEmail}</p>
-                        <p className="text-xs text-secondary-text">Your account</p>
-                      </div>
-                      <div className="border-t border-black/5" />
-                      <div className="py-1">
-                        <button
-                          type="button"
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                          onClick={() => { setAccountMenuOpen(false); navigate('/customer/dashboard') }}
-                        >
-                          <LayoutDashboard size={16} className="text-gold-deep/60" />
-                          Dashboard
-                        </button>
-                        <button
-                          type="button"
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                          onClick={() => { setAccountMenuOpen(false); navigate('/profile') }}
-                        >
-                          <Settings size={16} className="text-gold-deep/60" />
-                          Account Settings
-                        </button>
-                        <button
-                          type="button"
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-charcoal transition-colors hover:bg-ivory hover:text-royal"
-                          onClick={() => { setAccountMenuOpen(false); navigate('/become-host') }}
-                        >
-                          <Building2 size={16} className="text-gold-deep/60" />
-                          Become a Host
-                        </button>
-                      </div>
-                      <div className="border-t border-black/5" />
-                      <button
-                        type="button"
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-red-500 bg-red-50/80 hover:bg-red-50 hover:text-red-600 transition-colors"
-                        onClick={() => { setAccountMenuOpen(false); onLogout?.() }}
-                      >
-                        <LogOut size={16} />
-                        Log out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Sidebar overlay */}
-        <div
-          className={`fixed inset-0 z-[60] bg-charcoal/40 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden ${
-            sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
-          onClick={() => setSidebarOpen(false)}
-          aria-hidden="true"
-        />
-
-        {/* Left sidebar */}
-        <aside
-          ref={sidebarRef}
-          className={`fixed top-0 left-0 z-[70] h-full w-72 bg-white shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-out flex flex-col ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          {/* Sidebar header */}
-          <div className="flex items-center justify-between px-5 h-[72px] border-b border-black/5 shrink-0">
-            <Link to="/" className="font-heading text-[22px] font-bold tracking-tight text-royal" onClick={() => setSidebarOpen(false)}>
-              Func<span className="text-gold">Book</span>
-            </Link>
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(false)}
-              className="p-2 -mr-2 rounded-xl text-charcoal hover:text-royal hover:bg-ivory transition-colors"
-              aria-label="Close navigation"
-            >
-              <X size={20} />
-            </button>
-          </div>
-
-          {/* Sidebar nav — static */}
-          <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/customer/dashboard') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <LayoutDashboard size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Dashboard
-            </button>
-            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/services') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <Building2 size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Services
-            </button>
-            <button type="button" onClick={() => { setSidebarOpen(false); navigate('/customer/bookings') }} className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <CalendarCheck size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              My Bookings
-            </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <Heart size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Wishlist
-            </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <Star size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Reviews
-            </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <CreditCard size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Payment History
-            </button>
-
-            <div className="my-2 border-t border-black/5" />
-
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <Settings size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Profile &amp; Settings
-            </button>
-            <button type="button" className="group flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-charcoal border border-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-deep/50 focus-visible:bg-gold/5 transition-all duration-200 hover:bg-gold/8 hover:text-gold-deep hover:border-gold/20">
-              <HelpCircle size={18} className="text-secondary-text group-hover:text-gold-deep transition-colors" />
-              Help &amp; Support
-            </button>
-
-            <div className="my-2 border-t border-black/5" />
-          </nav>
-
-          {/* Sidebar footer — logout pinned to bottom */}
-          <div className="shrink-0 border-t border-black/5 px-3 py-3">
-            <button
-              type="button"
-              onClick={() => { setSidebarOpen(false); onLogout?.() }}
-              className="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-500 bg-red-50/80 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
-        </aside>
-      </>
-    )
-  }
-
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]"
-    >
+    <header className="relative z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
         <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
           <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
@@ -398,7 +204,7 @@ export default function Navbar({ onAuthSuccess, isAuthenticated, userEmail, onLo
                 {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
-              {mobileMenuOpen && !isAuthenticated && (
+              {mobileMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-72 lg:w-48 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
                   <div className="divide-y divide-black/5">
                     <div className="lg:hidden">

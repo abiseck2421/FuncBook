@@ -1,14 +1,15 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, Star, BadgeCheck } from 'lucide-react'
 import type { Service } from '../data/categories'
+import { useWishlist } from '../contexts/WishlistContext'
 
 interface ServiceCardProps {
   service: Service
 }
 
 export default function ServiceCard({ service }: ServiceCardProps) {
-  const [wishlisted, setWishlisted] = useState(false)
+  const { toggleWishlist, isWishlisted } = useWishlist()
+  const wishlisted = isWishlisted(service.id)
   const navigate = useNavigate()
 
   return (
@@ -26,7 +27,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
         <button
-          onClick={(e) => { e.stopPropagation(); setWishlisted(!wishlisted) }}
+          onClick={(e) => { e.stopPropagation(); toggleWishlist(service) }}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center hover:scale-110 transition-transform"
         >
           <Heart

@@ -53,15 +53,16 @@ html {
 
 html,
 body {
+  height: 100%;
   font-family: var(--font-body);
   background-color: var(--color-ivory);
   color: var(--color-royal);
-  min-height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 #root {
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   background-color: var(--color-ivory);
 }
 

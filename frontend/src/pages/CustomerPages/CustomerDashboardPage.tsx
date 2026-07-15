@@ -5,6 +5,7 @@ import {
 } from 'lucide-react'
 import ServiceCard from '../../components/ServiceCard'
 import { servicesByCategory } from '../../data/categories'
+import { useWishlist } from '../../contexts/WishlistContext'
 
 const customerName = 'Priya'
 
@@ -31,7 +32,7 @@ const bookingStatusStyles: Record<string, string> = {
   cancelled: 'bg-charcoal/10 text-charcoal/60 border-black/10',
 }
 
-const savedServices = [
+const defaultSavedServices = [
   servicesByCategory['function-halls'][3],
   servicesByCategory['catering'][0],
   servicesByCategory['photographers'][1],
@@ -52,19 +53,23 @@ function formatDate(dateStr: string) {
 }
 
 export default function CustomerDashboardPage() {
+  const { wishlist } = useWishlist()
+  const savedServices = wishlist.length > 0 ? wishlist : defaultSavedServices
+  const savedCount = wishlist.length || 4
   return (
-    <div className="min-h-screen bg-ivory pb-16">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-8 sm:py-10">
       {/* Welcome Section */}
-      <section className="pt-28 sm:pt-24">
-        <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
-          <h1 className="font-heading text-4xl sm:text-5xl font-bold text-royal leading-[1.08] tracking-tight">
-            Welcome back, {customerName}
-          </h1>
-          <p className="mt-2 text-secondary-text text-base sm:text-lg">
-            Manage your bookings and discover services for your next event.
-          </p>
-        </div>
-      </section>
+      <div className="mb-6 sm:mb-8">
+        <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
+          Dashboard
+        </p>
+        <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-royal">
+          Welcome back, {customerName}
+        </h1>
+        <p className="mt-2 sm:mt-3 text-sm sm:text-base text-secondary-text max-w-lg">
+          Manage your bookings and discover services for your next event.
+        </p>
+      </div>
 
       {/* Overview Cards */}
       <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
@@ -72,7 +77,7 @@ export default function CustomerDashboardPage() {
           {[
             { label: 'Upcoming Bookings', value: '2', icon: CalendarDays, to: '/customer/bookings' },
             { label: 'Completed Bookings', value: '8', icon: CheckCircle2, to: '/customer/bookings' },
-            { label: 'Saved Services', value: '4', icon: Heart, to: '/customer/wishlist' },
+            { label: 'Saved Services', value: String(savedCount), icon: Heart, to: '/customer/wishlist' },
             { label: 'Total Spent', value: '₹1.24L', icon: IndianRupee, to: '/customer/payment-history' },
           ].map((stat) => {
             const Icon = stat.icon
