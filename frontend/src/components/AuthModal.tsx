@@ -4,7 +4,7 @@ import { X, ArrowLeft } from 'lucide-react'
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  onAuthSuccess: (email: string) => void
+  onAuthSuccess: (email?: string) => void
 }
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {

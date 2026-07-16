@@ -57,7 +57,7 @@ export default function CustomerDashboardPage() {
   const savedServices = wishlist.length > 0 ? wishlist : defaultSavedServices
   const savedCount = wishlist.length || 4
   return (
-    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-8 sm:py-10">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-10">
       {/* Welcome Section */}
       <div className="mb-6 sm:mb-8">
         <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">

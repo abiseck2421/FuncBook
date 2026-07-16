@@ -375,7 +375,7 @@ export default function AddServicePage() {
             <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-gold/5 blur-[100px]" />
             <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-gold/8 blur-[80px]" />
           </div>
-          <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pt-28 pb-20 sm:py-28 text-center">
+          <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-12 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/10 border border-gold/20 mb-8">
               <Sparkles size={36} className="text-gold-deep" />
             </div>
@@ -995,7 +995,7 @@ export default function AddServicePage() {
   return (
     <div className="min-h-screen bg-ivory pb-28 lg:pb-8">
       {/* Header */}
-      <section className="pt-28 sm:pt-24">
+      <section className="">
         <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/host/dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-secondary-text hover:text-gold-deep transition-colors shrink-0">

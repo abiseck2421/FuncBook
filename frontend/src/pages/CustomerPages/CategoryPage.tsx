@@ -40,7 +40,7 @@ export default function CategoryPage() {
 
   if (!category) {
     return (
-      <div className="pt-28 text-center">
+      <div className="text-center">
         <h1 className="text-2xl font-bold text-royal">Category not found</h1>
         <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
@@ -48,7 +48,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="pt-22 sm:pt-28 pb-16">
+    <div className="pb-16">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
         <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-amber-200 via-amber-100 to-amber-50 p-8 sm:p-10 border border-gold-deep/10">
           <div className="relative z-10">

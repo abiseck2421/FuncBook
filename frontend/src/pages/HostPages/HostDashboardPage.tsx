@@ -70,7 +70,7 @@ export default function HostDashboardPage() {
   return (
     <div className="min-h-screen bg-ivory pb-12">
       {/* Header */}
-      <section className="pt-28 sm:pt-24">
+      <section className="">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>

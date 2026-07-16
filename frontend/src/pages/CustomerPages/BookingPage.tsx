@@ -131,7 +131,7 @@ export default function BookingPage() {
 
   if (!service || !mock) {
     return (
-      <div className="pt-28 text-center">
+      <div className="text-center">
         <h1 className="text-2xl font-bold text-royal">Service not found</h1>
         <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
@@ -140,7 +140,7 @@ export default function BookingPage() {
 
   return (
     <div className="pb-16">
-      <div className="pt-28 pb-6 px-6">
+      <div className="pb-6 px-6">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto">
           <button
             onClick={() => navigate(-1)}

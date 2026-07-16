@@ -107,7 +107,7 @@ export default function CustomerBookingPage() {
 
   if (!service || !serviceId) {
     return (
-      <div className="pt-28 text-center pb-16">
+      <div className="text-center pb-16">
         <h1 className="text-2xl font-bold text-royal">Service not found</h1>
         <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
@@ -116,7 +116,7 @@ export default function CustomerBookingPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="pt-22 sm:pt-28 pb-16 min-h-screen flex items-center justify-center">
+      <div className="pb-16 min-h-screen flex items-center justify-center">
         <div className="w-full max-w-md mx-auto px-6 text-center animate-fade-in">
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-8 sm:p-10">
             <div className="w-16 h-16 rounded-full bg-gold-deep/10 flex items-center justify-center mx-auto mb-5">
@@ -202,7 +202,7 @@ export default function CustomerBookingPage() {
   const errorClass = 'mt-1 text-[11px] text-red-500'
 
   return (
-    <div className="pt-22 sm:pt-28 pb-16 min-h-screen">
+    <div className="pb-16 min-h-screen">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
 
         {currentStep < 4 && (

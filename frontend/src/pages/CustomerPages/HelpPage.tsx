@@ -32,7 +32,7 @@ const faqs: FAQ[] = [
   {
     question: 'How do I request a refund?',
     answer: 'Refunds are processed within 5-7 business days for eligible cancellations. You can request a refund from the Payment History page. Cancellations made more than 7 days before the event receive a full refund.',
-    category: 'Refund',
+    category: 'Cancellation',
   },
   {
     question: 'What is the cancellation policy?',
@@ -119,7 +119,7 @@ export default function HelpPage() {
   }
 
   return (
-    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-8 sm:pb-10">
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">

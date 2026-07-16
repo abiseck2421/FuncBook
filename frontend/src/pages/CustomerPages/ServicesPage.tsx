@@ -6,7 +6,7 @@ export default function ServicesPage() {
   const allServices = mergeServices(servicesByCategory)
 
   return (
-    <div className="pt-22 sm:pt-28 pb-16">
+    <div className="pb-16">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
         <div className="mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-3">

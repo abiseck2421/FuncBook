@@ -59,12 +59,12 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide"
+        className="flex md:grid md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 md:gap-4 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide"
       >
         {displayed.map((service) => (
           <div
             key={service.id}
-            className="w-[calc(50%-0.5rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
+            className="w-[calc(50%-0.375rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
           >
             <ServiceCard service={service} />
           </div>
