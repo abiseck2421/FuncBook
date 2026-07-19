@@ -53,11 +53,12 @@ function formatDate(dateStr: string) {
 }
 
 export default function CustomerDashboardPage() {
-  const { wishlist } = useWishlist()
-  const savedServices = wishlist.length > 0 ? wishlist : defaultSavedServices
-  const savedCount = wishlist.length || 4
+  const { collections, totalSaved } = useWishlist()
+  const allSaved = collections.flatMap((col) => col.services)
+  const savedServices = allSaved.length > 0 ? allSaved.slice(0, 4) : defaultSavedServices
+  const savedCount = totalSaved
   return (
-    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-10">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-8 sm:pb-10">
       {/* Welcome Section */}
       <div className="mb-6 sm:mb-8">
         <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
@@ -72,7 +73,7 @@ export default function CustomerDashboardPage() {
       </div>
 
       {/* Overview Cards */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
+      <section className="mt-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {[
             { label: 'Upcoming Bookings', value: '2', icon: CalendarDays, to: '/customer/bookings' },
@@ -105,7 +106,7 @@ export default function CustomerDashboardPage() {
       </section>
 
       {/* Upcoming Booking */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-10">
+      <section className="mt-10">
         <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
           <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal mb-6">
             Upcoming Booking
@@ -178,7 +179,7 @@ export default function CustomerDashboardPage() {
       </section>
 
       {/* Recent Bookings */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
+      <section className="mt-8">
         <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">
@@ -224,7 +225,7 @@ export default function CustomerDashboardPage() {
       </section>
 
       {/* Saved Services */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
+      <section className="mt-8">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">
             Saved Services
@@ -246,7 +247,7 @@ export default function CustomerDashboardPage() {
       </section>
 
       {/* Recommended for You */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-10">
+      <section className="mt-10">
         <div className="flex items-center justify-between mb-5">
           <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">
             Recommended for You
