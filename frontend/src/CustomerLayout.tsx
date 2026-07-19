@@ -8,7 +8,6 @@ import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
 import type { SidebarNavItem } from './components/Sidebar'
 import type { NavbarDropdownItem } from './components/AfterLoginNavbar'
-import { WishlistProvider } from './contexts/WishlistContext'
 
 export type DashboardType = 'customer' | 'host'
 
@@ -91,8 +90,16 @@ export default function CustomerLayout({ type = 'customer' }: CustomerLayoutProp
   }
 
   return (
-    <WishlistProvider>
-      <div className="h-screen overflow-hidden bg-ivory">
+    <div className="h-screen overflow-hidden bg-ivory">
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onLogout={handleLogout}
+        navItems={config.navItems}
+        secondaryItems={config.secondaryItems}
+      />
+
+      <div className="h-full flex flex-col">
         <AfterLoginNavbar
           onMenuClick={() => setIsSidebarOpen(true)}
           userEmail={userEmail}
@@ -101,18 +108,10 @@ export default function CustomerLayout({ type = 'customer' }: CustomerLayoutProp
           dropdownItems={config.dropdownItems}
         />
 
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          onLogout={handleLogout}
-          navItems={config.navItems}
-          secondaryItems={config.secondaryItems}
-        />
-
-        <main className="w-full h-[calc(100vh-72px)] overflow-y-auto pt-4 sm:pt-6">
+        <main className="flex-1 overflow-y-auto pt-4 sm:pt-6">
           <Outlet />
         </main>
       </div>
-    </WishlistProvider>
+    </div>
   )
 }

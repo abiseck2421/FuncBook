@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { WishlistProvider } from './contexts/WishlistContext'
 import SidebarLayout from './SidebarLayout'
 import CustomerLayout from './CustomerLayout'
+import ServicesLayout from './ServicesLayout'
 import LandingPage from './pages/CustomerPages/LandingPage'
 import ServicesPage from './pages/CustomerPages/ServicesPage'
 import CategoryPage from './pages/CustomerPages/CategoryPage'
@@ -20,14 +22,18 @@ import HostDashboardPage from './pages/HostPages/HostDashboardPage'
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <WishlistProvider>
+        <Routes>
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:categoryId" element={<CategoryPage />} />
           <Route path="/booking/:serviceId" element={<BookingPage />} />
           <Route path="/checkout/:serviceId" element={<CustomerBookingPage />} />
           <Route path="/become-host" element={<BecomeHostPage />} />
+        </Route>
+
+        <Route element={<ServicesLayout />}>
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:categoryId" element={<CategoryPage />} />
         </Route>
 
         <Route element={<CustomerLayout type="host" />}>
@@ -36,16 +42,18 @@ function App() {
           <Route path="/host/services" element={<HostDashboardPage />} />
         </Route>
 
-        <Route element={<CustomerLayout />}>
-          <Route path="/customer/dashboard" element={<CustomerDashboardPage />} />
-          <Route path="/customer/bookings" element={<MyBookingsPage />} />
-          <Route path="/customer/wishlist" element={<WishlistPage />} />
-          <Route path="/customer/reviews" element={<ReviewsPage />} />
-          <Route path="/customer/payments" element={<PaymentsPage />} />
-          <Route path="/customer/settings" element={<SettingsPage />} />
-          <Route path="/customer/help" element={<HelpPage />} />
+        <Route path="/customer" element={<CustomerLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<CustomerDashboardPage />} />
+          <Route path="bookings" element={<MyBookingsPage />} />
+          <Route path="wishlist" element={<WishlistPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="help" element={<HelpPage />} />
         </Route>
-      </Routes>
+        </Routes>
+      </WishlistProvider>
     </BrowserRouter>
   )
 }

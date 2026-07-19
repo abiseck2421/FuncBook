@@ -8,6 +8,7 @@ import {
   Phone, Globe,
 } from 'lucide-react'
 import ServiceCard from '../../components/ServiceCard'
+import WishlistManageModal from '../../components/WishlistManageModal'
 import { servicesByCategory, categoryGalleries } from '../../data/categories'
 import type { Service, Review } from '../../data/categories'
 import { getHostServices, mergeServices } from '../../data/hostServices'
@@ -105,7 +106,8 @@ export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState('')
   const [guestCount, setGuestCount] = useState(100)
   const dateInputRef = useRef<HTMLInputElement>(null)
-  const { toggleWishlist, isWishlisted } = useWishlist()
+  const { isWishlisted, collections, addToCollection } = useWishlist()
+  const [manageModalOpen, setManageModalOpen] = useState(false)
 
   const service = useMemo(() => {
     if (!serviceId) return null
@@ -483,7 +485,14 @@ export default function BookingPage() {
                   <p className="text-[10px] text-secondary-text mt-0.5">Starting price</p>
                 </div>
                 <button
-                  onClick={() => toggleWishlist(service)}
+                  onClick={() => {
+                    if (isWishlisted(service.id)) {
+                      setManageModalOpen(true)
+                    } else {
+                      const fav = collections.find((c) => c.id === 'col-favorites') || collections[0]
+                      if (fav) addToCollection(service, fav.id)
+                    }
+                  }}
                   className="w-9 h-9 rounded-xl bg-ivory/60 border border-gold-deep/10 flex items-center justify-center hover:scale-110 transition-transform"
                 >
                   <Heart size={16} className={isWishlisted(service.id) ? 'fill-gold text-gold' : 'text-charcoal'} />
@@ -571,6 +580,13 @@ export default function BookingPage() {
             {lightboxIndex + 1} / {gallery.length}
           </div>
         </div>
+      )}
+      {service && (
+        <WishlistManageModal
+          service={service}
+          isOpen={manageModalOpen}
+          onClose={() => setManageModalOpen(false)}
+        />
       )}
     </div>
   )
