@@ -203,7 +203,7 @@ export default function CustomerBookingPage() {
 
   return (
     <div className="pb-16 min-h-screen">
-      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
+      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
 
         {currentStep < 4 && (
           <button

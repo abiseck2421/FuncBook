@@ -20,7 +20,7 @@ const categories = [
 export default function BrowseCategories() {
   const navigate = useNavigate()
   return (
-    <section id="categories" className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-12 sm:py-16">
+    <section id="categories" className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-12 sm:py-16">
       <div className="text-center mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-4">
           Browse Categories

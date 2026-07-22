@@ -71,10 +71,10 @@ export default function HostDashboardPage() {
     <div className="min-h-screen bg-ivory pb-12">
       {/* Header */}
       <section className="">
-        <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
+        <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading text-4xl sm:text-5xl font-bold text-royal leading-[1.08] tracking-tight">
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-royal leading-[1.08] tracking-tight">
                 Host Dashboard
               </h1>
               <p className="mt-2 text-secondary-text text-base sm:text-lg">
@@ -93,8 +93,8 @@ export default function HostDashboardPage() {
       </section>
 
       {/* Stats Row */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {[
             { label: 'Total Views', value: totalViews.toLocaleString(), icon: Eye, change: '+12%', up: true },
             { label: 'Total Bookings', value: totalBookings.toString(), icon: CalendarDays, change: '+8%', up: true },
@@ -128,7 +128,7 @@ export default function HostDashboardPage() {
       </section>
 
       {/* Tab Navigation */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-10">
+      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-10">
         <div className="flex items-center gap-1 border-b border-black/10">
           {([
             { key: 'overview' as const, label: 'Overview' },
@@ -152,7 +152,7 @@ export default function HostDashboardPage() {
       </section>
 
       {/* Tab Content */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 mt-8">
+      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Quick Actions */}

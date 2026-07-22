@@ -29,7 +29,7 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
   }
 
   return (
-    <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-6 sm:pb-8 animate-fade-in">
+    <section id={id} className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-6 sm:pb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-heading text-2xl sm:text-3xl font-bold text-royal">{title}</h2>
         <div className="flex items-center gap-3">
@@ -59,12 +59,12 @@ export default function ServiceSection({ id, title, services }: ServiceSectionPr
 
       <div
         ref={scrollRef}
-        className="flex md:grid md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 md:gap-4 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide"
+        className="flex md:grid md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-3 md:gap-4 overflow-x-auto md:overflow-visible snap-x md:snap-none snap-mandatory pb-4 md:pb-0 scrollbar-hide px-1"
       >
         {displayed.map((service) => (
           <div
             key={service.id}
-            className="w-[calc(50%-0.375rem)] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
+            className="w-[min(260px,calc(50%-0.375rem))] md:w-auto md:min-w-0 snap-start md:snap-none shrink-0 md:shrink"
           >
             <ServiceCard service={service} />
           </div>

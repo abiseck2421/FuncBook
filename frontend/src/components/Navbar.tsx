@@ -148,7 +148,7 @@ export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthMod
                   </button>
 
                   <div
-                    className={`fixed left-1/2 top-[72px] w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2 before:content-[''] before:absolute before:top-[-16px] before:left-0 before:right-0 before:h-4 transition-all duration-300 ${
+                    className={`fixed left-1/2 top-[72px] w-[min(1120px,calc(100vw-1rem))] -translate-x-1/2 overflow-hidden before:content-[''] before:absolute before:top-[-16px] before:left-0 before:right-0 before:h-4 transition-all duration-300 ${
                       isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'pointer-events-none opacity-0 -translate-y-2'
                     }`}
                   >
@@ -205,7 +205,7 @@ export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthMod
               </button>
 
               {mobileMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-72 lg:w-48 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
+                <div className="absolute right-0 top-full mt-2 w-[min(80vw,18rem)] overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
                   <div className="divide-y divide-black/5">
                     <div className="lg:hidden">
                       {location.pathname === '/' && navItems.map((item) => {

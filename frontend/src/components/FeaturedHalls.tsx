@@ -71,7 +71,7 @@ export default function FeaturedHalls() {
   }
 
   return (
-    <section id="featured-halls" className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-12 sm:py-16 animate-fade-in">
+    <section id="featured-halls" className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-12 sm:py-16 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-3">

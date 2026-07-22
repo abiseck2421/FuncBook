@@ -9,7 +9,7 @@ export default function HeroSection() {
         <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-gold/8 blur-[80px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-12">
+      <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-8 sm:pb-12">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold-deep text-xs font-semibold uppercase tracking-wider">

@@ -10,7 +10,7 @@ export default function CTA() {
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] rounded-full bg-gold/5 blur-[80px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 text-center">
+      <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-semibold uppercase tracking-wider mb-6">
           <Sparkles size={14} />
           Get Started Today

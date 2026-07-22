@@ -386,7 +386,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-ivory/60 border border-gold-deep/10">
+                <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-ivory/60 border border-gold-deep/10">
                   <div className="w-10 h-10 rounded-xl bg-gold-deep/10 flex items-center justify-center shrink-0">
                     <Monitor size={16} className="text-gold-deep" />
                   </div>
@@ -394,12 +394,12 @@ export default function SettingsPage() {
                     <p className="text-sm font-semibold text-royal">Windows — Chrome</p>
                     <p className="text-xs text-secondary-text mt-0.5">Current device</p>
                   </div>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     Active now
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-2xl bg-ivory/60 border border-gold-deep/10">
+                <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl bg-ivory/60 border border-gold-deep/10">
                   <div className="w-10 h-10 rounded-xl bg-charcoal/5 flex items-center justify-center shrink-0">
                     <Smartphone size={16} className="text-charcoal/40" />
                   </div>
@@ -407,7 +407,7 @@ export default function SettingsPage() {
                     <p className="text-sm font-semibold text-royal">iPhone — Safari</p>
                     <p className="text-xs text-secondary-text mt-0.5">Last login: Jul 18, 2026 at 3:42 PM</p>
                   </div>
-                  <span className="text-xs text-secondary-text">Mumbai</span>
+                  <span className="text-xs text-secondary-text hidden sm:inline">Mumbai</span>
                 </div>
               </div>
 

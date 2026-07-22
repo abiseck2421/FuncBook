@@ -75,7 +75,7 @@ export default function BecomeHostPage() {
           <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-gold/8 blur-[80px]" />
         </div>
 
-        <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-12">
+        <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-8 sm:pb-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold-deep text-xs font-semibold uppercase tracking-wider">
@@ -83,7 +83,7 @@ export default function BecomeHostPage() {
                 Start Earning Today
               </div>
 
-              <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-royal leading-[1.08] tracking-tight">
+              <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-royal leading-[1.08] tracking-tight">
                 Become a Host
                 <br />
                 on <span className="text-gold">FuncBook</span>
@@ -168,7 +168,7 @@ export default function BecomeHostPage() {
       </section>
 
       {/* Already a Host? */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-6 -mt-2 sm:-mt-4 mb-4">
+      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 -mt-2 sm:-mt-4 mb-4">
         <div className="relative overflow-hidden bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div className="absolute inset-0 bg-gradient-to-r from-gold/5 via-transparent to-gold/3 pointer-events-none rounded-3xl" />
           <div className="relative flex items-start gap-4">
@@ -202,12 +202,12 @@ export default function BecomeHostPage() {
       </section>
 
       {/* Profile Form */}
-      <section id="host-profile-form" className="w-full max-w-[min(95%,1400px)] mx-auto px-6 py-12 sm:py-16">
+      <section id="host-profile-form" className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="text-center mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-4">
             Create Your Profile
           </p>
-          <h2 className="font-heading text-4xl sm:text-5xl font-bold text-royal">
+          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-royal">
             Host Profile
           </h2>
           <p className="mt-4 text-secondary-text max-w-md mx-auto">
@@ -270,7 +270,7 @@ export default function BecomeHostPage() {
                 <label className={labelCls}>Business Name <span className="text-red-500">*</span></label>
                 <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g., Royal Events Pvt. Ltd." className={`${inputCls} mt-2`} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>GST Number</label>
                   <input type="text" value={gstNumber} onChange={e => setGstNumber(e.target.value)} placeholder="Optional" className={`${inputCls} mt-2`} />
@@ -321,7 +321,7 @@ export default function BecomeHostPage() {
                   <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Enter phone number" className={`${inputCls} pl-[5.25rem]`} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>City / Location <span className="text-red-500">*</span></label>
                   <div className="relative mt-2">

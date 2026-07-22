@@ -226,7 +226,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                       onChange={(e) => handleOtpChange(i, e.target.value.replace(/\D/g, ''))}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
                       onPaste={handleOtpPaste}
-                      className="h-14 w-12 rounded-xl border border-black/10 bg-ivory/60 text-center text-lg font-semibold text-charcoal outline-none transition focus:border-gold-deep focus:bg-white sm:h-16 sm:w-14"
+                      className="h-12 w-10 sm:h-14 sm:w-12 md:h-16 md:w-14 rounded-xl border border-black/10 bg-ivory/60 text-center text-lg font-semibold text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
                     />
                   ))}
                 </div>

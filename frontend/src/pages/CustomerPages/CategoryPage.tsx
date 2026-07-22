@@ -49,7 +49,7 @@ export default function CategoryPage() {
 
   return (
     <div className="pb-16">
-      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-6">
+      <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
         <div className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-amber-200 via-amber-100 to-amber-50 p-8 sm:p-10 border border-gold-deep/10">
           <div className="relative z-10">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2">
@@ -114,7 +114,7 @@ export default function CategoryPage() {
           </div>
         </div>
 
-        <div className="grid gap-x-6 gap-y-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+        <div className="grid gap-x-6 gap-y-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}

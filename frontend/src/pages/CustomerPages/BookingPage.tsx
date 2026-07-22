@@ -142,7 +142,7 @@ export default function BookingPage() {
 
   return (
     <div className="pb-16">
-      <div className="pb-6 px-6">
+      <div className="pb-6 px-4 sm:px-6">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto">
           <button
             onClick={() => navigate(-1)}
@@ -184,7 +184,7 @@ export default function BookingPage() {
         </div>
       </div>
 
-      <div className="w-full px-6">
+      <div className="w-full px-4 sm:px-6">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto">
           <div className="rounded-2xl overflow-hidden bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-3">
             <div className="flex flex-col lg:flex-row gap-3">
@@ -235,7 +235,7 @@ export default function BookingPage() {
         </div>
       </div>
 
-      <div className="w-full px-6 mt-8">
+      <div className="w-full px-4 sm:px-6 mt-8">
         <div className="w-full max-w-[min(95%,1400px)] mx-auto space-y-8">
           <div className="rounded-2xl bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-6 sm:p-8">
             <h2 className="font-heading text-xl sm:text-2xl font-bold text-gold-deep">About This Service</h2>

@@ -375,7 +375,7 @@ export default function AddServicePage() {
             <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-gold/5 blur-[100px]" />
             <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full bg-gold/8 blur-[80px]" />
           </div>
-          <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-6 pb-8 sm:pb-12 text-center">
+          <div className="relative z-10 w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-8 sm:pb-12 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/10 border border-gold/20 mb-8">
               <Sparkles size={36} className="text-gold-deep" />
             </div>
@@ -996,7 +996,7 @@ export default function AddServicePage() {
     <div className="min-h-screen bg-ivory pb-28 lg:pb-8">
       {/* Header */}
       <section className="">
-        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10">
+        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-4 sm:px-8 lg:px-10">
           <div className="flex items-center gap-3 mb-6">
             <Link to="/host/dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-secondary-text hover:text-gold-deep transition-colors shrink-0">
               <ArrowLeft size={16} /> Back
@@ -1016,18 +1016,18 @@ export default function AddServicePage() {
       </section>
 
       {/* Stepper */}
-      <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10">
+      <div className="w-full max-w-[min(92%,1500px)] mx-auto px-4 sm:px-6 lg:px-10">
         <Stepper />
       </div>
 
       {/* Step content */}
-      <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10">
+      <div className="w-full max-w-[min(92%,1500px)] mx-auto px-4 sm:px-6 lg:px-10">
         {renderStep()}
       </div>
 
       {/* Errors - anchored bottom-left above action bar */}
       {errors.length > 0 && (
-        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10 mt-6 mb-2">
+        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-4 sm:px-6 lg:px-10 mt-6 mb-2">
           <div className="animate-fade-in bg-red-50 border border-red-200/60 rounded-2xl p-4 inline-block">
             <div className="flex items-start gap-3">
               <AlertCircle size={18} className="text-red-500 mt-0.5 shrink-0" />
@@ -1044,14 +1044,14 @@ export default function AddServicePage() {
 
       {/* Bottom Action Bar */}
       <div className="fixed bottom-0 inset-x-0 z-50 border-t border-gold-deep/10 bg-white/90 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.06)] lg:static lg:z-auto lg:border-t lg:border-gold-deep/10 lg:bg-ivory lg:backdrop-blur-none lg:shadow-none">
-        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-6 sm:px-8 lg:px-10 py-4 flex items-center justify-between gap-4">
+        <div className="w-full max-w-[min(92%,1500px)] mx-auto px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-3 sm:gap-4">
           <div>
             {step > 0 ? (
-              <button onClick={prevStep} className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
+              <button onClick={prevStep} className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
                 <ArrowLeft size={16} /> Back
               </button>
             ) : (
-              <Link to="/host/dashboard" className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
+              <Link to="/host/dashboard" className="inline-flex items-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300">
                 <ArrowLeft size={16} /> Back
               </Link>
             )}
@@ -1068,13 +1068,13 @@ export default function AddServicePage() {
               <>
                 <button
                   onClick={handlePublish}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-300"
                 >
                   <Save size={16} /> Save Draft
                 </button>
                 <button
                   onClick={handlePublish}
-                  className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-300"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-300"
                 >
                   <Send size={16} /> Publish Service
                 </button>

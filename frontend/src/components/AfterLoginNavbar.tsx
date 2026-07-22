@@ -75,7 +75,7 @@ export default function AfterLoginNavbar({ onMenuClick, userEmail, onLogout, log
             </button>
 
             {accountMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+              <div className="absolute right-0 top-full mt-2 w-[min(72vw,18rem)] overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
                 <div className="max-h-[70vh] overflow-auto py-2">
                   <div className="px-4 pb-3 pt-2">
                     <p className="text-sm font-semibold text-royal">{userEmail}</p>

@@ -58,11 +58,13 @@ body {
   background-color: var(--color-ivory);
   color: var(--color-royal);
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 #root {
   height: 100%;
   overflow: hidden;
+  overflow-x: hidden;
   background-color: var(--color-ivory);
 }
 

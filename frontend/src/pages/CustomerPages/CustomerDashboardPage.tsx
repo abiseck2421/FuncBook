@@ -74,7 +74,7 @@ export default function CustomerDashboardPage() {
 
       {/* Overview Cards */}
       <section className="mt-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {[
             { label: 'Upcoming Bookings', value: '2', icon: CalendarDays, to: '/customer/bookings' },
             { label: 'Completed Bookings', value: '8', icon: CheckCircle2, to: '/customer/bookings' },
