@@ -18,6 +18,7 @@ import HelpPage from './pages/CustomerPages/HelpPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
 import AddServicePage from './pages/HostPages/AddServicePage'
 import HostDashboardPage from './pages/HostPages/HostDashboardPage'
+import HostServicesPage from './pages/HostPages/HostServicesPage'
 
 function App() {
   return (
@@ -39,7 +40,7 @@ function App() {
         <Route element={<CustomerLayout type="host" />}>
           <Route path="/host/dashboard" element={<HostDashboardPage />} />
           <Route path="/host/add-service" element={<AddServicePage />} />
-          <Route path="/host/services" element={<HostDashboardPage />} />
+          <Route path="/host/services" element={<HostServicesPage />} />
         </Route>
 
         <Route path="/customer" element={<CustomerLayout />}>

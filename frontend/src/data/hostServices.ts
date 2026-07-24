@@ -24,6 +24,12 @@ export function saveHostService(service: Service): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
 }
 
+export function deleteHostService(serviceId: string): void {
+  const existing = getHostServices()
+  const updated = existing.filter(s => s.id !== serviceId)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+}
+
 export function getHostServices(): Service[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)

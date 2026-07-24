@@ -15,6 +15,7 @@
   --animate-fade-in: fade-in 0.7s ease-out forwards;
   --animate-slide-up: slide-up 0.7s ease-out forwards;
   --animate-fade-in-up: fade-in-up 0.8s ease-out forwards;
+  --animate-slide-in: slide-in 0.4s ease-out forwards;
   --animate-float: float 4s ease-in-out infinite;
 
   @keyframes fade-in {
@@ -29,6 +30,11 @@
 
   @keyframes fade-in-up {
     from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(-8px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
@@ -70,6 +76,33 @@ body {
 
 a, button, [role="button"] {
   cursor: pointer;
+}
+
+/* ── Global custom scrollbar ─────────────────────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #B8860B #F8F6F2;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #F8F6F2;
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #B8860B;
+  border-radius: 999px;
+  border: 2px solid #F8F6F2;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #9A7209;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
