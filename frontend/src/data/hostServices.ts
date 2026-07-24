@@ -40,10 +40,6 @@ export function getHostServices(): Service[] {
   }
 }
 
-export function getHostServicesByCategory(categoryId: string): Service[] {
-  return getHostServices().filter(s => s.categoryId === categoryId)
-}
-
 export function mergeServices(base: Record<string, Service[]>): Record<string, Service[]> {
   const hostServices = getHostServices()
   if (hostServices.length === 0) return base

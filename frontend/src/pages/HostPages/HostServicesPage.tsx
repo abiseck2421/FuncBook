@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   Plus, Eye, IndianRupee, Star, Package,
   Building2, UtensilsCrossed, Palette, Music, Sparkles, Camera,
-  Armchair, MoreHorizontal, Pencil, Trash2, AlertCircle,
+  Armchair, MoreHorizontal, Pencil, Trash2,
 } from 'lucide-react'
 import { getHostServices, deleteHostService } from '../../data/hostServices'
 import type { Service } from '../../data/categories'
@@ -252,23 +252,6 @@ export default function HostServicesPage() {
               <Plus size={18} />
               Add Your First Service
             </Link>
-          </div>
-        </section>
-      )}
-
-      {/* Error State */}
-      {!loading && services === null && (
-        <section>
-          <div className="bg-white rounded-3xl border border-red-200/60 shadow-[0_4px_24px_rgba(239,68,68,0.08)] p-8 sm:p-12 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 border border-red-200/60 mb-5">
-              <AlertCircle size={28} className="text-red-500" />
-            </div>
-            <h3 className="font-heading text-xl sm:text-2xl font-bold text-royal">
-              Something went wrong
-            </h3>
-            <p className="mt-2 text-secondary-text text-sm max-w-sm mx-auto">
-              We couldn't load your services. Please try again later.
-            </p>
           </div>
         </section>
       )}

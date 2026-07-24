@@ -27,15 +27,6 @@ export default function BecomeHostPage() {
   const cityRef = useRef<HTMLInputElement>(null)
   const businessDescRef = useRef<HTMLTextAreaElement>(null)
 
-  const fieldRefs: Record<FieldKey, React.RefObject<HTMLInputElement | HTMLTextAreaElement>> = {
-    businessName: businessNameRef,
-    ownerName: ownerNameRef,
-    email: emailRef,
-    phone: phoneRef,
-    city: cityRef,
-    businessDesc: businessDescRef,
-  }
-
   const hasHostProfile = !!localStorage.getItem('funcbook_host_profile')
 
   const [businessName, setBusinessName] = useState('')
@@ -75,13 +66,19 @@ export default function BecomeHostPage() {
       const fieldValues: Record<FieldKey, string> = {
         businessName, ownerName, email, phone, city, businessDesc,
       }
-      const firstKey = (['businessName', 'ownerName', 'email', 'phone', 'city', 'businessDesc'] as FieldKey[]).find(f => !fieldValues[f].trim())
-      if (firstKey) {
-        const ref = fieldRefs[firstKey]
-        if (ref?.current) {
-          ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          setTimeout(() => ref.current?.focus(), 400)
-        }
+      const refEntries: [FieldKey, React.RefObject<HTMLInputElement | HTMLTextAreaElement | null> | null][] = [
+        ['businessName', businessNameRef],
+        ['ownerName', ownerNameRef],
+        ['email', emailRef],
+        ['phone', phoneRef],
+        ['city', cityRef],
+        ['businessDesc', businessDescRef],
+      ]
+      const firstEntry = refEntries.find(([key]) => !fieldValues[key].trim())
+      const ref = firstEntry?.[1]
+      if (ref?.current) {
+        ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        setTimeout(() => ref.current?.focus(), 400)
       }
     }
   }
@@ -301,7 +298,7 @@ export default function BecomeHostPage() {
             <div className="space-y-5">
               <div>
                 <label className={labelCls}>Business Name <span className="text-red-500">*</span></label>
-                <input ref={fieldRefs.businessName} type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g., Royal Events Pvt. Ltd." className={`${errorFields.has('businessName') ? inputErrorCls : inputCls} mt-2`} />
+                <input ref={businessNameRef} type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g., Royal Events Pvt. Ltd." className={`${errorFields.has('businessName') ? inputErrorCls : inputCls} mt-2`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -318,7 +315,7 @@ export default function BecomeHostPage() {
               </div>
               <div>
                 <label className={labelCls}>Business Description <span className="text-red-500">*</span></label>
-                <textarea ref={fieldRefs.businessDesc} rows={4} value={businessDesc} onChange={e => setBusinessDesc(e.target.value)} placeholder="Describe your business, services, and what makes you stand out..." className={`${errorFields.has('businessDesc') ? inputErrorCls : inputCls} mt-2 resize-none min-h-[120px]`} />
+                <textarea ref={businessDescRef} rows={4} value={businessDesc} onChange={e => setBusinessDesc(e.target.value)} placeholder="Describe your business, services, and what makes you stand out..." className={`${errorFields.has('businessDesc') ? inputErrorCls : inputCls} mt-2 resize-none min-h-[120px]`} />
               </div>
             </div>
           </div>
@@ -337,13 +334,13 @@ export default function BecomeHostPage() {
             <div className="space-y-5">
               <div>
                 <label className={labelCls}>Owner / Contact Name <span className="text-red-500">*</span></label>
-                <input ref={fieldRefs.ownerName} type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Full name" className={`${errorFields.has('ownerName') ? inputErrorCls : inputCls} mt-2`} />
+                <input ref={ownerNameRef} type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Full name" className={`${errorFields.has('ownerName') ? inputErrorCls : inputCls} mt-2`} />
               </div>
               <div>
                 <label className={labelCls}>Email Address <span className="text-red-500">*</span></label>
                 <div className="relative mt-2">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
-                  <input ref={fieldRefs.email} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className={`${errorFields.has('email') ? inputErrorCls : inputCls} pl-11`} />
+                  <input ref={emailRef} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className={`${errorFields.has('email') ? inputErrorCls : inputCls} pl-11`} />
                 </div>
               </div>
               <div>
@@ -351,7 +348,7 @@ export default function BecomeHostPage() {
                 <div className="relative mt-2">
                   <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
                   <span className="absolute left-10 top-1/2 -translate-y-1/2 text-sm text-secondary-text font-medium select-none">+91</span>
-                  <input ref={fieldRefs.phone} type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Enter phone number" className={`${errorFields.has('phone') ? inputErrorCls : inputCls} pl-[5.25rem]`} />
+                  <input ref={phoneRef} type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Enter phone number" className={`${errorFields.has('phone') ? inputErrorCls : inputCls} pl-[5.25rem]`} />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -359,7 +356,7 @@ export default function BecomeHostPage() {
                   <label className={labelCls}>City / Location <span className="text-red-500">*</span></label>
                   <div className="relative mt-2">
                     <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
-                    <input ref={fieldRefs.city} type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="e.g., Bangalore" className={`${errorFields.has('city') ? inputErrorCls : inputCls} pl-11`} />
+                    <input ref={cityRef} type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="e.g., Bangalore" className={`${errorFields.has('city') ? inputErrorCls : inputCls} pl-11`} />
                   </div>
                 </div>
                 <div>
