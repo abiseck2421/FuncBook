@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import {
   ArrowRight, ArrowUpRight, Sparkles, Building2, User,
@@ -6,14 +6,35 @@ import {
   Camera, Mail, Globe, AlertCircle, Upload, X, LayoutDashboard,
 } from 'lucide-react'
 
-const inputCls = 'w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white placeholder:text-secondary-text/40'
+const inputBase = 'w-full rounded-2xl border bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition-all duration-300 focus:bg-white placeholder:text-secondary-text/40'
+const inputCls = `${inputBase} border-black/10 focus:border-gold-deep`
+const inputErrorCls = `${inputBase} border-red-400 bg-red-50/30 focus:border-red-500`
 const labelCls = 'text-sm font-medium text-charcoal'
+
+type FieldKey = 'businessName' | 'ownerName' | 'email' | 'phone' | 'city' | 'businessDesc'
 
 export default function BecomeHostPage() {
   const navigate = useNavigate()
   const { isAuthenticated } = useOutletContext<{ isAuthenticated: boolean }>()
   const [errors, setErrors] = useState<string[]>([])
+  const [errorFields, setErrorFields] = useState<Set<FieldKey>>(new Set())
   const [profileNotice, setProfileNotice] = useState<string | null>(null)
+
+  const businessNameRef = useRef<HTMLInputElement>(null)
+  const ownerNameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const cityRef = useRef<HTMLInputElement>(null)
+  const businessDescRef = useRef<HTMLTextAreaElement>(null)
+
+  const fieldRefs: Record<FieldKey, React.RefObject<HTMLInputElement | HTMLTextAreaElement>> = {
+    businessName: businessNameRef,
+    ownerName: ownerNameRef,
+    email: emailRef,
+    phone: phoneRef,
+    city: cityRef,
+    businessDesc: businessDescRef,
+  }
 
   const hasHostProfile = !!localStorage.getItem('funcbook_host_profile')
 
@@ -34,12 +55,14 @@ export default function BecomeHostPage() {
 
   const validate = (): boolean => {
     const errs: string[] = []
-    if (!businessName.trim()) errs.push('Business name is required.')
-    if (!ownerName.trim()) errs.push('Owner / contact name is required.')
-    if (!email.trim()) errs.push('Email address is required.')
-    if (!phone.trim()) errs.push('Contact number is required.')
-    if (!city.trim()) errs.push('City / location is required.')
-    if (!businessDesc.trim()) errs.push('Business description is required.')
+    const fields = new Set<FieldKey>()
+    if (!businessName.trim()) { errs.push('Business name is required.'); fields.add('businessName') }
+    if (!ownerName.trim()) { errs.push('Owner / contact name is required.'); fields.add('ownerName') }
+    if (!email.trim()) { errs.push('Email address is required.'); fields.add('email') }
+    if (!phone.trim()) { errs.push('Contact number is required.'); fields.add('phone') }
+    if (!city.trim()) { errs.push('City / location is required.'); fields.add('city') }
+    if (!businessDesc.trim()) { errs.push('Business description is required.'); fields.add('businessDesc') }
+    setErrorFields(fields)
     setErrors(errs)
     return errs.length === 0
   }
@@ -49,7 +72,17 @@ export default function BecomeHostPage() {
       localStorage.setItem('funcbook_host_profile', 'true')
       navigate('/host/dashboard')
     } else {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
+      const fieldValues: Record<FieldKey, string> = {
+        businessName, ownerName, email, phone, city, businessDesc,
+      }
+      const firstKey = (['businessName', 'ownerName', 'email', 'phone', 'city', 'businessDesc'] as FieldKey[]).find(f => !fieldValues[f].trim())
+      if (firstKey) {
+        const ref = fieldRefs[firstKey]
+        if (ref?.current) {
+          ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          setTimeout(() => ref.current?.focus(), 400)
+        }
+      }
     }
   }
 
@@ -168,7 +201,7 @@ export default function BecomeHostPage() {
       </section>
 
       {/* Already a Host? */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 -mt-2 sm:-mt-4 mb-4">
+      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-2 sm:mt-4 mb-0">
         <div className="relative overflow-hidden bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
           <div className="absolute inset-0 bg-gradient-to-r from-gold/5 via-transparent to-gold/3 pointer-events-none rounded-3xl" />
           <div className="relative flex items-start gap-4">
@@ -177,7 +210,7 @@ export default function BecomeHostPage() {
             </div>
             <div>
               <h3 className="font-heading text-xl sm:text-2xl font-bold text-royal">Already a Host?</h3>
-              <p className="mt-1 text-sm text-secondary-text leading-relaxed max-w-lg">
+              <p className="mt-1 text-sm text-secondary-text leading-relaxed">
                 Access your existing host account and manage your services and bookings.
               </p>
             </div>
@@ -192,8 +225,8 @@ export default function BecomeHostPage() {
           </button>
         </div>
         {profileNotice && (
-          <div className="mt-3 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-700 text-sm font-medium">
+          <div className="mt-3 animate-fade-in w-full">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-700 text-sm font-medium">
               <AlertCircle size={15} className="shrink-0" />
               {profileNotice}
             </div>
@@ -202,7 +235,7 @@ export default function BecomeHostPage() {
       </section>
 
       {/* Profile Form */}
-      <section id="host-profile-form" className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <section id="host-profile-form" className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-12 sm:pb-16">
         <div className="text-center mb-10">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-4">
             Create Your Profile
@@ -268,7 +301,7 @@ export default function BecomeHostPage() {
             <div className="space-y-5">
               <div>
                 <label className={labelCls}>Business Name <span className="text-red-500">*</span></label>
-                <input type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g., Royal Events Pvt. Ltd." className={`${inputCls} mt-2`} />
+                <input ref={fieldRefs.businessName} type="text" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g., Royal Events Pvt. Ltd." className={`${errorFields.has('businessName') ? inputErrorCls : inputCls} mt-2`} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -285,7 +318,7 @@ export default function BecomeHostPage() {
               </div>
               <div>
                 <label className={labelCls}>Business Description <span className="text-red-500">*</span></label>
-                <textarea rows={4} value={businessDesc} onChange={e => setBusinessDesc(e.target.value)} placeholder="Describe your business, services, and what makes you stand out..." className={`${inputCls} mt-2 resize-none min-h-[120px]`} />
+                <textarea ref={fieldRefs.businessDesc} rows={4} value={businessDesc} onChange={e => setBusinessDesc(e.target.value)} placeholder="Describe your business, services, and what makes you stand out..." className={`${errorFields.has('businessDesc') ? inputErrorCls : inputCls} mt-2 resize-none min-h-[120px]`} />
               </div>
             </div>
           </div>
@@ -304,13 +337,13 @@ export default function BecomeHostPage() {
             <div className="space-y-5">
               <div>
                 <label className={labelCls}>Owner / Contact Name <span className="text-red-500">*</span></label>
-                <input type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Full name" className={`${inputCls} mt-2`} />
+                <input ref={fieldRefs.ownerName} type="text" value={ownerName} onChange={e => setOwnerName(e.target.value)} placeholder="Full name" className={`${errorFields.has('ownerName') ? inputErrorCls : inputCls} mt-2`} />
               </div>
               <div>
                 <label className={labelCls}>Email Address <span className="text-red-500">*</span></label>
                 <div className="relative mt-2">
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className={`${inputCls} pl-11`} />
+                  <input ref={fieldRefs.email} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className={`${errorFields.has('email') ? inputErrorCls : inputCls} pl-11`} />
                 </div>
               </div>
               <div>
@@ -318,7 +351,7 @@ export default function BecomeHostPage() {
                 <div className="relative mt-2">
                   <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
                   <span className="absolute left-10 top-1/2 -translate-y-1/2 text-sm text-secondary-text font-medium select-none">+91</span>
-                  <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Enter phone number" className={`${inputCls} pl-[5.25rem]`} />
+                  <input ref={fieldRefs.phone} type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Enter phone number" className={`${errorFields.has('phone') ? inputErrorCls : inputCls} pl-[5.25rem]`} />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -326,7 +359,7 @@ export default function BecomeHostPage() {
                   <label className={labelCls}>City / Location <span className="text-red-500">*</span></label>
                   <div className="relative mt-2">
                     <MapPin size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-secondary-text/60" />
-                    <input type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="e.g., Bangalore" className={`${inputCls} pl-11`} />
+                    <input ref={fieldRefs.city} type="text" value={city} onChange={e => setCity(e.target.value)} placeholder="e.g., Bangalore" className={`${errorFields.has('city') ? inputErrorCls : inputCls} pl-11`} />
                   </div>
                 </div>
                 <div>
@@ -340,15 +373,25 @@ export default function BecomeHostPage() {
 
         {/* Errors */}
         {errors.length > 0 && (
-          <div className="mb-6">
-            <div className="animate-fade-in bg-red-50 border border-red-200/60 rounded-2xl p-4 inline-block">
-              <div className="flex items-start gap-3">
-                <AlertCircle size={18} className="text-red-500 mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-semibold text-red-700">Please fix the following:</p>
-                  <ul className="mt-2 space-y-1">
-                    {errors.map((err, i) => <li key={i} className="text-sm text-red-600">{err}</li>)}
-                  </ul>
+          <div className="mb-6 w-full" id="validation-errors">
+            <div className="relative bg-red-50 border border-red-200/60 border-l-[5px] border-l-red-500 rounded-2xl p-5 sm:p-6 w-full animate-slide-in shadow-[0_4px_16px_rgba(239,68,68,0.08)]">
+              <div className="flex items-start gap-4">
+                <div className="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                  <AlertCircle size={22} className="text-red-500" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-base font-bold text-red-800">Please fix the following:</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {errors.map((err, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100/80 border border-red-200/50 text-red-700 text-xs font-medium"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-400 shrink-0" />
+                        {err}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
