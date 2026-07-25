@@ -42,7 +42,7 @@ const hostNavItems: SidebarNavItem[] = [
 ]
 
 const hostSecondaryItems: SidebarNavItem[] = [
-  { label: 'Profile', icon: Settings, path: '/host/profile' },
+  { label: 'Profile', icon: Settings, path: '/host/settings' },
   { label: 'Settings', icon: Settings, path: '/host/settings' },
   { label: 'Help & Support', icon: HelpCircle, path: '/customer/help' },
 ]
@@ -51,6 +51,7 @@ const hostDropdownItems: NavbarDropdownItem[] = [
   { label: 'Host Dashboard', icon: LayoutDashboard, path: '/host/dashboard' },
   { label: 'My Services', icon: Building2, path: '/host/services' },
   { label: 'Add New Service', icon: Building2, path: '/host/add-service' },
+  { label: 'Settings', icon: Settings, path: '/host/settings' },
 ]
 
 const layoutConfig: Record<DashboardType, {
