@@ -89,6 +89,22 @@ export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthMod
 
   const menuRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    if (!activeMenu) return
+    const handleMouseMove = (e: MouseEvent) => {
+      const trigger = document.querySelector(`[data-menu-trigger="${activeMenu}"]`)
+      const panel = document.querySelector(`[data-menu-panel="${activeMenu}"]`)
+      if (!trigger || !panel) { setActiveMenu(null); return }
+      const tr = trigger.getBoundingClientRect()
+      const pr = panel.getBoundingClientRect()
+      const overTrigger = e.clientX >= tr.left && e.clientX <= tr.right && e.clientY >= tr.top && e.clientY <= pr.top
+      const overPanel = e.clientX >= pr.left && e.clientX <= pr.right && e.clientY >= pr.top && e.clientY <= pr.bottom
+      if (!overTrigger && !overPanel) setActiveMenu(null)
+    }
+    document.addEventListener('mousemove', handleMouseMove)
+    return () => document.removeEventListener('mousemove', handleMouseMove)
+  }, [activeMenu])
+
   const authModalOpen = controlledAuthModalOpen !== undefined ? controlledAuthModalOpen : internalAuthModalOpen
   const setAuthModalOpen = controlledSetAuthModalOpen !== undefined ? controlledSetAuthModalOpen : setInternalAuthModalOpen
 
@@ -130,10 +146,10 @@ export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthMod
                   key={item.key}
                   className="group relative"
                   onMouseEnter={() => setActiveMenu(item.key)}
-                  onMouseLeave={() => setActiveMenu(null)}
                 >
                   <button
                     type="button"
+                    data-menu-trigger={item.key}
                     className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-300 ${
                       isOpen ? 'text-royal bg-white/80 shadow-[0_4px_18px_rgba(0,0,0,0.06)]' : 'text-charcoal hover:text-royal hover:bg-white/60'
                     }`}
@@ -148,14 +164,13 @@ export default function Navbar({ onAuthSuccess, authModalOpen: controlledAuthMod
                   </button>
 
                   <div
-                    className={`fixed left-1/2 top-[72px] w-[min(1120px,calc(100vw-1rem))] -translate-x-1/2 before:content-[''] before:absolute before:top-[-16px] before:left-0 before:right-0 before:h-4 before:z-10 transition-all duration-300 ${
+                    data-menu-panel={item.key}
+                    className={`fixed left-1/2 top-[72px] w-[min(1120px,calc(100vw-1rem))] -translate-x-1/2 transition-all duration-300 ${
                       isOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'pointer-events-none opacity-0 -translate-y-2'
                     }`}
                   >
                     <div
                       className="rounded-b-[28px] rounded-t-[24px] bg-white shadow-[0_18px_50px_rgba(17,17,17,0.12)] ring-1 ring-black/5 overflow-hidden"
-                      onMouseEnter={() => setActiveMenu(item.key)}
-                      onMouseLeave={() => setActiveMenu(null)}
                     >
                       <div className="grid lg:grid-cols-[1.1fr_1fr_1fr_1fr] items-stretch">
                         <div className="bg-ivory/70 p-7 sm:p-9 min-h-[260px]">
