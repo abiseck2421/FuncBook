@@ -20,6 +20,7 @@ import AddServicePage from './pages/HostPages/AddServicePage'
 import HostDashboardPage from './pages/HostPages/HostDashboardPage'
 import HostServicesPage from './pages/HostPages/HostServicesPage'
 import HostSettingsPage from './pages/HostPages/HostSettingsPage'
+import HostBookingsPage from './pages/HostPages/HostBookingsPage'
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/host/dashboard" element={<HostDashboardPage />} />
           <Route path="/host/add-service" element={<AddServicePage />} />
           <Route path="/host/services" element={<HostServicesPage />} />
+          <Route path="/host/bookings" element={<HostBookingsPage />} />
           <Route path="/host/settings" element={<HostSettingsPage />} />
         </Route>
 

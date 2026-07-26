@@ -42,7 +42,6 @@ const hostNavItems: SidebarNavItem[] = [
 ]
 
 const hostSecondaryItems: SidebarNavItem[] = [
-  { label: 'Profile', icon: Settings, path: '/host/settings' },
   { label: 'Settings', icon: Settings, path: '/host/settings' },
   { label: 'Help & Support', icon: HelpCircle, path: '/customer/help' },
 ]
