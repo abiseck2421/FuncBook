@@ -1,7 +1,7 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useParams, useNavigate, Link, useOutletContext } from 'react-router-dom'
 import {
-  ArrowLeft, Star, BadgeCheck, CalendarCheck, Calendar, MapPin, IndianRupee, Users,
+  ArrowLeft, Star, BadgeCheck, CalendarCheck, MapPin, IndianRupee, Users,
   X, ChevronLeft, ChevronRight, Heart, Clock, Wifi, Car, Snowflake,
   Sun, LampDesk, Monitor, UtensilsCrossed,
   Building2, Shield, MessageCircle, ChevronDown, Check,
@@ -13,6 +13,7 @@ import { servicesByCategory, categoryGalleries } from '../../data/categories'
 import type { Service, Review } from '../../data/categories'
 import { getHostServices, mergeServices } from '../../data/hostServices'
 import { useWishlist } from '../../contexts/WishlistContext'
+import BookingDatePicker from '../../components/BookingDatePicker'
 
 function findService(serviceId: string) {
   for (const cid in servicesByCategory) {
@@ -105,7 +106,6 @@ export default function BookingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [selectedDate, setSelectedDate] = useState('')
   const [guestCount, setGuestCount] = useState(100)
-  const dateInputRef = useRef<HTMLInputElement>(null)
   const { isWishlisted, collections, addToCollection } = useWishlist()
   const [manageModalOpen, setManageModalOpen] = useState(false)
 
@@ -299,26 +299,11 @@ export default function BookingPage() {
             <div className="mt-5 flex flex-col sm:flex-row gap-8 sm:gap-16 items-start">
               <div className="w-full sm:w-[220px] flex-shrink-0">
                 <p className="text-sm text-secondary-text mb-2">Select your preferred event date</p>
-                <div className="relative w-full">
-                  <input
-                    ref={dateInputRef}
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full rounded-xl border border-gold-deep/15 bg-ivory/50 pl-4 pr-10 py-3 text-base text-royal focus:outline-none focus:ring-2 focus:ring-gold/40 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (dateInputRef.current) {
-                        ;(dateInputRef.current as any).showPicker?.() || dateInputRef.current.focus()
-                      }
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-deep hover:text-gold transition-colors cursor-pointer"
-                  >
-                    <Calendar size={18} />
-                  </button>
-                </div>
+                <BookingDatePicker
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                  placeholder="Select date"
+                />
               </div>
               <div className="hidden sm:block w-px bg-gold-deep/10 min-h-[120px]"></div>
               <div className="flex-1 min-w-0">
@@ -502,11 +487,10 @@ export default function BookingPage() {
             <div className="p-5 space-y-4">
               <div>
                 <label className="text-xs font-semibold text-royal uppercase tracking-wide">Event Date</label>
-                <input
-                  type="date"
+                <BookingDatePicker
                   value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40"
+                  onChange={setSelectedDate}
+                  placeholder="Select date"
                 />
               </div>
               <div>

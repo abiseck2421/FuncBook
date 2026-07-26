@@ -6,6 +6,7 @@ import {
   ChevronRight, MoreVertical, CalendarCheck, AlertTriangle,
   Ban, FileText,
 } from 'lucide-react'
+import BookingDatePicker from '../../components/BookingDatePicker'
 
 type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
 type PaymentStatus = 'paid' | 'pending' | 'refunded'
@@ -261,13 +262,13 @@ const bookingStatusStyles: Record<BookingStatus, string> = {
   pending: 'bg-amber-50 text-amber-700 border-amber-200',
   confirmed: 'bg-sky-50 text-sky-700 border-sky-200',
   completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  cancelled: 'bg-red-50 text-red-600 border-red-200',
+  cancelled: 'bg-red-50 text-red-700 border-red-200',
 }
 
 const paymentStatusStyles: Record<PaymentStatus, string> = {
   paid: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  pending: 'bg-orange-50 text-orange-600 border-orange-200',
-  refunded: 'bg-violet-50 text-violet-600 border-violet-200',
+  pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  refunded: 'bg-gray-100 text-gray-600 border-gray-200',
 }
 
 const ITEMS_PER_PAGE = 5
@@ -404,11 +405,11 @@ export default function HostBookingsPage() {
   }
 
   const statCards = [
-    { label: 'Total Bookings', value: stats.total, icon: CalendarDays, color: 'text-gold-deep' },
-    { label: "Today's Bookings", value: stats.today, icon: CalendarCheck, color: 'text-sky-600' },
-    { label: 'Upcoming', value: stats.upcoming, icon: Clock, color: 'text-amber-600' },
-    { label: 'Completed', value: stats.completed, icon: CheckCircle2, color: 'text-emerald-600' },
-    { label: 'Cancelled', value: stats.cancelled, icon: XCircle, color: 'text-red-500' },
+    { label: 'Total Bookings', value: stats.total, icon: CalendarDays, color: 'text-gold-deep', bg: 'bg-gold/10' },
+    { label: "Today's Bookings", value: stats.today, icon: CalendarCheck, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Upcoming', value: stats.upcoming, icon: Clock, color: 'text-sky-600', bg: 'bg-sky-50' },
+    { label: 'Completed', value: stats.completed, icon: CheckCircle2, color: 'text-amber-600', bg: 'bg-amber-50' },
+    { label: 'Cancelled', value: stats.cancelled, icon: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
   ]
 
   return (
@@ -442,10 +443,10 @@ export default function HostBookingsPage() {
                 className="bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 sm:p-6"
               >
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bg}`}>
                     <Icon size={18} className={stat.color} />
                   </div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-deep">{stat.label}</span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-text">{stat.label}</span>
                 </div>
                 <span className="font-heading text-2xl sm:text-3xl font-bold text-royal">{stat.value}</span>
               </div>
@@ -460,7 +461,7 @@ export default function HostBookingsPage() {
           <div className="flex flex-col lg:flex-row lg:items-end gap-4">
             {/* Search */}
             <div className="flex-1 min-w-0">
-              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">
                 Search
               </label>
               <div className="relative">
@@ -477,7 +478,7 @@ export default function HostBookingsPage() {
 
             {/* Status Filter */}
             <div className="w-full lg:w-44">
-              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-2">
+              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">
                 Status
               </label>
               <select
@@ -494,15 +495,14 @@ export default function HostBookingsPage() {
             </div>
 
             {/* Date Filter */}
-            <div className="w-full lg:w-44">
-              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-2">
+            <div className="w-full lg:w-52">
+              <label className="block text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">
                 Event Date
               </label>
-              <input
-                type="date"
+              <BookingDatePicker
                 value={dateFilter}
-                onChange={(e) => { setDateFilter(e.target.value); setPage(1) }}
-                className="w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40 transition-colors"
+                onChange={(date) => { setDateFilter(date); setPage(1) }}
+                placeholder="Select date"
               />
             </div>
 
@@ -542,19 +542,19 @@ export default function HostBookingsPage() {
         ) : (
           <>
             {/* Desktop Table */}
-            <div className="hidden lg:block bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
+            <div className="hidden lg:block bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden h-[580px] flex flex-col">
+              <div className="overflow-auto flex-1 scrollbar-hide">
+                <table className="w-full table-fixed">
+                  <thead className="sticky top-0 z-10 bg-white">
                     <tr className="border-b border-black/5">
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Booking</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Customer</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Service</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Event Date</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Amount</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Payment</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Status</th>
-                      <th className="text-right text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep px-6 py-4">Actions</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[90px]">Booking</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[200px]">Customer</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[180px]">Service</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[140px]">Event Date</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[100px]">Amount</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[100px]">Payment</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[110px]">Status</th>
+                      <th className="text-right text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[140px]">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -567,18 +567,18 @@ export default function HostBookingsPage() {
                           <span className="text-sm font-semibold text-royal">{booking.id}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
                             <div className="w-9 h-9 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
                               <span className="text-xs font-bold text-gold-deep">{booking.customerInitials}</span>
                             </div>
                             <div className="min-w-0">
-                              <p className="text-sm font-semibold text-royal truncate">{booking.customerName}</p>
-                              <p className="text-xs text-secondary-text truncate">{booking.customerEmail}</p>
+                              <p className="text-sm font-semibold text-royal truncate" title={booking.customerName}>{booking.customerName}</p>
+                              <p className="text-xs text-secondary-text truncate" title={booking.customerEmail}>{booking.customerEmail}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-charcoal">{booking.serviceName}</span>
+                          <span className="text-sm text-charcoal truncate block" title={booking.serviceName}>{booking.serviceName}</span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="text-sm text-charcoal">{formatDate(booking.eventDate)}</div>
@@ -861,7 +861,7 @@ export default function HostBookingsPage() {
             <div className="px-6 sm:px-8 py-6 space-y-6">
               {/* Customer Information */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-3">Customer Information</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-3">Customer Information</h4>
                 <div className="bg-ivory/50 rounded-2xl p-4 border border-gold-deep/10">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
@@ -886,7 +886,7 @@ export default function HostBookingsPage() {
 
               {/* Service & Event Details */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-3">Service & Event Details</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-3">Service & Event Details</h4>
                 <div className="bg-ivory/50 rounded-2xl p-4 border border-gold-deep/10 space-y-3">
                   <div className="flex items-center gap-3 text-sm">
                     <FileText size={14} className="text-gold-deep shrink-0" />
@@ -910,7 +910,7 @@ export default function HostBookingsPage() {
               {/* Special Requests */}
               {selectedBooking.specialRequests && (
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-3">Special Requests</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-3">Special Requests</h4>
                   <div className="bg-ivory/50 rounded-2xl p-4 border border-gold-deep/10">
                     <p className="text-sm text-charcoal leading-relaxed">{selectedBooking.specialRequests}</p>
                   </div>
@@ -919,7 +919,7 @@ export default function HostBookingsPage() {
 
               {/* Payment Information */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-3">Payment Information</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-3">Payment Information</h4>
                 <div className="bg-ivory/50 rounded-2xl p-4 border border-gold-deep/10 flex items-center justify-between">
                   <div>
                     <p className="text-2xl font-heading font-bold text-royal">₹{selectedBooking.amount.toLocaleString('en-IN')}</p>
@@ -933,7 +933,7 @@ export default function HostBookingsPage() {
 
               {/* Booking Timeline */}
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-deep mb-3">Booking Timeline</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text mb-3">Booking Timeline</h4>
                 <div className="space-y-0">
                   {selectedBooking.timeline.map((entry, i) => (
                     <div key={i} className="flex gap-3">

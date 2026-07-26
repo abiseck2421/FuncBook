@@ -8,6 +8,7 @@ import {
 import { servicesByCategory, categories } from '../../data/categories'
 import type { Service } from '../../data/categories'
 import { getHostServices } from '../../data/hostServices'
+import BookingDatePicker from '../../components/BookingDatePicker'
 
 const STEPS = ['Service', 'Details', 'Review', 'Payment', 'Confirmed']
 
@@ -443,8 +444,14 @@ export default function CustomerBookingPage() {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="sm:col-span-2">
                           <label className={labelClass}>Event Date *</label>
-                          <input type="date" value={formData.eventDate} onChange={(e) => updateField('eventDate', e.target.value)}
-                            className={`${inputClass} mt-1.5 ${errors.eventDate ? 'border-red-400' : ''}`} />
+                          <div className="mt-1.5">
+                            <BookingDatePicker
+                              value={formData.eventDate}
+                              onChange={(date) => updateField('eventDate', date)}
+                              placeholder="Select event date"
+                              disabled={false}
+                            />
+                          </div>
                           {errors.eventDate && <p className={errorClass}>{errors.eventDate}</p>}
                         </div>
                         <div>
