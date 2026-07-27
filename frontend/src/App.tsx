@@ -21,6 +21,9 @@ import HostDashboardPage from './pages/HostPages/HostDashboardPage'
 import HostServicesPage from './pages/HostPages/HostServicesPage'
 import HostSettingsPage from './pages/HostPages/HostSettingsPage'
 import HostBookingsPage from './pages/HostPages/HostBookingsPage'
+import HostAnalyticsPage from './pages/HostPages/HostAnalyticsPage'
+import HostReviewsPage from './pages/HostPages/HostReviewsPage'
+import HostPaymentsPage from './pages/HostPages/HostPaymentsPage'
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
           <Route path="/host/add-service" element={<AddServicePage />} />
           <Route path="/host/services" element={<HostServicesPage />} />
           <Route path="/host/bookings" element={<HostBookingsPage />} />
+          <Route path="/host/analytics" element={<HostAnalyticsPage />} />
+          <Route path="/host/reviews" element={<HostReviewsPage />} />
+          <Route path="/host/payments" element={<HostPaymentsPage />} />
           <Route path="/host/settings" element={<HostSettingsPage />} />
         </Route>
 

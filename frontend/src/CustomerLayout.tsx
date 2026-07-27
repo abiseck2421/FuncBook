@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Building2, CalendarCheck, Heart, Star, CreditCard,
-  Settings, HelpCircle, DollarSign, BarChart3,
+  Settings, HelpCircle, BarChart3,
 } from 'lucide-react'
 import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
@@ -38,7 +38,7 @@ const hostNavItems: SidebarNavItem[] = [
   { label: 'Add New Service', icon: Building2, path: '/host/add-service' },
   { label: 'Analytics', icon: BarChart3, path: '/host/analytics' },
   { label: 'Reviews', icon: Star, path: '/host/reviews' },
-  { label: 'Earnings', icon: DollarSign, path: '/host/earnings' },
+  { label: 'Payments', icon: CreditCard, path: '/host/payments' },
 ]
 
 const hostSecondaryItems: SidebarNavItem[] = [
