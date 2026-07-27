@@ -542,19 +542,19 @@ export default function HostBookingsPage() {
         ) : (
           <>
             {/* Desktop Table */}
-            <div className="hidden lg:block bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden h-[580px] flex flex-col">
-              <div className="overflow-auto flex-1 scrollbar-hide">
-                <table className="w-full table-fixed">
-                  <thead className="sticky top-0 z-10 bg-white">
+            <div className="hidden lg:block bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden">
+              <div className="overflow-x-auto scrollbar-hide">
+                <table className="w-full">
+                  <thead className="bg-white">
                     <tr className="border-b border-black/5">
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[90px]">Booking</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[200px]">Customer</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[180px]">Service</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[140px]">Event Date</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[100px]">Amount</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[100px]">Payment</th>
-                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[110px]">Status</th>
-                      <th className="text-right text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-4 w-[140px]">Actions</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 w-[90px] whitespace-nowrap">Booking</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5">Customer</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5">Service</th>
+                      <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 whitespace-nowrap">Event Date</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 w-[100px] whitespace-nowrap">Amount</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 w-[100px] whitespace-nowrap">Payment</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 w-[100px] whitespace-nowrap">Status</th>
+                      <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-5 py-3.5 w-[110px] whitespace-nowrap">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -563,12 +563,12 @@ export default function HostBookingsPage() {
                         key={booking.id}
                         className="border-b border-black/5 last:border-0 hover:bg-ivory/30 transition-colors"
                       >
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5 align-middle whitespace-nowrap">
                           <span className="text-sm font-semibold text-royal">{booking.id}</span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5 align-middle">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-9 h-9 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
                               <span className="text-xs font-bold text-gold-deep">{booking.customerInitials}</span>
                             </div>
                             <div className="min-w-0">
@@ -577,34 +577,34 @@ export default function HostBookingsPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-charcoal truncate block" title={booking.serviceName}>{booking.serviceName}</span>
+                        <td className="px-5 py-3.5 align-middle">
+                          <span className="text-sm text-charcoal truncate block max-w-[180px]" title={booking.serviceName}>{booking.serviceName}</span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5 align-middle whitespace-nowrap">
                           <div className="text-sm text-charcoal">{formatDate(booking.eventDate)}</div>
                           <div className="text-xs text-secondary-text">{booking.eventTime}</div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5 align-middle text-right whitespace-nowrap">
                           <span className="text-sm font-semibold text-royal">₹{booking.amount.toLocaleString('en-IN')}</span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${paymentStatusStyles[booking.paymentStatus]}`}>
+                        <td className="px-5 py-3.5 align-middle text-center">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${paymentStatusStyles[booking.paymentStatus]}`}>
                             {booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1)}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${bookingStatusStyles[booking.status]}`}>
+                        <td className="px-5 py-3.5 align-middle text-center">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${bookingStatusStyles[booking.status]}`}>
                             {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="px-5 py-3.5 align-middle text-center">
+                          <div className="flex items-center justify-center gap-1.5">
                             <button
                               type="button"
                               onClick={() => setSelectedBooking(booking)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-gold-deep bg-gold/10 border border-gold/20 hover:bg-gold-deep hover:text-white hover:border-gold-deep transition-all duration-300"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-gold-deep bg-gold/10 border border-gold/20 hover:bg-gold-deep hover:text-white hover:border-gold-deep transition-all duration-300"
                             >
-                              <Eye size={12} />
+                              <Eye size={11} />
                               View
                             </button>
                             <div className="relative">

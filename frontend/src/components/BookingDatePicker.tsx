@@ -173,7 +173,9 @@ export default function BookingDatePicker({
         <span className={!value ? 'text-charcoal/30' : 'text-royal'}>
           {value ? formatDateDisplay(value) : placeholder}
         </span>
-        <CalendarDays size={16} className="text-gold-deep shrink-0" />
+        <span className="w-7 h-7 rounded-full bg-[#F5EFE0] flex items-center justify-center shrink-0">
+          <CalendarDays size={14} className="text-[#C89B2D]" />
+        </span>
       </button>
 
       {/* Clear Button */}
@@ -181,7 +183,7 @@ export default function BookingDatePicker({
         <button
           type="button"
           onClick={handleClear}
-          className="absolute right-10 top-1/2 -translate-y-1/2 p-1 rounded-lg text-charcoal/30 hover:text-royal hover:bg-ivory transition-colors"
+          className="absolute right-11 top-1/2 -translate-y-1/2 p-1 rounded-lg text-charcoal/30 hover:text-royal hover:bg-ivory transition-colors"
         >
           <X size={14} />
         </button>
@@ -189,21 +191,18 @@ export default function BookingDatePicker({
 
       {/* Calendar Popup */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-50 w-[340px] bg-white rounded-2xl border border-[#E8E2D4] shadow-[0_16px_48px_rgba(0,0,0,0.12)] animate-slide-in overflow-hidden">
-          {/* Gold Gradient Header */}
-          <div
-            className="px-4 py-3 flex items-center justify-between"
-            style={{ background: 'linear-gradient(90deg, #A66A00 0%, #B8860B 30%, #C99700 65%, #D4A017 100%)' }}
-          >
+        <div className="absolute top-full left-0 mt-2 z-50 w-[340px] bg-white rounded-2xl border border-[#E8E2D4] shadow-[0_8px_32px_rgba(0,0,0,0.08)] animate-slide-in overflow-hidden">
+          {/* Light Header */}
+          <div className="px-4 py-3 flex items-center justify-between bg-[#FAF7F2] border-b border-[#E7C97A]">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center">
-                <CalendarDays size={14} className="text-white" />
+              <div className="w-7 h-7 rounded-full bg-[#F5EFE0] flex items-center justify-center">
+                <CalendarDays size={14} className="text-[#C89B2D]" />
               </div>
               <div className="flex items-center gap-1.5">
                 <select
                   value={viewMonth}
                   onChange={(e) => handleMonthChange(Number(e.target.value))}
-                  className="bg-white/15 text-white text-xs font-semibold rounded-lg px-2 py-1 border-none outline-none cursor-pointer appearance-none hover:bg-white/25 transition-colors"
+                  className="bg-white text-[#3D3D3D] text-xs font-semibold rounded-full px-2.5 py-1 border border-[#E7C97A] outline-none cursor-pointer appearance-none hover:border-[#C89B2D] hover:text-[#C89B2D] transition-colors"
                   style={{ WebkitAppearance: 'none' }}
                 >
                   {MONTHS.map((m, i) => (
@@ -213,7 +212,7 @@ export default function BookingDatePicker({
                 <select
                   value={viewYear}
                   onChange={(e) => handleYearChange(Number(e.target.value))}
-                  className="bg-white/15 text-white text-xs font-semibold rounded-lg px-2 py-1 border-none outline-none cursor-pointer appearance-none hover:bg-white/25 transition-colors"
+                  className="bg-white text-[#3D3D3D] text-xs font-semibold rounded-full px-2.5 py-1 border border-[#E7C97A] outline-none cursor-pointer appearance-none hover:border-[#C89B2D] hover:text-[#C89B2D] transition-colors"
                   style={{ WebkitAppearance: 'none' }}
                 >
                   {yearOptions.map((y) => (
@@ -226,14 +225,14 @@ export default function BookingDatePicker({
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white/80 hover:text-white hover:bg-white/15 transition-colors"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[#C89B2D] hover:bg-[#F5EFE0] transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white/80 hover:text-white hover:bg-white/15 transition-colors"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[#C89B2D] hover:bg-[#F5EFE0] transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
@@ -241,7 +240,7 @@ export default function BookingDatePicker({
           </div>
 
           {/* Day Labels */}
-          <div className="grid grid-cols-7 px-3 pt-3">
+          <div className="grid grid-cols-7 px-3 pt-3 bg-white">
             {SHORT_DAYS.map((day) => (
               <div key={day} className="text-center text-[10px] font-semibold uppercase tracking-wider text-secondary-text py-1">
                 {day}
