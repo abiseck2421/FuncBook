@@ -82,10 +82,10 @@ export default function FeaturedHalls() {
           </h2>
         </div>
         <div className="flex items-center gap-3">
-          <a href="#" className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">
+          <button onClick={() => navigate('/services/function-halls')} className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-gold hover:text-gold-deep transition-colors group">
             View All
             <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+          </button>
           <button
             onClick={() => scroll('left')}
             className="flex md:hidden w-10 h-10 rounded-full border border-border items-center justify-center text-royal/40 hover:text-royal hover:border-royal transition-colors"
