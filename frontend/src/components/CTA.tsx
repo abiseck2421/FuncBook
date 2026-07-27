@@ -30,15 +30,9 @@ export default function CTA() {
             to="/services"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-white hover:text-royal transition-all duration-500"
           >
-            Book Your Event
+            Explore Services
             <ArrowRight size={18} />
           </Link>
-          <a
-            href="#categories"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white/10 text-white font-semibold text-sm ring-1 ring-white/20 hover:bg-white/20 hover:ring-gold/40 transition-all duration-500"
-          >
-            Explore Services
-          </a>
         </div>
       </div>
     </section>
