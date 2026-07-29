@@ -2,14 +2,12 @@ import { useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Building2, CalendarCheck, Heart, Star, CreditCard,
-  Settings, HelpCircle, BarChart3,
+  Settings, HelpCircle,
 } from 'lucide-react'
 import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
 import type { SidebarNavItem } from './components/Sidebar'
 import type { NavbarDropdownItem } from './components/AfterLoginNavbar'
-
-export type DashboardType = 'customer' | 'host'
 
 const customerNavItems: SidebarNavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/customer/dashboard' },
@@ -31,58 +29,10 @@ const customerDropdownItems: NavbarDropdownItem[] = [
   { label: 'Become a Host', icon: Building2, path: '/become-host' },
 ]
 
-const hostNavItems: SidebarNavItem[] = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/host/dashboard' },
-  { label: 'My Services', icon: Building2, path: '/host/services' },
-  { label: 'Bookings', icon: CalendarCheck, path: '/host/bookings' },
-  { label: 'Add New Service', icon: Building2, path: '/host/add-service' },
-  { label: 'Analytics', icon: BarChart3, path: '/host/analytics' },
-  { label: 'Reviews', icon: Star, path: '/host/reviews' },
-  { label: 'Payments', icon: CreditCard, path: '/host/payments' },
-]
-
-const hostSecondaryItems: SidebarNavItem[] = [
-  { label: 'Settings', icon: Settings, path: '/host/settings' },
-  { label: 'Help & Support', icon: HelpCircle, path: '/customer/help' },
-]
-
-const hostDropdownItems: NavbarDropdownItem[] = [
-  { label: 'Host Dashboard', icon: LayoutDashboard, path: '/host/dashboard' },
-  { label: 'My Services', icon: Building2, path: '/host/services' },
-  { label: 'Add New Service', icon: Building2, path: '/host/add-service' },
-  { label: 'Settings', icon: Settings, path: '/host/settings' },
-]
-
-const layoutConfig: Record<DashboardType, {
-  navItems: SidebarNavItem[]
-  secondaryItems: SidebarNavItem[]
-  logoHref: string
-  dropdownItems: NavbarDropdownItem[]
-}> = {
-  customer: {
-    navItems: customerNavItems,
-    secondaryItems: customerSecondaryItems,
-    logoHref: '/customer/dashboard',
-    dropdownItems: customerDropdownItems,
-  },
-  host: {
-    navItems: hostNavItems,
-    secondaryItems: hostSecondaryItems,
-    logoHref: '/host/dashboard',
-    dropdownItems: hostDropdownItems,
-  },
-}
-
-type CustomerLayoutProps = {
-  type?: DashboardType
-}
-
-export default function CustomerLayout({ type = 'customer' }: CustomerLayoutProps) {
+export default function CustomerLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [userEmail] = useState('user@funcbook.com')
   const navigate = useNavigate()
-
-  const config = layoutConfig[type]
 
   const handleLogout = () => {
     localStorage.removeItem('funcbook_auth_user')
@@ -95,8 +45,8 @@ export default function CustomerLayout({ type = 'customer' }: CustomerLayoutProp
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         onLogout={handleLogout}
-        navItems={config.navItems}
-        secondaryItems={config.secondaryItems}
+        navItems={customerNavItems}
+        secondaryItems={customerSecondaryItems}
       />
 
       <div className="h-full flex flex-col">
@@ -104,8 +54,8 @@ export default function CustomerLayout({ type = 'customer' }: CustomerLayoutProp
           onMenuClick={() => setIsSidebarOpen(true)}
           userEmail={userEmail}
           onLogout={handleLogout}
-          logoHref={config.logoHref}
-          dropdownItems={config.dropdownItems}
+          logoHref="/customer/dashboard"
+          dropdownItems={customerDropdownItems}
         />
 
         <main className="flex-1 overflow-y-auto pt-4 sm:pt-6">

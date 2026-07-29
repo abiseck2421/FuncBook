@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { WishlistProvider } from './contexts/WishlistContext'
 import SidebarLayout from './SidebarLayout'
 import CustomerLayout from './CustomerLayout'
+import HostLayout from './HostLayout'
 import ServicesLayout from './ServicesLayout'
 import LandingPage from './pages/CustomerPages/LandingPage'
 import ServicesPage from './pages/CustomerPages/ServicesPage'
@@ -24,6 +25,7 @@ import HostBookingsPage from './pages/HostPages/HostBookingsPage'
 import HostAnalyticsPage from './pages/HostPages/HostAnalyticsPage'
 import HostReviewsPage from './pages/HostPages/HostReviewsPage'
 import HostPaymentsPage from './pages/HostPages/HostPaymentsPage'
+import HostHelpPage from './pages/HostPages/HostHelpPage'
 
 function App() {
   return (
@@ -42,7 +44,7 @@ function App() {
           <Route path="/services/:categoryId" element={<CategoryPage />} />
         </Route>
 
-        <Route element={<CustomerLayout type="host" />}>
+        <Route element={<HostLayout />}>
           <Route path="/host/dashboard" element={<HostDashboardPage />} />
           <Route path="/host/add-service" element={<AddServicePage />} />
           <Route path="/host/services" element={<HostServicesPage />} />
@@ -51,6 +53,7 @@ function App() {
           <Route path="/host/reviews" element={<HostReviewsPage />} />
           <Route path="/host/payments" element={<HostPaymentsPage />} />
           <Route path="/host/settings" element={<HostSettingsPage />} />
+          <Route path="/host/help" element={<HostHelpPage />} />
         </Route>
 
         <Route path="/customer" element={<CustomerLayout />}>
