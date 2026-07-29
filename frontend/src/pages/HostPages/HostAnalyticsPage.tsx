@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Eye, CalendarDays, IndianRupee, Star, Clock,
   XCircle, ArrowUpRight, TrendingUp, Package, Users, UserPlus,
@@ -86,404 +86,670 @@ const maxBookings = Math.max(...monthlyBookingsData.map(d => d.value))
 const maxRevenue = Math.max(...monthlyRevenueData.map(d => d.value))
 const totalCategory = categoryPerformance.reduce((s, v) => s + v.value, 0)
 
+/* ---------- animated count-up hook ---------- */
+function useCountUp(target: number, duration: number, started: boolean) {
+  const [display, setDisplay] = useState(0)
+  const raf = useRef<number>(0)
+
+  useEffect(() => {
+    if (!started) return
+    const startTime = performance.now()
+    const step = (now: number) => {
+      const elapsed = now - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplay(Math.round(eased * target))
+      if (progress < 1) raf.current = requestAnimationFrame(step)
+    }
+    raf.current = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf.current)
+  }, [target, duration, started])
+
+  return display
+}
+
+/* ---------- AnimatedSection wrapper ---------- */
+function AnimatedSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => setVisible(true), delay)
+        obs.disconnect()
+      }
+    }, { threshold: 0.05 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [delay])
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'} ${className}`}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* ---------- count-up value ---------- */
+function CountUpValue({ value, suffix = '', started }: { value: number; suffix?: string; started: boolean }) {
+  const display = useCountUp(value, 1200, started)
+  return <>{display}{suffix}</>
+}
+
 export default function HostAnalyticsPage() {
   const [dateRange, setDateRange] = useState<string>('Last 30 Days')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [animated, setAnimated] = useState(false)
+
+  useEffect(() => { setAnimated(true) }, [])
+
+  /* bar chart hover */
+  const [hoveredBar, setHoveredBar] = useState<number | null>(null)
+
+  /* donut hover */
+  const [hoveredSegment, setHoveredSegment] = useState<number | null>(null)
+
+  /* line chart hover */
+  const [hoveredPoint, setHoveredPoint] = useState<number | null>(null)
+  const [lineReady, setLineReady] = useState(false)
+  useEffect(() => {
+    if (animated) {
+      const t = setTimeout(() => setLineReady(true), 1400)
+      return () => clearTimeout(t)
+    }
+  }, [animated])
+
+  const svgW = 700
+  const svgH = 200
+  const padX = 10
+  const padY = 10
+  const chartW = svgW - padX * 2
+  const chartH = svgH - padY * 2
+
+  const revenuePoints = monthlyRevenueData.map((d, i) => {
+    const x = padX + (i / (monthlyRevenueData.length - 1)) * chartW
+    const y = padY + chartH - (d.value / maxRevenue) * chartH
+    return { x, y, ...d }
+  })
+
+  const lineD = revenuePoints.reduce((acc, p, i) => {
+    if (i === 0) return `M ${p.x} ${p.y}`
+    const prev = revenuePoints[i - 1]
+    const cpx1 = (prev.x + p.x) / 2
+    const cpy1 = prev.y
+    const cpx2 = (prev.x + p.x) / 2
+    const cpy2 = p.y
+    return `${acc} C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${p.x} ${p.y}`
+  }, '')
+
+  const areaD = `${lineD} L ${revenuePoints[revenuePoints.length - 1].x} ${padY + chartH} L ${revenuePoints[0].x} ${padY + chartH} Z`
+
+  const lineLen = 1800
+
+  /* donut */
+  const donutSize = 240
+  const half = donutSize / 2
+  const radius = 95
+  const strokeW = 28
+  const circ = 2 * Math.PI * radius
 
   const overviewStats = [
-    { label: 'Total Views', value: '5,860', icon: Eye, change: '+14%', bg: 'bg-gold/10' },
-    { label: 'Total Bookings', value: '147', icon: CalendarDays, change: '+9%', bg: 'bg-emerald-50' },
-    { label: 'Active Listings', value: '12', icon: Package, change: '+2', bg: 'bg-sky-50' },
-    { label: 'Total Revenue', value: '₹42.8L', icon: IndianRupee, change: '+18%', bg: 'bg-amber-50' },
-    { label: 'Average Rating', value: '4.76', icon: Star, change: '+0.12', bg: 'bg-gold/10' },
-    { label: 'Conversion Rate', value: '2.85%', icon: TrendingUp, change: '+0.4%', bg: 'bg-emerald-50' },
+    { label: 'Total Views', value: 5860, icon: Eye, change: '+14%', bg: 'bg-gold/10' },
+    { label: 'Total Bookings', value: 147, icon: CalendarDays, change: '+9%', bg: 'bg-emerald-50' },
+    { label: 'Active Listings', value: 12, icon: Package, change: '+2', bg: 'bg-sky-50' },
+    { label: 'Total Revenue', value: 4280000, icon: IndianRupee, change: '+18%', bg: 'bg-amber-50', isCurrency: true },
+    { label: 'Average Rating', value: 476, icon: Star, change: '+0.12', bg: 'bg-gold/10', isRating: true },
+    { label: 'Conversion Rate', value: 285, icon: TrendingUp, change: '+0.4%', bg: 'bg-emerald-50', isPercent: true },
   ]
 
   const customerInsights = [
-    { label: 'New Customers', value: '89', icon: UserPlus, change: '+22%', bg: 'bg-sky-50', color: 'text-sky-600' },
-    { label: 'Returning Customers', value: '58', icon: Users, change: '+15%', bg: 'bg-emerald-50', color: 'text-emerald-600' },
-    { label: 'Repeat Booking Rate', value: '39.5%', icon: Repeat, change: '+3.2%', bg: 'bg-amber-50', color: 'text-amber-600' },
+    { label: 'New Customers', value: 89, icon: UserPlus, change: '+22%', bg: 'bg-sky-50', color: 'text-sky-600' },
+    { label: 'Returning Customers', value: 58, icon: Users, change: '+15%', bg: 'bg-emerald-50', color: 'text-emerald-600' },
+    { label: 'Repeat Booking Rate', value: 395, icon: Repeat, change: '+3.2%', bg: 'bg-amber-50', color: 'text-amber-600', isDecimal: true },
   ]
+
+  function formatStat(s: typeof overviewStats[0]) {
+    if (s.isCurrency) return `₹${(s.value / 100000).toFixed(1)}L`
+    if (s.isRating) return (s.value / 100).toFixed(2)
+    if (s.isPercent) return (s.value / 100).toFixed(2) + '%'
+    return s.value.toLocaleString('en-IN')
+  }
 
   return (
     <div className="min-h-screen bg-ivory pb-12">
+      {/* 🏁 global keyframes */}
+      <style>{`
+        @keyframes barGrow {
+          from { transform: scaleY(0); }
+          to   { transform: scaleY(1); }
+        }
+        @keyframes drawLine {
+          to { stroke-dashoffset: 0; }
+        }
+        @keyframes donutDraw {
+          to { stroke-dashoffset: var(--target); }
+        }
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes countIn {
+          from { opacity: 0; transform: scale(0.6); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        .card-animate {
+          animation: fadeSlideUp 0.7s ease-out both;
+        }
+        .bar-anim {
+          transform-origin: bottom center;
+          animation: barGrow 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .line-path {
+          stroke-dasharray: ${lineLen};
+          stroke-dashoffset: ${lineLen};
+          animation: drawLine 1.6s ease-in-out 0.8s forwards;
+        }
+        .donut-segment {
+          fill: none;
+          stroke-dasharray: var(--len);
+          stroke-dashoffset: var(--len);
+          animation: donutDraw 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+          transition: stroke-width 0.2s, filter 0.2s;
+          cursor: pointer;
+        }
+        .donut-segment:hover {
+          stroke-width: ${strokeW + 6};
+          filter: brightness(1.15);
+        }
+        .donut-segment.hovered {
+          stroke-width: ${strokeW + 6};
+          filter: brightness(1.15);
+        }
+        .point-dot {
+          transition: r 0.2s, fill 0.2s, stroke-width 0.2s;
+          cursor: pointer;
+        }
+        .point-dot:hover, .point-dot.active {
+          r: 6;
+          fill: #C89B2D;
+          stroke-width: 3;
+        }
+        .tooltip-box {
+          pointer-events: none;
+          transition: opacity 0.2s;
+        }
+      `}</style>
+
       {/* Header */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
-              Insights
-            </p>
-            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-royal leading-[1.08] tracking-tight">
-              Analytics
-            </h1>
-            <p className="mt-2 text-secondary-text text-base sm:text-lg">
-              Monitor your service performance, bookings, and earnings at a glance.
-            </p>
+      <AnimatedSection delay={0}>
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
+                Insights
+              </p>
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-royal leading-[1.08] tracking-tight">
+                Analytics
+              </h1>
+              <p className="mt-2 text-secondary-text text-base sm:text-lg">
+                Monitor your service performance, bookings, and earnings at a glance.
+              </p>
+            </div>
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gold-deep/15 bg-white text-sm font-semibold text-royal hover:border-gold/40 focus:outline-none focus:ring-2 focus:ring-gold/40 transition-colors"
+              >
+                {dateRange}
+                <ChevronDown size={14} className={`text-secondary-text transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-1 w-44 rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 py-1.5 z-20">
+                  {dateRangeOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => { setDateRange(option); setDropdownOpen(false) }}
+                      className={`flex w-full items-center px-3.5 py-2 text-xs transition-colors ${
+                        dateRange === option ? 'text-gold-deep font-semibold bg-gold/5' : 'text-charcoal hover:bg-ivory/70'
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-          <div className="relative shrink-0">
-            <button
-              type="button"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gold-deep/15 bg-white text-sm font-semibold text-royal hover:border-gold/40 focus:outline-none focus:ring-2 focus:ring-gold/40 transition-colors"
-            >
-              {dateRange}
-              <ChevronDown size={14} className={`text-secondary-text transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-            {dropdownOpen && (
-              <div className="absolute right-0 mt-1 w-44 rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 py-1.5 z-20">
-                {dateRangeOptions.map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => { setDateRange(option); setDropdownOpen(false) }}
-                    className={`flex w-full items-center px-3.5 py-2 text-xs transition-colors ${
-                      dateRange === option ? 'text-gold-deep font-semibold bg-gold/5' : 'text-charcoal hover:bg-ivory/70'
-                    }`}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
       {/* Overview Stats */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {overviewStats.map((stat) => {
-            const Icon = stat.icon
-            return (
-              <div key={stat.label} className="bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
-                    <Icon size={16} className="text-gold-deep" />
-                  </div>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary-text leading-tight">{stat.label}</span>
-                </div>
-                <div className="flex items-end gap-1.5">
-                  <span className="font-heading text-xl sm:text-2xl font-bold text-royal">{stat.value}</span>
-                  <span className="text-[10px] font-semibold mb-0.5 text-emerald-600">{stat.change}</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* Charts Row */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Monthly Bookings Bar Chart */}
-          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Monthly Bookings</h2>
-              <div className="flex items-center gap-1.5 text-xs text-secondary-text">
-                <TrendingUp size={14} className="text-emerald-600" />
-                <span className="font-semibold text-emerald-600">+12%</span>
-                <span>vs last year</span>
-              </div>
-            </div>
-            <div className="flex items-end gap-2 h-[200px]">
-              {monthlyBookingsData.map((d) => (
-                <div key={d.month} className="flex-1 flex flex-col items-center gap-1.5">
-                  <span className="text-[10px] font-semibold text-royal">{d.value}</span>
-                  <div className="w-full flex justify-center">
-                    <div
-                      className="w-full max-w-[28px] rounded-t-md bg-gold-deep/80"
-                      style={{ height: `${(d.value / maxBookings) * 150}px` }}
-                    />
-                  </div>
-                  <span className="text-[9px] font-medium text-secondary-text">{d.month}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Revenue Trend Line Chart */}
-          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Revenue Trend</h2>
-              <div className="flex items-center gap-1.5 text-xs text-secondary-text">
-                <TrendingUp size={14} className="text-emerald-600" />
-                <span className="font-semibold text-emerald-600">+18%</span>
-                <span>vs last year</span>
-              </div>
-            </div>
-            <div className="relative h-[200px]">
-              <svg className="w-full h-full" viewBox="0 0 700 200" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C89B2D" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="#C89B2D" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d={`${monthlyRevenueData.map((d, i) => {
-                    const x = (i / (monthlyRevenueData.length - 1)) * 660 + 20
-                    const y = 190 - (d.value / maxRevenue) * 170
-                    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
-                  }).join(' ')} L 680 190 L 20 190 Z`}
-                  fill="url(#revGrad)"
-                />
-                <polyline
-                  points={monthlyRevenueData.map((d, i) => {
-                    const x = (i / (monthlyRevenueData.length - 1)) * 660 + 20
-                    const y = 190 - (d.value / maxRevenue) * 170
-                    return `${x},${y}`
-                  }).join(' ')}
-                  fill="none"
-                  stroke="#C89B2D"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {monthlyRevenueData.map((d, i) => {
-                  const x = (i / (monthlyRevenueData.length - 1)) * 660 + 20
-                  const y = 190 - (d.value / maxRevenue) * 170
-                  return <circle key={i} cx={x} cy={y} r="3.5" fill="white" stroke="#C89B2D" strokeWidth="2" />
-                })}
-              </svg>
-              <div className="absolute bottom-0 inset-x-0 flex justify-between px-4">
-                {monthlyRevenueData.map((d) => (
-                  <span key={d.month} className="text-[9px] font-medium text-secondary-text">{d.month}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Category Performance + Booking Status */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
-          {/* Category Donut */}
-          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 flex flex-col">
-            <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Category Performance</h2>
-            <div className="flex-1 flex items-center justify-center mb-6">
-              <div className="relative w-40 h-40">
-                <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                  {categoryPerformance.reduce<{ offset: number; segments: { dash: number; stroke: string }[] }>((acc, cat) => {
-                    const pct = (cat.value / totalCategory) * 100
-                    acc.segments.push({ dash: pct, stroke: cat.color })
-                    acc.offset += pct
-                    return acc
-                  }, { offset: 0, segments: [] }).segments.reduce<{ offset: number; result: { offset: number; dash: number; stroke: string }[] }>((acc, seg) => {
-                    acc.result.push({ ...seg, offset: acc.offset })
-                    acc.offset += seg.dash
-                    return acc
-                  }, { offset: 0, result: [] }).result.map((seg, i) => (
-                    <circle key={i} cx="18" cy="18" r="15.9155" fill="none" stroke={seg.stroke} strokeWidth="3.5"
-                      strokeDasharray={`${seg.dash} ${100 - seg.dash}`} strokeDashoffset={`${-seg.offset}`} />
-                  ))}
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="font-heading text-2xl font-bold text-royal">{totalCategory}%</span>
-                  <span className="text-[10px] text-secondary-text uppercase tracking-wider">Split</span>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-2.5">
-              {categoryPerformance.map((cat) => {
-                const Icon = cat.icon
-                return (
-                  <div key={cat.label} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: cat.color }} />
-                      <Icon size={13} className="text-secondary-text" />
-                      <span className="text-sm text-charcoal">{cat.label}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-royal">{cat.value}%</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* Booking Status */}
-          <div className="flex">
-            <HostBookingStatusCard data={bookingStatusData} className="flex-1" />
-          </div>
-        </div>
-      </section>
-
-      {/* Service Performance Table */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden">
-          <div className="px-6 sm:px-8 py-5 border-b border-black/5">
-            <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Top Performing Services</h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-black/5">
-                  <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 sm:px-8 py-3.5 whitespace-nowrap">Service</th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Category</th>
-                  <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Views</th>
-                  <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Bookings</th>
-                  <th className="text-right text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Revenue</th>
-                  <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Rating</th>
-                  <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 sm:pr-8 py-3.5 whitespace-nowrap">Conversion</th>
-                </tr>
-              </thead>
-              <tbody>
-                {servicePerformance.map((svc, i) => (
-                  <tr key={i} className="border-b border-black/5 last:border-0 hover:bg-ivory/30 transition-colors">
-                    <td className="px-6 sm:px-8 py-3.5 align-middle whitespace-nowrap">
-                      <span className="text-sm font-semibold text-royal">{svc.name}</span>
-                    </td>
-                    <td className="px-6 py-3.5 align-middle whitespace-nowrap">
-                      <span className="text-sm text-charcoal">{svc.category}</span>
-                    </td>
-                    <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
-                      <span className="text-sm text-charcoal">{svc.views.toLocaleString()}</span>
-                    </td>
-                    <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
-                      <span className="text-sm font-semibold text-royal">{svc.bookings}</span>
-                    </td>
-                    <td className="px-6 py-3.5 align-middle text-right whitespace-nowrap">
-                      <span className="text-sm font-semibold text-royal">₹{svc.revenue.toLocaleString('en-IN')}</span>
-                    </td>
-                    <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
-                      <div className="inline-flex items-center gap-1">
-                        <Star size={13} className="fill-gold text-gold" />
-                        <span className="text-sm font-semibold text-royal">{svc.rating}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 sm:pr-8 py-3.5 align-middle text-center whitespace-nowrap">
-                      <span className="text-sm font-semibold text-emerald-600">{svc.conversion}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* Customer Insights */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Customer Insights</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {customerInsights.map((insight) => {
-              const Icon = insight.icon
+      <AnimatedSection delay={100} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {overviewStats.map((stat, i) => {
+              const Icon = stat.icon
               return (
-                <div key={insight.label} className="bg-ivory/60 rounded-2xl border border-gold-deep/10 p-5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-9 h-9 rounded-xl ${insight.bg} flex items-center justify-center`}>
-                      <Icon size={16} className={insight.color} />
+                <div
+                  key={stat.label}
+                  className="card-animate bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 hover:shadow-[0_8px_28px_rgba(184,134,11,0.12)] hover:-translate-y-0.5 transition-all duration-400"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                >
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
+                      <Icon size={16} className="text-gold-deep" />
                     </div>
-                    <span className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text">{insight.label}</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary-text leading-tight">{stat.label}</span>
                   </div>
                   <div className="flex items-end gap-1.5">
-                    <span className="font-heading text-2xl font-bold text-royal">{insight.value}</span>
-                    <span className="text-[11px] font-semibold mb-0.5 text-emerald-600">{insight.change}</span>
+                    <span className="font-heading text-xl sm:text-2xl font-bold text-royal">
+                      {stat.isCurrency || stat.isRating || stat.isPercent
+                        ? formatStat(stat)
+                        : animated
+                          ? <CountUpValue value={stat.value} started={animated} />
+                          : '0'
+                      }
+                    </span>
+                    <span className="text-[10px] font-semibold mb-0.5 text-emerald-600">{stat.change}</span>
                   </div>
                 </div>
               )
             })}
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
-      {/* Top Service + Quick Insights */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3">
-            <HostTopServiceCard {...topServiceData} />
-          </div>
-
-          {/* Quick Insights */}
-          <div className="lg:col-span-2 bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-            <div className="flex items-center gap-2 mb-6">
-              <Sparkles size={18} className="text-gold-deep" />
-              <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Quick Insights</h2>
+      {/* Charts Row */}
+      <AnimatedSection delay={200} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* ====== Bar Chart ====== */}
+            <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Monthly Bookings</h2>
+                <div className="flex items-center gap-1.5 text-xs text-secondary-text">
+                  <TrendingUp size={14} className="text-emerald-600" />
+                  <span className="font-semibold text-emerald-600">+12%</span>
+                  <span>vs last year</span>
+                </div>
+              </div>
+              <div className="relative h-[220px]">
+                {/* hover tooltip */}
+                {hoveredBar !== null && (
+                  <div className="tooltip-box absolute -top-7 left-0 z-10 bg-royal text-white text-xs font-semibold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap"
+                    style={{
+                      left: `${(hoveredBar / (monthlyBookingsData.length - 1)) * 90 + 5}%`,
+                      transform: 'translateX(-50%)',
+                    }}
+                  >
+                    {monthlyBookingsData[hoveredBar].value} bookings
+                  </div>
+                )}
+                <div className="flex items-end gap-2 sm:gap-3 h-full">
+                  {monthlyBookingsData.map((d, i) => {
+                    const pct = (d.value / maxBookings) * 100
+                    const isHovered = hoveredBar === i
+                    return (
+                      <div key={d.month} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                        <span className="text-[10px] font-semibold text-royal transition-opacity duration-200" style={{ opacity: isHovered ? 1 : 0.7 }}>{d.value}</span>
+                        <div
+                          className="w-full flex justify-center"
+                          onMouseEnter={() => setHoveredBar(i)}
+                          onMouseLeave={() => setHoveredBar(null)}
+                        >
+                          <div
+                            className={`bar-anim w-full max-w-[32px] sm:max-w-[36px] rounded-t-lg transition-all duration-300 ${isHovered ? 'bg-gold-deep scale-110 shadow-[0_4px_14px_rgba(184,134,11,0.35)]' : 'bg-gold-deep/80'}`}
+                            style={{
+                              height: `${pct}%`,
+                              animationDelay: `${i * 80}ms`,
+                            }}
+                          />
+                        </div>
+                        <span className="text-[9px] font-medium text-secondary-text">{d.month}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
-            <div className="space-y-4">
-              {quickInsights.map((insight, i) => {
+
+            {/* ====== Line Chart ====== */}
+            <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Revenue Trend</h2>
+                <div className="flex items-center gap-1.5 text-xs text-secondary-text">
+                  <TrendingUp size={14} className="text-emerald-600" />
+                  <span className="font-semibold text-emerald-600">+18%</span>
+                  <span>vs last year</span>
+                </div>
+              </div>
+              <div className="relative h-[220px]">
+                <svg className="w-full h-full" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#C89B2D" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#C89B2D" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={areaD} fill="url(#revGrad)" opacity={animated ? 0.85 : 0} style={{ transition: 'opacity 0.6s' }} />
+                  <path d={lineD} fill="none" stroke="#C89B2D" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="line-path" />
+                  {revenuePoints.map((p, i) => (
+                    <g key={i}>
+                      <circle
+                        cx={p.x} cy={p.y} r="4"
+                        fill="white" stroke="#C89B2D" strokeWidth="2.5"
+                        className={`point-dot ${hoveredPoint === i ? 'active' : ''}`}
+                        style={{ opacity: lineReady ? 1 : 0, transition: 'opacity 0.3s', transitionDelay: `${i * 60}ms` }}
+                        onMouseEnter={() => setHoveredPoint(i)}
+                        onMouseLeave={() => setHoveredPoint(null)}
+                      />
+                      {hoveredPoint === i && (
+                        <>
+                          <line x1={p.x} y1={p.y} x2={p.x} y2={svgH} stroke="#C89B2D" strokeWidth="1" strokeDasharray="3,3" opacity="0.3" />
+                          <rect
+                            x={p.x - 48} y={p.y - 34} width="96" height="26" rx="8"
+                            fill="#1A1A2E" opacity="0.9"
+                          />
+                          <text x={p.x} y={p.y - 18} textAnchor="middle" fill="white" fontSize="11" fontWeight="600">
+                            ₹{p.value.toLocaleString('en-IN')}
+                          </text>
+                        </>
+                      )}
+                    </g>
+                  ))}
+                </svg>
+                <div className="absolute bottom-0 inset-x-0 flex justify-between px-1">
+                  {monthlyRevenueData.map((d) => (
+                    <span key={d.month} className="text-[9px] font-medium text-secondary-text">{d.month}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Donut + Booking Status */}
+      <AnimatedSection delay={300} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
+            {/* ====== Donut ====== */}
+            <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 flex flex-col hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+              <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Category Performance</h2>
+              <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-6">
+                <div className="relative shrink-0" style={{ width: donutSize, height: donutSize }}>
+                  <svg viewBox={`0 0 ${donutSize} ${donutSize}`} className="w-full h-full -rotate-90">
+                    {(() => {
+                      const segments: { offset: number; pct: number; color: string }[] = []
+                      let cur = 0
+                      for (const cat of categoryPerformance) {
+                        const pct = cat.value / totalCategory
+                        segments.push({ offset: cur, pct, color: cat.color })
+                        cur += pct
+                      }
+                      return segments.map((seg, i) => {
+                        const len = seg.pct * circ
+                        const offset = -seg.offset * circ
+                        const isHov = hoveredSegment === i
+                        return (
+                          <circle
+                            key={i}
+                            className={`donut-segment ${isHov ? 'hovered' : ''}`}
+                            cx={half}
+                            cy={half}
+                            r={radius}
+                            stroke={seg.color}
+                            strokeWidth={strokeW}
+                            strokeLinecap="round"
+                            style={{
+                              '--len': `${len}`,
+                              '--target': `${offset - len}`,
+                              animationDelay: `${i * 150}ms`,
+                              strokeDashoffset: offset,
+                            } as React.CSSProperties}
+                            onMouseEnter={() => setHoveredSegment(i)}
+                            onMouseLeave={() => setHoveredSegment(null)}
+                          />
+                        )
+                      })
+                    })()}
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ animation: animated ? 'countIn 0.6s ease-out 1.2s both' : 'none' }}>
+                    <span className="font-heading text-3xl font-bold text-royal">{animated ? <CountUpValue value={totalCategory} started={animated} /> : '0'}%</span>
+                    <span className="text-[10px] text-secondary-text uppercase tracking-wider">Split</span>
+                  </div>
+                </div>
+
+                {/* improved legend */}
+                <div className="flex flex-col gap-3 sm:gap-2.5 w-full sm:w-auto">
+                  {categoryPerformance.map((cat, i) => {
+                    const Icon = cat.icon
+                    const isHov = hoveredSegment === i
+                    return (
+                      <div
+                        key={cat.label}
+                        className={`flex items-center justify-between sm:justify-start gap-3 sm:gap-4 px-3 py-2 rounded-xl transition-all duration-200 ${isHov ? 'bg-gold/5 scale-[1.02]' : ''}`}
+                        onMouseEnter={() => setHoveredSegment(i)}
+                        onMouseLeave={() => setHoveredSegment(null)}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                          <Icon size={15} className={`text-secondary-text shrink-0 ${isHov ? 'text-gold-deep' : ''}`} />
+                          <span className={`text-sm whitespace-nowrap transition-colors ${isHov ? 'text-royal font-semibold' : 'text-charcoal'}`}>{cat.label}</span>
+                        </div>
+                        <span className="text-sm font-semibold text-royal tabular-nums">{cat.value}%</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Booking Status */}
+            <div className="flex">
+              <HostBookingStatusCard data={bookingStatusData} className="flex-1" />
+            </div>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Service Performance Table */}
+      <AnimatedSection delay={400} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] overflow-hidden hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+            <div className="px-6 sm:px-8 py-5 border-b border-black/5">
+              <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Top Performing Services</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-black/5">
+                    <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 sm:px-8 py-3.5 whitespace-nowrap">Service</th>
+                    <th className="text-left text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Category</th>
+                    <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Views</th>
+                    <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Bookings</th>
+                    <th className="text-right text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Revenue</th>
+                    <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 py-3.5 whitespace-nowrap">Rating</th>
+                    <th className="text-center text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text px-6 sm:pr-8 py-3.5 whitespace-nowrap">Conversion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {servicePerformance.map((svc, i) => (
+                    <tr key={i} className="border-b border-black/5 last:border-0 hover:bg-ivory/50 transition-colors duration-200" style={{ animation: animated ? `fadeSlideUp 0.5s ease-out ${i * 80}ms both` : 'none' }}>
+                      <td className="px-6 sm:px-8 py-3.5 align-middle whitespace-nowrap">
+                        <span className="text-sm font-semibold text-royal">{svc.name}</span>
+                      </td>
+                      <td className="px-6 py-3.5 align-middle whitespace-nowrap">
+                        <span className="text-sm text-charcoal">{svc.category}</span>
+                      </td>
+                      <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
+                        <span className="text-sm text-charcoal">{svc.views.toLocaleString()}</span>
+                      </td>
+                      <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
+                        <span className="text-sm font-semibold text-royal">{svc.bookings}</span>
+                      </td>
+                      <td className="px-6 py-3.5 align-middle text-right whitespace-nowrap">
+                        <span className="text-sm font-semibold text-royal">₹{svc.revenue.toLocaleString('en-IN')}</span>
+                      </td>
+                      <td className="px-6 py-3.5 align-middle text-center whitespace-nowrap">
+                        <div className="inline-flex items-center gap-1">
+                          <Star size={13} className="fill-gold text-gold" />
+                          <span className="text-sm font-semibold text-royal">{svc.rating}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 sm:pr-8 py-3.5 align-middle text-center whitespace-nowrap">
+                        <span className="text-sm font-semibold text-emerald-600">{svc.conversion}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </AnimatedSection>
+
+      {/* Customer Insights */}
+      <AnimatedSection delay={500} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Customer Insights</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              {customerInsights.map((insight, i) => {
                 const Icon = insight.icon
                 return (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-lg ${insight.bg} flex items-center justify-center shrink-0 mt-0.5`}>
-                      <Icon size={14} className={insight.color} />
+                  <div key={insight.label} className="card-animate bg-ivory/60 rounded-2xl border border-gold-deep/10 p-5 hover:bg-ivory hover:-translate-y-0.5 hover:shadow-[0_4px_16px_rgba(184,134,11,0.10)] transition-all duration-400" style={{ animationDelay: `${i * 100}ms` }}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-9 h-9 rounded-xl ${insight.bg} flex items-center justify-center`}>
+                        <Icon size={16} className={insight.color} />
+                      </div>
+                      <span className="text-xs font-semibold uppercase tracking-[0.15em] text-secondary-text">{insight.label}</span>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-[11px] text-secondary-text uppercase tracking-wider">{insight.label}</p>
-                      <p className="text-sm font-semibold text-royal mt-0.5">{insight.value}</p>
+                    <div className="flex items-end gap-1.5">
+                      <span className="font-heading text-2xl font-bold text-royal">
+                        {insight.isDecimal
+                          ? `${(insight.value / 10).toFixed(1)}%`
+                          : animated
+                            ? <CountUpValue value={insight.value} started={animated} />
+                            : '0'
+                        }
+                      </span>
+                      <span className="text-[11px] font-semibold mb-0.5 text-emerald-600">{insight.change}</span>
                     </div>
                   </div>
                 )
               })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
+
+      {/* Top Service + Quick Insights */}
+      <AnimatedSection delay={600} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div className="lg:col-span-3">
+              <HostTopServiceCard {...topServiceData} />
+            </div>
+
+            <div className="lg:col-span-2 bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+              <div className="flex items-center gap-2 mb-6">
+                <Sparkles size={18} className="text-gold-deep" />
+                <h2 className="font-heading text-lg sm:text-xl font-bold text-royal">Quick Insights</h2>
+              </div>
+              <div className="space-y-4">
+                {quickInsights.map((insight, i) => {
+                  const Icon = insight.icon
+                  return (
+                    <div key={i} className="card-animate flex items-start gap-3 p-2 rounded-xl hover:bg-ivory/60 transition-colors duration-200" style={{ animationDelay: `${i * 80}ms` }}>
+                      <div className={`w-8 h-8 rounded-lg ${insight.bg} flex items-center justify-center shrink-0 mt-0.5`}>
+                        <Icon size={14} className={insight.color} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[11px] text-secondary-text uppercase tracking-wider">{insight.label}</p>
+                        <p className="text-sm font-semibold text-royal mt-0.5">{insight.value}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+      </AnimatedSection>
 
       {/* Recent Activity */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Recent Activity</h2>
-          <div className="space-y-4">
-            {recentActivity.map((activity, i) => {
-              const Icon = activity.icon
-              return (
-                <div key={i} className="flex items-center gap-4 py-3 border-b border-black/5 last:border-0">
-                  <div className={`w-10 h-10 rounded-xl ${activity.bg} flex items-center justify-center shrink-0`}>
-                    <Icon size={16} className={activity.color} />
+      <AnimatedSection delay={700} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Recent Activity</h2>
+            <div className="space-y-4">
+              {recentActivity.map((activity, i) => {
+                const Icon = activity.icon
+                return (
+                  <div key={i} className="card-animate flex items-center gap-4 py-3 border-b border-black/5 last:border-0 hover:bg-ivory/30 rounded-xl px-3 -mx-3 transition-colors duration-200" style={{ animationDelay: `${i * 80}ms` }}>
+                    <div className={`w-10 h-10 rounded-xl ${activity.bg} flex items-center justify-center shrink-0`}>
+                      <Icon size={16} className={activity.color} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-charcoal truncate">{activity.text}</p>
+                      <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1.5">
+                        <Clock size={12} />
+                        {activity.time}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-charcoal truncate">{activity.text}</p>
-                    <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1.5">
-                      <Clock size={12} />
-                      {activity.time}
-                    </p>
-                  </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
 
-      {/* Footer Summary */}
-      <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 mt-8">
-        <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8">
-          <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Summary</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            <div className="text-center">
-              <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Total Revenue</p>
-              <p className="font-heading text-xl sm:text-2xl font-bold text-royal">₹42.8L</p>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">+18% growth</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Total Bookings</p>
-              <p className="font-heading text-xl sm:text-2xl font-bold text-royal">147</p>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">+9% growth</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Average Rating</p>
-              <div className="flex items-center justify-center gap-1.5">
-                <Star size={18} className="fill-gold text-gold" />
-                <p className="font-heading text-xl sm:text-2xl font-bold text-royal">4.76</p>
+      {/* Summary */}
+      <AnimatedSection delay={800} className="mt-8">
+        <section className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl border border-gold-deep/15 shadow-[0_4px_24px_rgba(184,134,11,0.08)] p-6 sm:p-8 hover:shadow-[0_8px_32px_rgba(184,134,11,0.14)] transition-shadow duration-400">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-royal mb-6">Summary</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+              <div className="text-center p-3 rounded-2xl hover:bg-ivory/60 transition-colors duration-200">
+                <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Total Revenue</p>
+                <p className="font-heading text-xl sm:text-2xl font-bold text-royal">₹42.8L</p>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1">+18% growth</p>
               </div>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">+0.12 this month</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Overall Growth</p>
-              <div className="flex items-center justify-center gap-1.5">
-                <TrendingUp size={18} className="text-emerald-600" />
-                <p className="font-heading text-xl sm:text-2xl font-bold text-royal">+15.2%</p>
+              <div className="text-center p-3 rounded-2xl hover:bg-ivory/60 transition-colors duration-200">
+                <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Total Bookings</p>
+                <p className="font-heading text-xl sm:text-2xl font-bold text-royal">147</p>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1">+9% growth</p>
               </div>
-              <p className="text-[11px] text-emerald-600 font-semibold mt-1">Strong performance</p>
+              <div className="text-center p-3 rounded-2xl hover:bg-ivory/60 transition-colors duration-200">
+                <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Average Rating</p>
+                <div className="flex items-center justify-center gap-1.5">
+                  <Star size={18} className="fill-gold text-gold" />
+                  <p className="font-heading text-xl sm:text-2xl font-bold text-royal">4.76</p>
+                </div>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1">+0.12 this month</p>
+              </div>
+              <div className="text-center p-3 rounded-2xl hover:bg-ivory/60 transition-colors duration-200">
+                <p className="text-xs text-secondary-text uppercase tracking-wider mb-1">Overall Growth</p>
+                <div className="flex items-center justify-center gap-1.5">
+                  <TrendingUp size={18} className="text-emerald-600" />
+                  <p className="font-heading text-xl sm:text-2xl font-bold text-royal">+15.2%</p>
+                </div>
+                <p className="text-[11px] text-emerald-600 font-semibold mt-1">Strong performance</p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </AnimatedSection>
     </div>
   )
 }
