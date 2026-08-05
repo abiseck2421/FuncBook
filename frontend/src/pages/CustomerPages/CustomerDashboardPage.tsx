@@ -7,7 +7,20 @@ import ServiceCard from '../../components/ServiceCard'
 import { servicesByCategory } from '../../data/categories'
 import { useWishlist } from '../../contexts/WishlistContext'
 
-const customerName = 'Priya'
+function getCustomerName(): string {
+  try {
+    const raw = localStorage.getItem('funcbook_auth_user')
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed.name === 'string' && parsed.name.trim()) {
+        return parsed.name.trim()
+      }
+    }
+  } catch {
+    // old plain-string value, ignore
+  }
+  return 'there'
+}
 
 const upcomingBooking = {
   id: 'bk-1',
@@ -54,6 +67,7 @@ function formatDate(dateStr: string) {
 
 export default function CustomerDashboardPage() {
   const { collections, totalSaved } = useWishlist()
+  const customerName = getCustomerName()
   const allSaved = collections.flatMap((col) => col.services)
   const savedServices = allSaved.length > 0 ? allSaved.slice(0, 4) : defaultSavedServices
   const savedCount = totalSaved

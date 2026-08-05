@@ -1,10 +1,16 @@
 import { useRef, useState, useEffect } from 'react'
 import { X, ArrowLeft } from 'lucide-react'
 
+export interface AuthSuccessInfo {
+  email?: string
+  name: string
+  dob: string
+}
+
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  onAuthSuccess: (email?: string) => void
+  onAuthSuccess: (info: AuthSuccessInfo) => void
 }
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
@@ -13,8 +19,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   const [entered, setEntered] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const [step, setStep] = useState<'input' | 'otp'>('input')
+  const [step, setStep] = useState<'input' | 'details' | 'otp'>('input')
   const [contact, setContact] = useState('')
+  const [name, setName] = useState('')
+  const [dob, setDob] = useState('')
+  const [password, setPassword] = useState('')
+  const [agree, setAgree] = useState(false)
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -24,6 +34,10 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       setEntered(false)
       setStep('input')
       setContact('')
+      setName('')
+      setDob('')
+      setPassword('')
+      setAgree(false)
       setOtp(['', '', '', '', '', ''])
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -50,6 +64,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
     if (!contact.trim()) return
     setStep('otp')
     setTimeout(() => otpRefs.current[0]?.focus(), 100)
+  }
+
+  const handleDetailsSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!name.trim() || !dob || !password || !agree) return
+    onClose()
+    onAuthSuccess({ email: contact, name: name.trim(), dob })
   }
 
   const handleOtpChange = (index: number, value: string) => {
@@ -80,8 +101,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   const handleVerify = () => {
     if (authSubmitLocked.current) return
     authSubmitLocked.current = true
-    onClose()
-    onAuthSuccess(contact)
+    setStep('details')
     window.setTimeout(() => {
       authSubmitLocked.current = false
     }, 0)
@@ -197,7 +217,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                   </button>
                 </div>
               </>
-            ) : (
+            ) : step === 'otp' ? (
               <>
                 <button
                   type="button"
@@ -234,7 +254,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                 <button
                   type="button"
                   onClick={handleVerify}
-                  className="mt-6 w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal"
+                  disabled={otp.some((d) => !d)}
+                  className="mt-6 w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Verify
                 </button>
@@ -249,6 +270,91 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                     Resend
                   </button>
                 </p>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setStep('otp')}
+                  className="absolute left-4 top-4 z-10 rounded-full bg-ivory p-2 text-charcoal transition hover:bg-gold-deep hover:text-white cursor-pointer"
+                >
+                  <ArrowLeft size={18} />
+                </button>
+
+                <div className="mt-10 text-center">
+                  <h3 className="font-heading text-3xl font-bold text-royal">Tell us about you</h3>
+                  <p className="mt-2 text-sm text-secondary-text">
+                    A few details to set up your FuncBook account.
+                  </p>
+                </div>
+
+                <form className="mt-8 space-y-4" onSubmit={handleDetailsSubmit}>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Full name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3.5 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60">
+                      Date of Birth
+                    </label>
+                    <input
+                      type="date"
+                      value={dob}
+                      max={new Date().toISOString().split('T')[0]}
+                      onChange={(e) => setDob(e.target.value)}
+                      className="w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3.5 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="Create a password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full rounded-2xl border border-black/10 bg-ivory/60 px-4 py-3.5 text-sm text-charcoal outline-none transition focus:border-gold-deep focus:bg-white"
+                    />
+                  </div>
+
+                  <label className="flex cursor-pointer items-start gap-2.5 pt-1">
+                    <input
+                      type="checkbox"
+                      checked={agree}
+                      onChange={(e) => setAgree(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-gold-deep"
+                    />
+                    <span className="text-xs leading-5 text-secondary-text">
+                      I agree to FuncBook's{' '}
+                      <button type="button" className="font-semibold text-royal underline-offset-2 hover:text-gold-deep hover:underline">
+                        Terms of Service
+                      </button>{' '}
+                      and{' '}
+                      <button type="button" className="font-semibold text-royal underline-offset-2 hover:text-gold-deep hover:underline">
+                        Privacy Policy
+                      </button>
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={!name.trim() || !dob || !password || !agree}
+                    className="w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Agree and Continue
+                  </button>
+                </form>
               </>
             )}
           </div>

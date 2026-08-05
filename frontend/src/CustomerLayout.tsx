@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Building2, CalendarCheck, Heart, Star, CreditCard,
@@ -31,8 +31,23 @@ const customerDropdownItems: NavbarDropdownItem[] = [
 
 export default function CustomerLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [userEmail] = useState('user@funcbook.com')
   const navigate = useNavigate()
+
+  const user = useMemo(() => {
+    try {
+      const raw = localStorage.getItem('funcbook_auth_user')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (parsed && typeof parsed === 'object') return parsed
+      }
+    } catch {
+      // old plain-string value, ignore
+    }
+    return { email: 'user@funcbook.com', name: '' }
+  }, [])
+
+  const userEmail = user.email || 'user@funcbook.com'
+  const userName = typeof user.name === 'string' ? user.name : ''
 
   const handleLogout = () => {
     localStorage.removeItem('funcbook_auth_user')
@@ -53,6 +68,7 @@ export default function CustomerLayout() {
         <AfterLoginNavbar
           onMenuClick={() => setIsSidebarOpen(true)}
           userEmail={userEmail}
+          userName={userName}
           onLogout={handleLogout}
           logoHref="/customer/dashboard"
           dropdownItems={customerDropdownItems}

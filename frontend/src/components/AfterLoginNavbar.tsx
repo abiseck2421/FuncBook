@@ -12,12 +12,13 @@ export interface NavbarDropdownItem {
 type AfterLoginNavbarProps = {
   onMenuClick: () => void
   userEmail: string
+  userName?: string
   onLogout?: () => void
   logoHref: string
   dropdownItems: NavbarDropdownItem[]
 }
 
-export default function AfterLoginNavbar({ onMenuClick, userEmail, onLogout, logoHref, dropdownItems }: AfterLoginNavbarProps) {
+export default function AfterLoginNavbar({ onMenuClick, userEmail, userName, onLogout, logoHref, dropdownItems }: AfterLoginNavbarProps) {
   const navigate = useNavigate()
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -39,7 +40,18 @@ export default function AfterLoginNavbar({ onMenuClick, userEmail, onLogout, log
     }
   }, [])
 
-  const userInitial = (userEmail.trim().charAt(0) || 'U').toUpperCase()
+  const userInitial = (() => {
+    const name = userName?.trim()
+    if (name) {
+      return name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part.charAt(0).toUpperCase())
+        .join('')
+    }
+    return (userEmail.trim().charAt(0) || 'U').toUpperCase()
+  })()
 
   return (
     <header className="relative z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
@@ -78,6 +90,9 @@ export default function AfterLoginNavbar({ onMenuClick, userEmail, onLogout, log
               <div className="absolute right-0 top-full mt-2 w-[min(72vw,18rem)] overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
                 <div className="max-h-[70vh] overflow-auto py-2">
                   <div className="px-4 pb-3 pt-2">
+                    {userName?.trim() && (
+                      <p className="text-sm font-semibold text-royal">{userName.trim()}</p>
+                    )}
                     <p className="text-sm font-semibold text-royal">{userEmail}</p>
                     <p className="text-xs text-secondary-text">Your account</p>
                   </div>

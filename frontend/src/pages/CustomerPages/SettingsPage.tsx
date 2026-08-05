@@ -15,9 +15,22 @@ interface ProfileData {
   location: string
 }
 
+function getAuthUser() {
+  try {
+    const raw = localStorage.getItem('funcbook_auth_user')
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed && typeof parsed === 'object') return parsed
+    }
+  } catch {
+    // old plain-string value, ignore
+  }
+  return {}
+}
+
 const initialProfile: ProfileData = {
-  name: 'Priya Sharma',
-  email: 'priya.sharma@email.com',
+  name: getAuthUser().name || 'Priya Sharma',
+  email: getAuthUser().email || 'priya.sharma@email.com',
   phone: '+91 98765 43210',
   location: 'Mumbai, Maharashtra',
 }

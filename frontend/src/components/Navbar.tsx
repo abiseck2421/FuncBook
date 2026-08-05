@@ -76,7 +76,7 @@ const navItems: Array<{ key: MenuKey; label: string }> = [
 ]
 
 type NavbarProps = {
-  onAuthSuccess: () => void
+  onAuthSuccess: (info: import('./AuthModal').AuthSuccessInfo) => void
   authModalOpen?: boolean
   setAuthModalOpen?: (open: boolean) => void
 }

@@ -99,7 +99,7 @@ export default function BookingPage() {
   const { setAuthModalOpen, setAuthRedirectPath } = useOutletContext<{
     authModalOpen: boolean
     setAuthModalOpen: (open: boolean) => void
-    handleAuthSuccess: (email: string) => void
+    handleAuthSuccess: (info: import('../../components/AuthModal').AuthSuccessInfo) => void
     setAuthRedirectPath: (path: string | null) => void
   }>()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
