@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   User, Mail, Phone, MapPin, Lock, Eye, EyeOff,
   Camera, Save, PenLine, CheckCircle2, Shield,
@@ -6,6 +7,7 @@ import {
   CreditCard, Bell, Eye as EyeIcon, Star, Wallet,
   Banknote, Info, ToggleLeft,
 } from 'lucide-react'
+import { useHostAuth } from '../../contexts/hostAuth'
 
 const inputClass = 'w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40 transition-colors'
 const labelClass = 'block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60 mb-2'
@@ -94,6 +96,8 @@ interface PrivacySettings {
 }
 
 export default function HostSettingsPage() {
+  const navigate = useNavigate()
+  const { logout } = useHostAuth()
   const [profile, setProfile] = useState<ProfileData>(initialProfile)
   const [savedProfile, setSavedProfile] = useState<ProfileData>(initialProfile)
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -246,8 +250,8 @@ export default function HostSettingsPage() {
   function handleDeactivate() {
     setShowDeactivateConfirm(false)
     setShowDeleteConfirm(false)
-    localStorage.removeItem('funcbook_auth_user')
-    window.location.href = '/'
+    logout()
+    navigate('/')
   }
 
   return (

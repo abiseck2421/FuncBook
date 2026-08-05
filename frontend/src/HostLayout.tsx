@@ -8,6 +8,7 @@ import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
 import type { SidebarNavItem } from './components/Sidebar'
 import type { NavbarDropdownItem } from './components/AfterLoginNavbar'
+import { useHostAuth } from './contexts/hostAuth'
 
 const hostNavItems: SidebarNavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/host/dashboard' },
@@ -33,11 +34,11 @@ const hostDropdownItems: NavbarDropdownItem[] = [
 
 export default function HostLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const [userEmail] = useState('user@funcbook.com')
+  const { hostEmail, logout } = useHostAuth()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    localStorage.removeItem('funcbook_auth_user')
+    logout()
     navigate('/')
   }
 
@@ -54,7 +55,7 @@ export default function HostLayout() {
       <div className="h-full flex flex-col">
         <AfterLoginNavbar
           onMenuClick={() => setIsSidebarOpen(true)}
-          userEmail={userEmail}
+          userEmail={hostEmail ?? 'host@funcbook.com'}
           onLogout={handleLogout}
           logoHref="/host/dashboard"
           dropdownItems={hostDropdownItems}

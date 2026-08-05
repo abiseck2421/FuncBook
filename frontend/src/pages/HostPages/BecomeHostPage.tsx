@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react'
-import { Link, useNavigate, useOutletContext } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight, ArrowUpRight, Sparkles, Building2, User,
   Phone, MapPin, Star, Users, TrendingUp,
   Camera, Mail, Globe, AlertCircle, Upload, X, LayoutDashboard,
 } from 'lucide-react'
+import { useHostAuth } from '../../contexts/hostAuth'
+import HostLoginModal from './HostLoginModal'
 
 const inputBase = 'w-full rounded-2xl border bg-ivory/60 px-4 py-3 text-sm text-charcoal outline-none transition-all duration-300 focus:bg-white placeholder:text-secondary-text/40'
 const inputCls = `${inputBase} border-black/10 focus:border-gold-deep`
@@ -15,10 +17,10 @@ type FieldKey = 'businessName' | 'ownerName' | 'email' | 'phone' | 'city' | 'bus
 
 export default function BecomeHostPage() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useOutletContext<{ isAuthenticated: boolean }>()
+  const { isAuthenticated } = useHostAuth()
+  const [hostLoginOpen, setHostLoginOpen] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
   const [errorFields, setErrorFields] = useState<Set<FieldKey>>(new Set())
-  const [profileNotice, setProfileNotice] = useState<string | null>(null)
 
   const businessNameRef = useRef<HTMLInputElement>(null)
   const ownerNameRef = useRef<HTMLInputElement>(null)
@@ -26,8 +28,6 @@ export default function BecomeHostPage() {
   const phoneRef = useRef<HTMLInputElement>(null)
   const cityRef = useRef<HTMLInputElement>(null)
   const businessDescRef = useRef<HTMLTextAreaElement>(null)
-
-  const hasHostProfile = !!localStorage.getItem('funcbook_host_profile')
 
   const [businessName, setBusinessName] = useState('')
   const [ownerName, setOwnerName] = useState('')
@@ -84,15 +84,10 @@ export default function BecomeHostPage() {
   }
 
   const handleGoToDashboard = () => {
-    if (!isAuthenticated) {
-      setProfileNotice('Please log in first to access your host dashboard.')
-      return
-    }
-    if (hasHostProfile) {
+    if (isAuthenticated) {
       navigate('/host/dashboard')
     } else {
-      setProfileNotice('No host profile found. Complete the form below to create one.')
-      document.getElementById('host-profile-form')?.scrollIntoView({ behavior: 'smooth' })
+      setHostLoginOpen(true)
     }
   }
 
@@ -221,14 +216,6 @@ export default function BecomeHostPage() {
             <ArrowUpRight size={16} />
           </button>
         </div>
-        {profileNotice && (
-          <div className="mt-3 animate-fade-in w-full">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200/60 text-amber-700 text-sm font-medium">
-              <AlertCircle size={15} className="shrink-0" />
-              {profileNotice}
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Profile Form */}
@@ -412,6 +399,8 @@ export default function BecomeHostPage() {
           </button>
         </div>
       </section>
+
+      <HostLoginModal isOpen={hostLoginOpen} onClose={() => setHostLoginOpen(false)} />
     </div>
   )
 }

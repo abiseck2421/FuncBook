@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { WishlistProvider } from './contexts/WishlistContext'
+import { HostAuthProvider } from './contexts/HostAuthContext'
+import RequireHostAuth from './components/RequireHostAuth'
 import SidebarLayout from './SidebarLayout'
 import CustomerLayout from './CustomerLayout'
 import HostLayout from './HostLayout'
@@ -17,6 +19,7 @@ import PaymentsPage from './pages/CustomerPages/PaymentsPage'
 import SettingsPage from './pages/CustomerPages/SettingsPage'
 import HelpPage from './pages/CustomerPages/HelpPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
+import HostLoginPage from './pages/HostPages/HostLoginPage'
 import AddServicePage from './pages/HostPages/AddServicePage'
 import HostDashboardPage from './pages/HostPages/HostDashboardPage'
 import HostServicesPage from './pages/HostPages/HostServicesPage'
@@ -30,6 +33,7 @@ import HostHelpPage from './pages/HostPages/HostHelpPage'
 function App() {
   return (
     <BrowserRouter>
+      <HostAuthProvider>
       <WishlistProvider>
         <Routes>
         <Route element={<SidebarLayout />}>
@@ -44,16 +48,20 @@ function App() {
           <Route path="/services/:categoryId" element={<CategoryPage />} />
         </Route>
 
-        <Route element={<HostLayout />}>
-          <Route path="/host/dashboard" element={<HostDashboardPage />} />
-          <Route path="/host/add-service" element={<AddServicePage />} />
-          <Route path="/host/services" element={<HostServicesPage />} />
-          <Route path="/host/bookings" element={<HostBookingsPage />} />
-          <Route path="/host/analytics" element={<HostAnalyticsPage />} />
-          <Route path="/host/reviews" element={<HostReviewsPage />} />
-          <Route path="/host/payments" element={<HostPaymentsPage />} />
-          <Route path="/host/settings" element={<HostSettingsPage />} />
-          <Route path="/host/help" element={<HostHelpPage />} />
+        <Route path="/host/login" element={<HostLoginPage />} />
+
+        <Route element={<RequireHostAuth />}>
+          <Route element={<HostLayout />}>
+            <Route path="/host/dashboard" element={<HostDashboardPage />} />
+            <Route path="/host/add-service" element={<AddServicePage />} />
+            <Route path="/host/services" element={<HostServicesPage />} />
+            <Route path="/host/bookings" element={<HostBookingsPage />} />
+            <Route path="/host/analytics" element={<HostAnalyticsPage />} />
+            <Route path="/host/reviews" element={<HostReviewsPage />} />
+            <Route path="/host/payments" element={<HostPaymentsPage />} />
+            <Route path="/host/settings" element={<HostSettingsPage />} />
+            <Route path="/host/help" element={<HostHelpPage />} />
+          </Route>
         </Route>
 
         <Route path="/customer" element={<CustomerLayout />}>
@@ -68,6 +76,7 @@ function App() {
         </Route>
         </Routes>
       </WishlistProvider>
+      </HostAuthProvider>
     </BrowserRouter>
   )
 }
