@@ -1,8 +1,11 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
+import type { ReactNode } from 'react'
+import type { LucideIcon } from 'lucide-react'
 import {
   Star, MessageSquare, Reply as ReplyIcon, X, Check,
   CalendarDays, Hash, Search, ChevronDown, Clock, TrendingUp,
 } from 'lucide-react'
+import PaymentSummaryCard from '../../components/payments/PaymentSummaryCard'
 
 type ReviewFilter = 'all' | '5' | '4' | '3' | '2' | '1'
 type SortOption = 'newest' | 'oldest' | 'highest'
@@ -134,8 +137,333 @@ const ratingBreakdown = [
   { stars: 1, count: 1 },
 ]
 
-const totalReviews = reviews.length
 const maxBreakdown = Math.max(...ratingBreakdown.map((r) => r.count))
+
+type ModalType = 'rating' | 'statistics' | 'fivestar' | 'response'
+
+interface ModalShellProps {
+  icon: LucideIcon
+  iconClass: string
+  title: string
+  subtitle: string
+  onClose: () => void
+  tall?: boolean
+  children: ReactNode
+}
+
+function ModalShell({ icon: Icon, iconClass, title, subtitle, onClose, tall = false, children }: ModalShellProps) {
+  const [visible, setVisible] = useState(false)
+  const [closing, setClosing] = useState(false)
+  const closeTimerRef = useRef<number | null>(null)
+
+  const requestClose = () => {
+    if (closing) return
+    setClosing(true)
+    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current)
+    closeTimerRef.current = window.setTimeout(onClose, 220)
+  }
+
+  useEffect(() => {
+    const rafId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setVisible(true))
+    })
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') requestClose()
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      cancelAnimationFrame(rafId)
+      document.removeEventListener('keydown', handleEscape)
+      if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const backdropClass = `absolute inset-0 bg-charcoal/40 backdrop-blur-[2px] transition-opacity duration-300 ${
+    closing || !visible ? 'opacity-0' : 'opacity-100'
+  }`
+
+  const panelClass = `relative w-full max-w-[620px] ${
+    tall ? 'min-h-[560px] max-h-[90vh]' : 'min-h-[440px] max-h-[82vh]'
+  } bg-white rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.18)] flex flex-col overflow-hidden transition-all duration-300 ease-out ${
+    closing || !visible ? 'opacity-0 scale-[0.96] -translate-y-3' : 'opacity-100 scale-100 translate-y-0'
+  }`
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className={backdropClass} onClick={requestClose} />
+      <div className={panelClass}>
+        <button
+          type="button"
+          onClick={requestClose}
+          aria-label="Close"
+          className="absolute top-4 right-4 z-10 p-2 rounded-xl text-charcoal/40 hover:text-royal hover:bg-ivory transition-colors"
+        >
+          <X size={18} />
+        </button>
+        <div className="px-6 sm:px-7 pt-7 pb-5 border-b border-black/5 shrink-0">
+          <div className="flex items-center gap-3 mb-1 pr-8">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${iconClass}`}>
+              <Icon size={18} />
+            </div>
+            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">{title}</h2>
+          </div>
+          <p className="text-sm text-secondary-text mt-2 pl-12">{subtitle}</p>
+        </div>
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-6 sm:px-7 py-5">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function RatingDetailsModal({ onClose, reviews }: { onClose: () => void; reviews: Review[] }) {
+  const total = reviews.length
+  const avg = total ? (reviews.reduce((s, r) => s + r.rating, 0) / total).toFixed(1) : '0.0'
+  const dist = [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    count: reviews.filter((r) => r.rating === stars).length,
+  }))
+  const maxCount = Math.max(...dist.map((d) => d.count))
+  const recent = [...reviews]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 4)
+  return (
+    <ModalShell
+      icon={Star}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="Rating Details"
+      subtitle="A closer look at your average customer rating."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Average Rating</p>
+          <p className="text-xs text-secondary-text mt-0.5">Based on {total} customer ratings</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Star size={22} className="fill-gold text-gold" />
+          <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">
+            {avg}
+            <span className="text-sm font-medium text-secondary-text"> / 5</span>
+          </p>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Rating Distribution</p>
+      <div className="rounded-2xl border border-gold-deep/15 p-4 mb-4 space-y-2.5">
+        {dist.map((d) => (
+          <div key={d.stars} className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-secondary-text w-14 shrink-0">{d.stars} ★</span>
+            <div className="flex-1 h-2.5 bg-gold/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold-deep transition-all duration-500"
+                style={{ width: `${(d.count / maxCount) * 100}%` }}
+              />
+            </div>
+            <span className="text-xs font-semibold text-royal w-8 text-right">{d.count}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Recent Ratings</p>
+      <div className="space-y-2">
+        {recent.map((r) => (
+          <div key={r.id} className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-black/5 hover:border-gold-deep/25 transition-colors">
+            <div className="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+              <span className="font-heading text-[11px] font-bold text-gold-deep">{r.customerInitials}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{r.customerName}</p>
+              <p className="text-[11px] text-secondary-text truncate mt-0.5">{r.serviceName} · {formatDate(r.date)}</p>
+            </div>
+            <div className="flex items-center gap-0.5 shrink-0">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star key={i} size={12} className={i < r.rating ? 'text-gold fill-gold' : 'text-charcoal/15'} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </ModalShell>
+  )
+}
+
+function ReviewStatisticsModal({ onClose, reviews }: { onClose: () => void; reviews: Review[] }) {
+  const responded = reviews.filter((r) => r.reply)
+  const pending = reviews.filter((r) => !r.reply)
+  const dist = [5, 4, 3, 2, 1].map((stars) => reviews.filter((r) => r.rating === stars).length)
+  const pillClass = 'flex items-center justify-between gap-2 rounded-2xl border border-black/5 px-3.5 py-2.5'
+  return (
+    <ModalShell
+      icon={MessageSquare}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="Review Statistics"
+      subtitle="An overview of your review volume and activity."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Reviews</p>
+          <p className="text-xs text-secondary-text mt-0.5">Across all services and bookings</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{reviews.length}</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
+        <div className={pillClass}>
+          <span className="text-xs text-secondary-text">Responded</span>
+          <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1"><Check size={12} />{responded.length}</span>
+        </div>
+        <div className={pillClass}>
+          <span className="text-xs text-secondary-text">Unresponded</span>
+          <span className="text-xs font-semibold text-amber-600 flex items-center gap-1"><Clock size={12} />{pending.length}</span>
+        </div>
+        <div className={pillClass}>
+          <span className="text-xs text-secondary-text">5-Star Reviews</span>
+          <span className="text-xs font-semibold text-royal">{dist[0]}</span>
+        </div>
+        <div className={pillClass}>
+          <span className="text-xs text-secondary-text">Response Rate</span>
+          <span className="text-xs font-semibold text-royal">{reviews.length ? Math.round((responded.length / reviews.length) * 100) : 0}%</span>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Reviews by Rating</p>
+      <div className="flex flex-wrap gap-2">
+        {[5, 4, 3, 2, 1].map((stars, i) => (
+          <span key={stars} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gold-deep/15 bg-white text-xs font-semibold text-royal">
+            {stars} ★
+            <span className="text-gold-deep">{dist[i]}</span>
+          </span>
+        ))}
+      </div>
+    </ModalShell>
+  )
+}
+
+function FiveStarDetailsModal({ onClose, reviews }: { onClose: () => void; reviews: Review[] }) {
+  const five = reviews.filter((r) => r.rating === 5)
+  const pct = reviews.length ? Math.round((five.length / reviews.length) * 100) : 0
+  return (
+    <ModalShell
+      icon={TrendingUp}
+      iconClass="bg-emerald-50 text-emerald-600"
+      title="5-Star Review Details"
+      subtitle="Your most loved reviews and what customers praise most."
+      onClose={onClose}
+      tall
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">5-Star Reviews</p>
+          <p className="text-xs text-secondary-text mt-0.5">{pct}% of all reviews</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{five.length}</p>
+      </div>
+
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Star size={16} className="fill-gold text-gold" />
+          <p className="text-sm font-semibold text-royal">Excellent service, loved by customers</p>
+        </div>
+        <p className="text-xs text-secondary-text leading-relaxed">
+          These reviews highlight the experiences your customers valued most. {pct}% of your feedback is 5-star, a strong reflection of your service quality.
+        </p>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">5-Star Reviews</p>
+      <div className="space-y-2">
+        {five.map((r) => (
+          <div key={r.id} className="rounded-2xl border border-black/5 p-4 hover:border-gold-deep/25 transition-colors">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                <span className="font-heading text-[11px] font-bold text-gold-deep">{r.customerInitials}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-royal truncate">{r.customerName}</p>
+                <p className="text-[11px] text-secondary-text truncate mt-0.5">{r.serviceName} · {formatDate(r.date)}</p>
+              </div>
+              <div className="flex items-center gap-0.5 shrink-0">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Star key={i} size={12} className="text-gold fill-gold" />
+                ))}
+              </div>
+            </div>
+            <p className="text-xs text-secondary-text leading-relaxed line-clamp-2">{r.text}</p>
+          </div>
+        ))}
+      </div>
+    </ModalShell>
+  )
+}
+
+function ResponseDetailsModal({ onClose, reviews }: { onClose: () => void; reviews: Review[] }) {
+  const responded = reviews.filter((r) => r.reply)
+  const pending = reviews.filter((r) => !r.reply)
+  const rate = reviews.length ? Math.round((responded.length / reviews.length) * 100) : 0
+  return (
+    <ModalShell
+      icon={ReplyIcon}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="Response Details"
+      subtitle="Track how promptly you respond to customer feedback."
+      onClose={onClose}
+      tall
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Response Rate</p>
+          <p className="text-xs text-secondary-text mt-0.5">{responded.length} of {reviews.length} reviews responded</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{rate}%</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2.5 mb-4">
+        <div className="flex items-center justify-between gap-2 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-3.5 py-2.5">
+          <span className="text-xs text-secondary-text">Responded</span>
+          <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1"><Check size={12} />{responded.length}</span>
+        </div>
+        <div className="flex items-center justify-between gap-2 rounded-2xl border border-amber-200 bg-amber-50/60 px-3.5 py-2.5">
+          <span className="text-xs text-secondary-text">Pending Response</span>
+          <span className="text-xs font-semibold text-amber-600 flex items-center gap-1"><Clock size={12} />{pending.length}</span>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Review Responses</p>
+      <div className="space-y-2">
+        {reviews.map((r) => (
+          <div key={r.id} className="rounded-2xl border border-black/5 p-4 hover:border-gold-deep/25 transition-colors">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-9 h-9 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                <span className="font-heading text-[11px] font-bold text-gold-deep">{r.customerInitials}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-royal truncate">{r.customerName}</p>
+                <p className="text-[11px] text-secondary-text truncate mt-0.5">{r.serviceName} · {formatDate(r.date)}</p>
+              </div>
+              {r.reply ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold border border-emerald-200 bg-emerald-50 text-emerald-700 shrink-0">
+                  <Check size={10} /> Replied
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold border border-amber-200 bg-amber-50 text-amber-700 shrink-0">
+                  <Clock size={10} /> Pending
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-secondary-text leading-relaxed line-clamp-2">{r.text}</p>
+            {r.reply && (
+              <div className="mt-2.5 ml-3 pl-3 border-l-2 border-gold-deep/20 bg-gold/5 rounded-r-xl p-2.5">
+                <p className="text-[10px] font-semibold text-gold-deep uppercase tracking-wider mb-0.5">Your Reply</p>
+                <p className="text-xs text-secondary-text leading-relaxed line-clamp-2">{r.reply}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </ModalShell>
+  )
+}
 
 export default function HostReviewsPage() {
   const [activeFilter, setActiveFilter] = useState<ReviewFilter>('all')
@@ -144,11 +472,14 @@ export default function HostReviewsPage() {
   const [replyingId, setReplyingId] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
   const [localReviews, setLocalReviews] = useState(reviews)
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null)
 
   const avgRating = (localReviews.reduce((s, r) => s + r.rating, 0) / localReviews.length).toFixed(1)
   const fiveStarCount = localReviews.filter((r) => r.rating === 5).length
   const repliedCount = localReviews.filter((r) => r.reply).length
   const responseRate = Math.round((repliedCount / localReviews.length) * 100)
+  const totalReviews = localReviews.length
+  const fiveStarPercent = totalReviews ? Math.round((fiveStarCount / totalReviews) * 100) : 0
 
   const counts: Record<ReviewFilter, number> = {
     all: localReviews.length,
@@ -200,6 +531,17 @@ export default function HostReviewsPage() {
 
   return (
     <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-12 sm:pb-10">
+      <style>{`
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
+        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #C89B3C #F8F5EE }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #F8F5EE; border-radius: 3px }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #C89B3C; border-radius: 3px }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #B8860B }
+        .custom-scrollbar::-webkit-scrollbar-button { display: none; width: 0; height: 0 }
+      `}</style>
+
       {/* Header */}
       <div className="mb-6 sm:mb-8">
         <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
@@ -214,31 +556,60 @@ export default function HostReviewsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-6 sm:mb-8">
-        {[
-          { label: 'Average Rating', value: avgRating, suffix: '/ 5', icon: Star },
-          { label: 'Total Reviews', value: totalReviews, suffix: '', icon: MessageSquare },
-          { label: '5-Star Reviews', value: fiveStarCount, suffix: '', icon: TrendingUp },
-          { label: 'Response Rate', value: `${responseRate}%`, suffix: '', icon: ReplyIcon },
-        ].map((card) => {
-          const Icon = card.icon
-          return (
-            <div key={card.label} className="bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 sm:p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center">
-                  <Icon size={18} className="text-gold-deep" />
-                </div>
-                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-secondary-text">
-                  {card.label}
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-heading text-2xl sm:text-3xl font-bold text-royal">{card.value}</span>
-                {card.suffix && <span className="text-xs text-secondary-text">{card.suffix}</span>}
-              </div>
-            </div>
-          )
-        })}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
+        <PaymentSummaryCard
+          label="Average Rating"
+          value={avgRating}
+          suffix="/ 5"
+          icon={Star}
+          index={0}
+          onClick={() => setActiveModal('rating')}
+          sub={
+            <>
+              <p>Total ratings: {totalReviews}</p>
+              <p>Based on customer feedback</p>
+            </>
+          }
+        />
+        <PaymentSummaryCard
+          label="Total Reviews"
+          value={totalReviews}
+          icon={MessageSquare}
+          index={1}
+          onClick={() => setActiveModal('statistics')}
+          sub={
+            <>
+              <p>Responded: {repliedCount}</p>
+              <p>Unresponded: {totalReviews - repliedCount}</p>
+            </>
+          }
+        />
+        <PaymentSummaryCard
+          label="5-Star Reviews"
+          value={fiveStarCount}
+          icon={TrendingUp}
+          index={2}
+          onClick={() => setActiveModal('fivestar')}
+          sub={
+            <>
+              <p>{fiveStarPercent}% of all reviews</p>
+              <p>Highlights your top-tier service</p>
+            </>
+          }
+        />
+        <PaymentSummaryCard
+          label="Response Rate"
+          value={`${responseRate}%`}
+          icon={ReplyIcon}
+          index={3}
+          onClick={() => setActiveModal('response')}
+          sub={
+            <>
+              <p>Responded: {repliedCount}</p>
+              <p>Pending response: {totalReviews - repliedCount}</p>
+            </>
+          }
+        />
       </div>
 
       {/* Rating Overview */}
@@ -514,6 +885,11 @@ export default function HostReviewsPage() {
           </div>
         </div>
       </div>
+
+      {activeModal === 'rating' && <RatingDetailsModal onClose={() => setActiveModal(null)} reviews={localReviews} />}
+      {activeModal === 'statistics' && <ReviewStatisticsModal onClose={() => setActiveModal(null)} reviews={localReviews} />}
+      {activeModal === 'fivestar' && <FiveStarDetailsModal onClose={() => setActiveModal(null)} reviews={localReviews} />}
+      {activeModal === 'response' && <ResponseDetailsModal onClose={() => setActiveModal(null)} reviews={localReviews} />}
     </div>
   )
 }
