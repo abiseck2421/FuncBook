@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
-import type { ReactNode } from 'react'
+import { useState } from 'react'
 import {
   IndianRupee, Clock, CheckCircle2, Receipt, TrendingUp,
-  X, XCircle, AlertTriangle, CalendarDays,
+  XCircle, AlertTriangle, CalendarDays,
 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import HostModalShell from '../../components/HostModalShell'
 import PaymentSummaryCard from '../../components/payments/PaymentSummaryCard'
 import RecentTransactionList from '../../components/payments/RecentTransactionList'
 import PaymentFilters from '../../components/payments/PaymentFilters'
@@ -138,81 +137,6 @@ function StatusPill({ status }: { status: StatusKey }) {
   )
 }
 
-interface ModalShellProps {
-  icon: LucideIcon
-  iconClass: string
-  title: string
-  subtitle: string
-  onClose: () => void
-  tall?: boolean
-  children: ReactNode
-}
-
-function ModalShell({ icon: Icon, iconClass, title, subtitle, onClose, tall = false, children }: ModalShellProps) {
-  const [visible, setVisible] = useState(false)
-  const [closing, setClosing] = useState(false)
-  const closeTimerRef = useRef<number | null>(null)
-
-  const requestClose = () => {
-    if (closing) return
-    setClosing(true)
-    if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current)
-    closeTimerRef.current = window.setTimeout(onClose, 220)
-  }
-
-  useEffect(() => {
-    const rafId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setVisible(true))
-    })
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') requestClose()
-    }
-    document.addEventListener('keydown', handleEscape)
-    return () => {
-      cancelAnimationFrame(rafId)
-      document.removeEventListener('keydown', handleEscape)
-      if (closeTimerRef.current) window.clearTimeout(closeTimerRef.current)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const backdropClass = `absolute inset-0 bg-charcoal/40 backdrop-blur-[2px] transition-opacity duration-300 ${
-    closing || !visible ? 'opacity-0' : 'opacity-100'
-  }`
-
-  const panelClass = `relative w-full max-w-[620px] ${
-    tall ? 'min-h-[560px] max-h-[90vh]' : 'min-h-[440px] max-h-[82vh]'
-  } bg-white rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.18)] flex flex-col overflow-hidden transition-all duration-300 ease-out ${
-    closing || !visible ? 'opacity-0 scale-[0.96] -translate-y-3' : 'opacity-100 scale-100 translate-y-0'
-  }`
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className={backdropClass} onClick={requestClose} />
-      <div className={panelClass}>
-        <button
-          type="button"
-          onClick={requestClose}
-          aria-label="Close"
-          className="absolute top-4 right-4 z-10 p-2 rounded-xl text-charcoal/40 hover:text-royal hover:bg-ivory transition-colors"
-        >
-          <X size={18} />
-        </button>
-        <div className="px-6 sm:px-7 pt-7 pb-5 border-b border-black/5 shrink-0">
-          <div className="flex items-center gap-3 mb-1 pr-8">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${iconClass}`}>
-              <Icon size={18} />
-            </div>
-            <h2 className="font-heading text-xl sm:text-2xl font-bold text-royal">{title}</h2>
-          </div>
-          <p className="text-sm text-secondary-text mt-2 pl-12">{subtitle}</p>
-        </div>
-        <div className="flex-1 overflow-y-auto custom-scrollbar px-6 sm:px-7 py-5">{children}</div>
-      </div>
-    </div>
-  )
-}
-
 function RevenueDetailsModal({ onClose }: { onClose: () => void }) {
   const completed = transactions.filter((t) => t.status === 'paid')
   const total = completed.reduce((s, t) => s + t.amount, 0)
@@ -220,7 +144,7 @@ function RevenueDetailsModal({ onClose }: { onClose: () => void }) {
   const maxRecent = Math.max(...recentMonths.map((m) => m.value))
   const topService = serviceRevenue.reduce((a, b) => (b.value > a.value ? b : a))
   return (
-    <ModalShell
+    <HostModalShell
       icon={IndianRupee}
       iconClass="bg-gold/10 text-gold-deep"
       title="Revenue Details"
@@ -284,7 +208,7 @@ function RevenueDetailsModal({ onClose }: { onClose: () => void }) {
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-text">Total</span>
         <span className="font-heading text-lg font-bold text-gold-deep">₹{total.toLocaleString('en-IN')}</span>
       </div>
-    </ModalShell>
+    </HostModalShell>
   )
 }
 
@@ -295,7 +219,7 @@ function PendingPayoutModal({ onClose }: { onClose: () => void }) {
   const first = pendings[0]
   const detailGridClass = 'flex items-center justify-between gap-2 rounded-2xl border border-black/5 px-3.5 py-2.5'
   return (
-    <ModalShell
+    <HostModalShell
       icon={Clock}
       iconClass="bg-amber-50 text-amber-600"
       title="Pending Payout Details"
@@ -422,7 +346,7 @@ function PendingPayoutModal({ onClose }: { onClose: () => void }) {
           </div>
         </>
       )}
-    </ModalShell>
+    </HostModalShell>
   )
 }
 
@@ -430,7 +354,7 @@ function PayoutHistoryModal({ onClose }: { onClose: () => void }) {
   const total = payouts.reduce((s, p) => s + p.amount, 0)
   const latest = [...payouts].sort((a, b) => new Date(b.payoutDate).getTime() - new Date(a.payoutDate).getTime())[0]
   return (
-    <ModalShell
+    <HostModalShell
       icon={CheckCircle2}
       iconClass="bg-emerald-50 text-emerald-600"
       title="Completed Payout Details"
@@ -488,7 +412,7 @@ function PayoutHistoryModal({ onClose }: { onClose: () => void }) {
           </div>
         ))}
       </div>
-    </ModalShell>
+    </HostModalShell>
   )
 }
 
@@ -502,7 +426,7 @@ function TransactionHistoryModal({ onClose }: { onClose: () => void }) {
   const breakdown: StatusKey[] = ['completed', 'pending', 'failed', 'refunded']
   const recent = [...transactions].sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())
   return (
-    <ModalShell
+    <HostModalShell
       icon={Receipt}
       iconClass="bg-gold/10 text-gold-deep"
       title="Transaction Details"
@@ -543,7 +467,7 @@ function TransactionHistoryModal({ onClose }: { onClose: () => void }) {
           </div>
         ))}
       </div>
-    </ModalShell>
+    </HostModalShell>
   )
 }
 
@@ -565,17 +489,6 @@ export default function HostPaymentsPage() {
 
   return (
     <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-12 sm:pb-10">
-      <style>{`
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
-        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #C89B3C #F8F5EE }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #F8F5EE; border-radius: 3px }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #C89B3C; border-radius: 3px }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #B8860B }
-        .custom-scrollbar::-webkit-scrollbar-button { display: none; width: 0; height: 0 }
-      `}</style>
-
       <div className="mb-6 sm:mb-8">
         <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
           Billing
