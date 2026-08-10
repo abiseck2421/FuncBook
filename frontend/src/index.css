@@ -105,10 +105,31 @@ a, button, [role="button"] {
   background: #9A7209;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
+.scrollbar-hide::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide {
+.scrollbar-hide,
+.scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ── Shared host modal / card animations & scrollbar ────────────────────────── */
+
+.custom-scrollbar { scrollbar-width: thin; scrollbar-color: #C89B3C #F8F5EE }
+.custom-scrollbar::-webkit-scrollbar { width: 6px }
+.custom-scrollbar::-webkit-scrollbar-track { background: #F8F5EE; border-radius: 3px }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #C89B3C; border-radius: 3px }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #B8860B }
+.custom-scrollbar::-webkit-scrollbar-button { display: none; width: 0; height: 0 }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
 }
