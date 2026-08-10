@@ -5,6 +5,7 @@ import {
   Repeat, AlertTriangle, Sparkles, ChevronDown,
   Building2, UtensilsCrossed, Camera, Music, Palette,
 } from 'lucide-react'
+import HostModalShell from '../../components/HostModalShell'
 import HostBookingStatusCard from '../../components/HostBookingStatusCard'
 import HostTopServiceCard from '../../components/HostTopServiceCard'
 
@@ -63,6 +64,71 @@ const servicePerformance = [
 ]
 
 const topServiceData = { name: 'Spice Route Catering', bookings: 32, revenue: 960000, rating: 4.9 }
+
+/* ---------- headline values (single source of truth for the summary cards) ---------- */
+const totalViews = 5860
+const totalBookings = 147
+const activeListings = 12
+const totalRevenue = 4280000
+const averageRating = 476 // 4.76 in hundredths
+const conversionRate = 285 // 2.85 in hundredths
+
+/* ---------- derived helpers from existing analytics data ---------- */
+const statusTotalBookings = bookingStatusData.reduce((s, b) => s + b.count, 0)
+const mostViewedService = servicePerformance.reduce((a, b) => (b.views > a.views ? b : a))
+const bestPerformingService = servicePerformance.reduce((a, b) => (b.bookings > a.bookings ? b : a))
+const bestRevenueService = servicePerformance.reduce((a, b) => (b.revenue > a.revenue ? b : a))
+
+/* ---------- modal-specific sub datasets (aligned to the headline values) ---------- */
+const monthlyViewsData = [
+  { month: 'Aug', value: 400 },
+  { month: 'Sep', value: 430 },
+  { month: 'Oct', value: 400 },
+  { month: 'Nov', value: 500 },
+  { month: 'Dec', value: 470 },
+  { month: 'Jan', value: 540 },
+  { month: 'Feb', value: 430 },
+  { month: 'Mar', value: 530 },
+  { month: 'Apr', value: 480 },
+  { month: 'May', value: 520 },
+  { month: 'Jun', value: 540 },
+  { month: 'Jul', value: 620 },
+]
+
+const ratingBreakdown = [
+  { stars: 5, count: 250 },
+  { stars: 4, count: 36 },
+  { stars: 3, count: 8 },
+  { stars: 2, count: 4 },
+  { stars: 1, count: 2 },
+]
+
+const monthlyRatingData = [
+  { month: 'Feb', value: 4.61 },
+  { month: 'Mar', value: 4.64 },
+  { month: 'Apr', value: 4.68 },
+  { month: 'May', value: 4.7 },
+  { month: 'Jun', value: 4.73 },
+  { month: 'Jul', value: 4.76 },
+]
+
+function growthPct(data: { value: number }[]) {
+  const half = Math.floor(data.length / 2)
+  if (half === 0) return 0
+  const first = data.slice(0, half).reduce((s, d) => s + d.value, 0)
+  const second = data.slice(half).reduce((s, d) => s + d.value, 0)
+  if (!first) return 0
+  return ((second - first) / first) * 100
+}
+
+function formatLakhs(value: number) {
+  return `₹${(value / 100000).toFixed(1)}L`
+}
+
+function formatCompactINR(value: number) {
+  if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`
+  return `₹${Math.round(value / 1000)}K`
+}
 
 const recentActivity = [
   { text: 'New booking received for Royal Palace Banquet Hall', time: '12 min ago', icon: CalendarDays, color: 'text-gold-deep', bg: 'bg-gold/10' },
@@ -142,10 +208,470 @@ function CountUpValue({ value, suffix = '', started }: { value: number; suffix?:
   return <>{display}{suffix}</>
 }
 
+/* ---------- analytics details modals ---------- */
+type ModalType = 'views' | 'bookings' | 'listings' | 'revenue' | 'rating' | 'conversion'
+
+/* 1 ── Total Views ─────────────────────────────────────────────── */
+function ViewsDetailsModal({ onClose }: { onClose: () => void }) {
+  const maxMonthly = Math.max(...monthlyViewsData.map((d) => d.value))
+  const recent = monthlyViewsData.slice(-6)
+  const maxRecent = Math.max(...recent.map((d) => d.value))
+  const growth = growthPct(monthlyViewsData)
+  return (
+    <HostModalShell
+      icon={Eye}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="View Analytics"
+      subtitle="Detailed breakdown of how customers discover your services."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Views</p>
+          <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1">
+            <TrendingUp size={12} className="text-emerald-600" />
+            <span className="font-semibold text-emerald-600">{growth >= 0 ? '+' : ''}{growth.toFixed(1)}%</span>
+            <span>vs previous 6 months</span>
+          </p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{totalViews.toLocaleString('en-IN')}</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div className="rounded-2xl border border-gold-deep/15 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Views by Month</p>
+          <div className="flex items-end gap-2 h-[76px]">
+            {monthlyViewsData.map((m) => (
+              <div key={m.month} className="flex-1 flex flex-col items-center gap-1 justify-end">
+                <span className="text-[9px] font-semibold text-royal">{(m.value / 1000).toFixed(1)}K</span>
+                <div
+                  className="w-full max-w-[30px] rounded-t-sm"
+                  style={{ height: `${(m.value / maxMonthly) * 44}px`, backgroundColor: '#C89B2D' }}
+                />
+                <span className="text-[9px] font-medium text-secondary-text">{m.month}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 p-4 flex flex-col justify-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Most Viewed Service</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+              <Eye size={18} className="text-gold-deep" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{mostViewedService.name}</p>
+              <p className="text-xs text-secondary-text mt-0.5">{mostViewedService.views.toLocaleString('en-IN')} views · {mostViewedService.category}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Recent Performance</p>
+      <div className="space-y-2">
+        {recent.map((m, i) => {
+          const prev = i > 0 ? recent[i - 1].value : monthlyViewsData[5].value
+          const pct = prev ? ((m.value - prev) / prev) * 100 : 0
+          return (
+            <div key={m.month} className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-black/5 hover:border-gold-deep/25 transition-colors">
+              <span className="text-sm font-semibold text-royal w-10 shrink-0">{m.month}</span>
+              <div className="flex-1 h-2.5 bg-gold/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gold-deep transition-all duration-500"
+                  style={{ width: `${(m.value / maxRecent) * 100}%` }}
+                />
+              </div>
+              <div className="text-right shrink-0 w-20">
+                <p className="text-sm font-semibold text-royal tabular-nums">{m.value.toLocaleString('en-IN')}</p>
+                <p className={`text-[10px] font-semibold ${m.value >= prev ? 'text-emerald-600' : 'text-red-500'}`}>
+                  {pct >= 0 ? '+' : ''}{pct.toFixed(1)}%
+                </p>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </HostModalShell>
+  )
+}
+
+/* 2 ── Total Bookings ─────────────────────────────────────────── */
+function BookingsDetailsModal({ onClose }: { onClose: () => void }) {
+  const completed = bookingStatusData.find((b) => b.label === 'Completed')?.count ?? 0
+  const upcoming = bookingStatusData.find((b) => b.label === 'Upcoming')?.count ?? 0
+  const pending = bookingStatusData.find((b) => b.label === 'Pending')?.count ?? 0
+  const cancelled = bookingStatusData.find((b) => b.label === 'Cancelled')?.count ?? 0
+  const maxMonthly = Math.max(...monthlyBookingsData.map((d) => d.value))
+  const avgMonthly = monthlyBookingsData.reduce((s, d) => s + d.value, 0) / monthlyBookingsData.length
+  const peak = monthlyBookingsData.reduce((a, b) => (b.value > a.value ? b : a))
+  const growth = growthPct(monthlyBookingsData)
+  const statusPills = [
+    { label: 'Completed', count: completed, pill: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
+    { label: 'Upcoming', count: upcoming, pill: 'bg-sky-50 text-sky-700 border-sky-200', dot: 'bg-sky-500' },
+    { label: 'Pending', count: pending, pill: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-500' },
+    { label: 'Cancelled', count: cancelled, pill: 'bg-red-50 text-red-600 border-red-200', dot: 'bg-red-500' },
+  ]
+  return (
+    <HostModalShell
+      icon={CalendarDays}
+      iconClass="bg-emerald-50 text-emerald-600"
+      title="Booking Analytics"
+      subtitle="A closer look at your booking performance and trends."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Bookings</p>
+          <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1">
+            <TrendingUp size={12} className="text-emerald-600" />
+            <span className="font-semibold text-emerald-600">{growth >= 0 ? '+' : ''}{growth.toFixed(1)}%</span>
+            <span>vs previous 6 months</span>
+          </p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{totalBookings}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {statusPills.map((s) => (
+          <div key={s.label} className="rounded-2xl border border-gold-deep/15 p-3.5">
+            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border mb-2.5 ${s.pill}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+              {s.label}
+            </span>
+            <p className="font-heading text-xl font-bold text-royal">{s.count}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Monthly Booking Breakdown</p>
+      <div className="rounded-2xl border border-gold-deep/15 p-4 mb-4">
+        <div className="flex items-end gap-2 h-[92px]">
+          {monthlyBookingsData.map((d) => (
+            <div key={d.month} className="flex-1 flex flex-col items-center gap-1 justify-end">
+              <span className="text-[9px] font-semibold text-royal">{d.value}</span>
+              <div
+                className="w-full max-w-[28px] rounded-t-sm"
+                style={{ height: `${(d.value / maxMonthly) * 60}px`, backgroundColor: '#C89B2D' }}
+              />
+              <span className="text-[9px] font-medium text-secondary-text">{d.month}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-gold-deep/15 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-2">Peak Booking Month</p>
+          <p className="font-heading text-lg font-bold text-royal">{peak.month} <span className="text-sm text-secondary-text font-medium">· {peak.value} bookings</span></p>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-2">Avg Bookings / Month</p>
+          <p className="font-heading text-lg font-bold text-royal">{avgMonthly.toFixed(1)}</p>
+        </div>
+      </div>
+    </HostModalShell>
+  )
+}
+
+/* 3 ── Active Listings ────────────────────────────────────────── */
+function ListingsDetailsModal({ onClose }: { onClose: () => void }) {
+  const categories = servicePerformance.reduce<Record<string, number>>((acc, s) => {
+    acc[s.category] = (acc[s.category] || 0) + 1
+    return acc
+  }, {})
+  return (
+    <HostModalShell
+      icon={Package}
+      iconClass="bg-sky-50 text-sky-600"
+      title="Listing Overview"
+      subtitle="Performance details for your active listings and services."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-sky-200 bg-sky-50/60 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Active Listings</p>
+          <p className="text-xs text-secondary-text mt-0.5">{servicePerformance.length} tracked services across all categories</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{activeListings}</p>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Active Services by Category</p>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {Object.entries(categories).map(([cat, count]) => (
+          <span key={cat} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gold-deep/15 bg-white text-xs font-semibold text-royal">
+            {cat}
+            <span className="text-gold-deep">{count}</span>
+          </span>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div className="rounded-2xl border border-gold-deep/15 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Most Viewed Listing</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+              <Eye size={18} className="text-gold-deep" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{mostViewedService.name}</p>
+              <p className="text-xs text-secondary-text mt-0.5">{mostViewedService.views.toLocaleString('en-IN')} views</p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Best Performing Listing</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
+              <TrendingUp size={18} className="text-emerald-600" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{bestPerformingService.name}</p>
+              <p className="text-xs text-secondary-text mt-0.5">{bestPerformingService.bookings} bookings · {formatLakhs(bestPerformingService.revenue)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Listing Performance Summary</p>
+      <div className="space-y-2">
+        {servicePerformance.map((svc) => (
+          <div key={svc.name} className="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border border-black/5 hover:border-gold-deep/25 transition-colors">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{svc.name}</p>
+              <p className="text-[11px] text-secondary-text mt-0.5">{svc.category} · {svc.views.toLocaleString('en-IN')} views · ★ {svc.rating}</p>
+            </div>
+            <div className="text-right shrink-0">
+              <p className="text-sm font-bold text-royal">{svc.bookings} bookings</p>
+              <p className="text-[11px] text-secondary-text mt-0.5">{formatLakhs(svc.revenue)}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </HostModalShell>
+  )
+}
+
+/* 4 ── Total Revenue ──────────────────────────────────────────── */
+function RevenueDetailsModal({ onClose }: { onClose: () => void }) {
+  const maxMonthly = Math.max(...monthlyRevenueData.map((d) => d.value))
+  const growth = growthPct(monthlyRevenueData)
+  const completed = bookingStatusData.find((b) => b.label === 'Completed')?.count ?? 0
+  const pending = bookingStatusData.find((b) => b.label === 'Pending')?.count ?? 0
+  const completedEarnings = Math.round(totalRevenue * (completed / statusTotalBookings))
+  const pendingPayout = Math.round(totalRevenue * (pending / statusTotalBookings))
+  return (
+    <HostModalShell
+      icon={IndianRupee}
+      iconClass="bg-amber-50 text-amber-600"
+      title="Revenue Details"
+      subtitle="Your earnings, payouts, and revenue growth at a glance."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Revenue</p>
+          <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1">
+            <TrendingUp size={12} className="text-emerald-600" />
+            <span className="font-semibold text-emerald-600">{growth >= 0 ? '+' : ''}{growth.toFixed(1)}%</span>
+            <span>vs previous 6 months</span>
+          </p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{formatLakhs(totalRevenue)}</p>
+      </div>
+
+      <div className="rounded-2xl border border-gold-deep/15 p-4 mb-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Monthly Revenue</p>
+        <div className="flex items-end gap-1.5 sm:gap-2 h-[96px]">
+          {monthlyRevenueData.map((m) => (
+            <div key={m.month} className="flex-1 flex flex-col items-center gap-1 justify-end">
+              <span className="text-[9px] font-semibold text-royal whitespace-nowrap">{formatCompactINR(m.value)}</span>
+              <div
+                className="w-full max-w-[32px] rounded-t-sm"
+                style={{ height: `${(m.value / maxMonthly) * 64}px`, backgroundColor: '#C89B2D' }}
+              />
+              <span className="text-[9px] font-medium text-secondary-text">{m.month}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-gold-deep/15 p-4 mb-4">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Best Performing Service by Revenue</p>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center shrink-0">
+              <IndianRupee size={18} className="text-gold-deep" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{bestRevenueService.name}</p>
+              <p className="text-xs text-secondary-text mt-0.5">{bestRevenueService.bookings} bookings</p>
+            </div>
+          </div>
+          <p className="font-heading text-xl font-bold text-royal shrink-0">{formatLakhs(bestRevenueService.revenue)}</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-1">Completed Earnings</p>
+          <p className="font-heading text-xl font-bold text-royal">{formatLakhs(completedEarnings)}</p>
+          <p className="text-[11px] text-secondary-text mt-1">{Math.round((completed / statusTotalBookings) * 100)}% of revenue from completed bookings</p>
+        </div>
+        <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-1">Pending Payout</p>
+          <p className="font-heading text-xl font-bold text-royal">{formatLakhs(pendingPayout)}</p>
+          <p className="text-[11px] text-secondary-text mt-1">{Math.round((pending / statusTotalBookings) * 100)}% of revenue awaiting settlement</p>
+        </div>
+      </div>
+    </HostModalShell>
+  )
+}
+
+/* 5 ── Average Rating ─────────────────────────────────────────── */
+function RatingDetailsModal({ onClose }: { onClose: () => void }) {
+  const avg = averageRating / 100
+  const totalReviews = ratingBreakdown.reduce((s, r) => s + r.count, 0)
+  const maxCount = Math.max(...ratingBreakdown.map((r) => r.count))
+  const ratings = [...ratingBreakdown].sort((a, b) => b.stars - a.stars)
+  return (
+    <HostModalShell
+      icon={Star}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="Rating Details"
+      subtitle="A closer look at your average customer rating."
+      onClose={onClose}
+      tall
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Average Rating</p>
+          <p className="text-xs text-secondary-text mt-0.5">Based on {totalReviews} customer reviews</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Star size={22} className="fill-gold text-gold" />
+          <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">
+            {avg.toFixed(2)}
+            <span className="text-sm font-medium text-secondary-text"> / 5</span>
+          </p>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Rating Distribution</p>
+      <div className="rounded-2xl border border-gold-deep/15 p-4 mb-4 space-y-2.5">
+        {ratings.map((r) => (
+          <div key={r.stars} className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-secondary-text w-14 shrink-0">{r.stars} ★</span>
+            <div className="flex-1 h-2.5 bg-gold/10 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold-deep transition-all duration-500"
+                style={{ width: `${(r.count / maxCount) * 100}%` }}
+              />
+            </div>
+            <span className="text-xs font-semibold text-royal w-16 text-right tabular-nums shrink-0">{r.count}</span>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Rating Trend</p>
+      <div className="rounded-2xl border border-gold-deep/15 p-4 space-y-3">
+        {monthlyRatingData.map((m, i) => {
+          const prev = i > 0 ? monthlyRatingData[i - 1].value : null
+          const delta = prev !== null ? m.value - prev : 0
+          return (
+            <div key={m.month} className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-secondary-text w-8 shrink-0">{m.month}</span>
+              <div className="flex-1 h-2 bg-gold/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gold-deep transition-all duration-500"
+                  style={{ width: `${(m.value / 5) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-royal w-12 text-right tabular-nums shrink-0">{m.value.toFixed(2)}</span>
+              {prev !== null && (
+                <span className={`text-[10px] font-semibold w-10 text-right shrink-0 ${delta >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                  {delta >= 0 ? '+' : ''}{delta.toFixed(2)}
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </HostModalShell>
+  )
+}
+
+/* 6 ── Conversion Rate ────────────────────────────────────────── */
+function ConversionDetailsModal({ onClose }: { onClose: () => void }) {
+  const rate = conversionRate / 100
+  const actual = (totalBookings / totalViews) * 100
+  const monthlyConv = monthlyBookingsData.map((b, i) => ({
+    month: b.month,
+    value: (b.value / monthlyViewsData[i].value) * 100,
+  }))
+  const maxConv = Math.max(...monthlyConv.map((c) => c.value))
+  const half = Math.floor(monthlyConv.length / 2)
+  const prevAvg = monthlyConv.slice(0, half).reduce((s, c) => s + c.value, 0) / half
+  const currAvg = monthlyConv.slice(half).reduce((s, c) => s + c.value, 0) / half
+  const diff = currAvg - prevAvg
+  return (
+    <HostModalShell
+      icon={TrendingUp}
+      iconClass="bg-emerald-50 text-emerald-600"
+      title="Conversion Analytics"
+      subtitle="How well your service views convert into bookings."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Current Conversion Rate</p>
+          <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1">
+            <TrendingUp size={12} className="text-emerald-600" />
+            <span className="font-semibold text-emerald-600">{diff >= 0 ? '+' : ''}{diff.toFixed(1)}pp</span>
+            <span>vs previous 6 months</span>
+          </p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{rate.toFixed(2)}%</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="rounded-2xl border border-gold-deep/15 p-3.5 text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">Total Views</p>
+          <p className="font-heading text-lg font-bold text-royal">{totalViews.toLocaleString('en-IN')}</p>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 p-3.5 text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">Total Bookings</p>
+          <p className="font-heading text-lg font-bold text-royal">{totalBookings}</p>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 p-3.5 text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary-text mb-2">Views → Booking</p>
+          <p className="font-heading text-lg font-bold text-emerald-600">{actual.toFixed(2)}%</p>
+        </div>
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Monthly Conversion Trend</p>
+      <div className="rounded-2xl border border-gold-deep/15 p-4">
+        <div className="flex items-end gap-2 h-[96px]">
+          {monthlyConv.map((c) => (
+            <div key={c.month} className="flex-1 flex flex-col items-center gap-1 justify-end">
+              <span className="text-[9px] font-semibold text-royal">{c.value.toFixed(1)}%</span>
+              <div
+                className="w-full max-w-[28px] rounded-t-sm"
+                style={{ height: `${(c.value / maxConv) * 62}px`, backgroundColor: '#10B981' }}
+              />
+              <span className="text-[9px] font-medium text-secondary-text">{c.month}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </HostModalShell>
+  )
+}
+
 export default function HostAnalyticsPage() {
   const [dateRange, setDateRange] = useState<string>('Last 30 Days')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [animated, setAnimated] = useState(false)
+  const [activeModal, setActiveModal] = useState<ModalType | null>(null)
 
   useEffect(() => { setAnimated(true) }, [])
 
@@ -200,12 +726,12 @@ export default function HostAnalyticsPage() {
   const circ = 2 * Math.PI * radius
 
   const overviewStats = [
-    { label: 'Total Views', value: 5860, icon: Eye, change: '+14%', bg: 'bg-gold/10' },
-    { label: 'Total Bookings', value: 147, icon: CalendarDays, change: '+9%', bg: 'bg-emerald-50' },
-    { label: 'Active Listings', value: 12, icon: Package, change: '+2', bg: 'bg-sky-50' },
-    { label: 'Total Revenue', value: 4280000, icon: IndianRupee, change: '+18%', bg: 'bg-amber-50', isCurrency: true },
-    { label: 'Average Rating', value: 476, icon: Star, change: '+0.12', bg: 'bg-gold/10', isRating: true },
-    { label: 'Conversion Rate', value: 285, icon: TrendingUp, change: '+0.4%', bg: 'bg-emerald-50', isPercent: true },
+    { label: 'Total Views', value: totalViews, icon: Eye, change: '+14%', bg: 'bg-gold/10', modal: 'views' as const },
+    { label: 'Total Bookings', value: totalBookings, icon: CalendarDays, change: '+9%', bg: 'bg-emerald-50', modal: 'bookings' as const },
+    { label: 'Active Listings', value: activeListings, icon: Package, change: '+2', bg: 'bg-sky-50', modal: 'listings' as const },
+    { label: 'Total Revenue', value: totalRevenue, icon: IndianRupee, change: '+18%', bg: 'bg-amber-50', isCurrency: true, modal: 'revenue' as const },
+    { label: 'Average Rating', value: averageRating, icon: Star, change: '+0.12', bg: 'bg-gold/10', isRating: true, modal: 'rating' as const },
+    { label: 'Conversion Rate', value: conversionRate, icon: TrendingUp, change: '+0.4%', bg: 'bg-emerald-50', isPercent: true, modal: 'conversion' as const },
   ]
 
   const customerInsights = [
@@ -340,7 +866,17 @@ export default function HostAnalyticsPage() {
               return (
                 <div
                   key={stat.label}
-                  className="card-animate bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 hover:shadow-[0_8px_28px_rgba(184,134,11,0.12)] hover:-translate-y-0.5 transition-all duration-400"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setActiveModal(stat.modal)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setActiveModal(stat.modal)
+                    }
+                  }}
+                  aria-label={`View ${stat.label} details`}
+                  className="card-animate group bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 hover:shadow-[0_8px_28px_rgba(184,134,11,0.12)] hover:-translate-y-0.5 hover:border-gold-deep/30 cursor-pointer transition-all duration-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div className="flex items-center gap-2.5 mb-3">
@@ -750,6 +1286,14 @@ export default function HostAnalyticsPage() {
           </div>
         </section>
       </AnimatedSection>
+
+      {/* Analytics Details Modals */}
+      {activeModal === 'views' && <ViewsDetailsModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'bookings' && <BookingsDetailsModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'listings' && <ListingsDetailsModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'revenue' && <RevenueDetailsModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'rating' && <RatingDetailsModal onClose={() => setActiveModal(null)} />}
+      {activeModal === 'conversion' && <ConversionDetailsModal onClose={() => setActiveModal(null)} />}
     </div>
   )
 }
