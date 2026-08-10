@@ -7,6 +7,7 @@ import {
   Ban, FileText,
 } from 'lucide-react'
 import BookingDatePicker from '../../components/BookingDatePicker'
+import HostModalShell from '../../components/HostModalShell'
 
 type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled'
 type PaymentStatus = 'paid' | 'pending' | 'refunded'
@@ -277,6 +278,322 @@ function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
+function formatINR(value: number) {
+  return `₹${value.toLocaleString('en-IN')}`
+}
+
+/* ---------- stat card details modals ---------- */
+type StatModal = 'total' | 'today' | 'upcoming' | 'completed' | 'cancelled'
+
+function BookingRow({ b, showPayment = false }: { b: Booking; showPayment?: boolean }) {
+  return (
+    <div className="rounded-xl border border-gold-deep/10 bg-ivory/40 p-3.5">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <p className="text-sm font-semibold text-royal truncate">{b.customerName}</p>
+        <div className="flex items-center gap-1.5 shrink-0">
+          {showPayment && (
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${paymentStatusStyles[b.paymentStatus]}`}>
+              {b.paymentStatus.charAt(0).toUpperCase() + b.paymentStatus.slice(1)}
+            </span>
+          )}
+          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${bookingStatusStyles[b.status]}`}>
+            {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary-text">
+        <span className="font-semibold text-gold-deep">{b.id}</span>
+        <span className="flex items-center gap-1 min-w-0">
+          <FileText size={11} className="shrink-0" />
+          <span className="truncate max-w-[220px]">{b.serviceName}</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <CalendarDays size={11} className="shrink-0" />
+          {formatDate(b.eventDate)} · {b.eventTime}
+        </span>
+        <span className="flex items-center gap-1 font-semibold text-royal">
+          <IndianRupee size={11} />
+          {formatINR(b.amount)}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function TotalBookingsModal({ onClose, total, confirmed, pending, completed, cancelled, revenue, recent }: {
+  onClose: () => void
+  total: number
+  confirmed: number
+  pending: number
+  completed: number
+  cancelled: number
+  revenue: number
+  recent: Booking[]
+}) {
+  const breakdown = [
+    { label: 'Confirmed', value: confirmed, status: 'confirmed' as BookingStatus },
+    { label: 'Pending', value: pending, status: 'pending' as BookingStatus },
+    { label: 'Completed', value: completed, status: 'completed' as BookingStatus },
+    { label: 'Cancelled', value: cancelled, status: 'cancelled' as BookingStatus },
+  ]
+  return (
+    <HostModalShell
+      icon={CalendarDays}
+      iconClass="bg-gold/10 text-gold-deep"
+      title="Total Booking Details"
+      subtitle="Overview of every booking across your services."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-gold-deep/15 bg-gold/5 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Total Bookings</p>
+          <p className="text-xs text-secondary-text mt-0.5 flex items-center gap-1">
+            <IndianRupee size={12} className="text-gold-deep" />
+            <span className="font-semibold text-royal">{formatINR(revenue)}</span>
+            <span>booking value</span>
+          </p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{total}</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {breakdown.map((b) => (
+          <div key={b.label} className="rounded-2xl border border-gold-deep/15 p-3.5">
+            <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border mb-2.5 ${bookingStatusStyles[b.status]}`}>
+              {b.label}
+            </span>
+            <p className="font-heading text-xl font-bold text-royal">{b.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Recent Bookings</p>
+      <div className="max-h-[280px] overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+        {recent.map((b) => <BookingRow key={b.id} b={b} />)}
+      </div>
+    </HostModalShell>
+  )
+}
+
+function TodayBookingsModal({ onClose, items }: { onClose: () => void; items: Booking[] }) {
+  return (
+    <HostModalShell
+      icon={CalendarCheck}
+      iconClass="bg-emerald-50 text-emerald-600"
+      title="Today's Booking Details"
+      subtitle="Everything scheduled for today, at a glance."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/60 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Today's Bookings</p>
+          <p className="text-xs text-secondary-text mt-0.5">Events scheduled for today</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{items.length}</p>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="rounded-2xl border border-gold-deep/15 bg-ivory/40 p-8 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-3">
+            <CalendarCheck size={20} className="text-gold-deep" />
+          </div>
+          <p className="text-sm font-semibold text-royal">No bookings today</p>
+          <p className="text-xs text-secondary-text mt-1">You're all clear. New bookings will appear here.</p>
+        </div>
+      ) : (
+        <div className="max-h-[380px] overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+          {items.map((b) => <BookingRow key={b.id} b={b} showPayment />)}
+        </div>
+      )}
+    </HostModalShell>
+  )
+}
+
+function UpcomingBookingsModal({ onClose, items, next }: { onClose: () => void; items: Booking[]; next: Booking | null }) {
+  return (
+    <HostModalShell
+      icon={Clock}
+      iconClass="bg-sky-50 text-sky-600"
+      title="Upcoming Booking Details"
+      subtitle="All bookings that are pending confirmation or confirmed ahead."
+      onClose={onClose}
+      tall
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-sky-200 bg-sky-50/50 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Upcoming Bookings</p>
+          <p className="text-xs text-secondary-text mt-0.5">Pending & confirmed events</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{items.length}</p>
+      </div>
+
+      {next && (
+        <div className="rounded-2xl border border-gold-deep/15 bg-gold/5 p-4 mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Next Upcoming Event</p>
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{next.customerName}</p>
+              <p className="text-xs text-secondary-text mt-0.5 truncate">{next.serviceName}</p>
+            </div>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${bookingStatusStyles[next.status]}`}>
+              {next.status.charAt(0).toUpperCase() + next.status.slice(1)}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Event Date</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{formatDate(next.eventDate)}</p>
+            </div>
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Event Time</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{next.eventTime}</p>
+            </div>
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Amount</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{formatINR(next.amount)}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">All Upcoming Bookings</p>
+      <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+        {items.map((b) => <BookingRow key={b.id} b={b} />)}
+      </div>
+    </HostModalShell>
+  )
+}
+
+function CompletedBookingsModal({ onClose, count, revenue, latest, items }: {
+  onClose: () => void
+  count: number
+  revenue: number
+  latest: Booking | null
+  items: Booking[]
+}) {
+  return (
+    <HostModalShell
+      icon={CheckCircle2}
+      iconClass="bg-emerald-50 text-emerald-600"
+      title="Completed Booking Details"
+      subtitle="Bookings that have been fulfilled and their earnings."
+      onClose={onClose}
+    >
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-1">Completed</p>
+          <p className="font-heading text-xl font-bold text-royal">{count}</p>
+        </div>
+        <div className="rounded-2xl border border-gold-deep/15 bg-gold/5 p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-1">Completed Revenue</p>
+          <p className="font-heading text-xl font-bold text-royal">{formatINR(revenue)}</p>
+        </div>
+      </div>
+
+      {latest && (
+        <div className="rounded-2xl border border-gold-deep/15 bg-ivory/40 p-4 mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Latest Completed Booking</p>
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-royal truncate">{latest.customerName}</p>
+              <p className="text-xs text-secondary-text mt-0.5 truncate">{latest.serviceName}</p>
+            </div>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${paymentStatusStyles[latest.paymentStatus]}`}>
+              {latest.paymentStatus.charAt(0).toUpperCase() + latest.paymentStatus.slice(1)}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Event Date</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{formatDate(latest.eventDate)}</p>
+            </div>
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Event Time</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{latest.eventTime}</p>
+            </div>
+            <div className="rounded-lg bg-white/70 border border-gold-deep/10 px-3 py-2">
+              <p className="text-[10px] text-secondary-text uppercase tracking-wider">Amount</p>
+              <p className="text-sm font-semibold text-royal mt-0.5">{formatINR(latest.amount)}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text mb-3">Completed Bookings</p>
+      <div className="max-h-[240px] overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+        {items.map((b) => <BookingRow key={b.id} b={b} showPayment />)}
+      </div>
+    </HostModalShell>
+  )
+}
+
+function CancelledBookingsModal({ onClose, items }: { onClose: () => void; items: Booking[] }) {
+  return (
+    <HostModalShell
+      icon={XCircle}
+      iconClass="bg-red-50 text-red-500"
+      title="Cancelled Booking Details"
+      subtitle="Bookings that were cancelled and their refund status."
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50/50 px-4 py-3.5 mb-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary-text">Cancelled Bookings</p>
+          <p className="text-xs text-secondary-text mt-0.5">Total cancellations</p>
+        </div>
+        <p className="font-heading text-2xl sm:text-3xl font-bold text-royal">{items.length}</p>
+      </div>
+
+      {items.length === 0 ? (
+        <div className="rounded-2xl border border-gold-deep/15 bg-ivory/40 p-8 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold/10 mb-3">
+            <CheckCircle2 size={20} className="text-emerald-600" />
+          </div>
+          <p className="text-sm font-semibold text-royal">No cancelled bookings</p>
+          <p className="text-xs text-secondary-text mt-1">Cancelled bookings will appear here.</p>
+        </div>
+      ) : (
+        <div className="max-h-[400px] overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+          {items.map((b) => {
+            const cancelEntry = b.timeline.find((t) => t.action.toLowerCase().includes('cancel'))
+            return (
+              <div key={b.id} className="rounded-xl border border-gold-deep/10 bg-ivory/40 p-3.5">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <p className="text-sm font-semibold text-royal truncate">{b.customerName}</p>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border shrink-0 ${paymentStatusStyles[b.paymentStatus]}`}>
+                    {b.paymentStatus.charAt(0).toUpperCase() + b.paymentStatus.slice(1)}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-secondary-text">
+                  <span className="font-semibold text-gold-deep">{b.id}</span>
+                  <span className="flex items-center gap-1 min-w-0">
+                    <FileText size={11} className="shrink-0" />
+                    <span className="truncate max-w-[220px]">{b.serviceName}</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <CalendarDays size={11} className="shrink-0" />
+                    {formatDate(b.eventDate)}
+                  </span>
+                  <span className="flex items-center gap-1 font-semibold text-royal">
+                    <IndianRupee size={11} />
+                    {formatINR(b.amount)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-2.5 pt-2.5 border-t border-gold-deep/10 text-xs text-red-600">
+                  <AlertTriangle size={12} className="shrink-0" />
+                  {cancelEntry
+                    ? `Cancelled by ${cancelEntry.by} · ${formatDate(cancelEntry.date)}`
+                    : 'Cancelled'}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </HostModalShell>
+  )
+}
+
 export default function HostBookingsPage() {
   const [loading, setLoading] = useState(true)
   const [bookings, setBookings] = useState<Booking[]>([])
@@ -285,6 +602,7 @@ export default function HostBookingsPage() {
   const [dateFilter, setDateFilter] = useState('')
   const [page, setPage] = useState(1)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [statModal, setStatModal] = useState<StatModal | null>(null)
   const [confirmModal, setConfirmModal] = useState<{ type: 'confirm' | 'complete' | 'cancel'; booking: Booking } | null>(null)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
   const [menuOpen, setMenuOpen] = useState<string | null>(null)
@@ -326,6 +644,34 @@ export default function HostBookingsPage() {
       upcoming: bookings.filter((b) => b.status === 'pending' || b.status === 'confirmed').length,
       completed: bookings.filter((b) => b.status === 'completed').length,
       cancelled: bookings.filter((b) => b.status === 'cancelled').length,
+    }
+  }, [bookings])
+
+  const detailStats = useMemo(() => {
+    const todayStr = new Date().toISOString().split('T')[0]
+    const confirmed = bookings.filter((b) => b.status === 'confirmed')
+    const pending = bookings.filter((b) => b.status === 'pending')
+    const completed = bookings.filter((b) => b.status === 'completed')
+    const cancelled = bookings.filter((b) => b.status === 'cancelled')
+    const upcoming = [...confirmed, ...pending].sort((a, b) => a.eventDate.localeCompare(b.eventDate))
+    return {
+      confirmed,
+      pending,
+      completed,
+      cancelled,
+      upcoming,
+      todayBookings: bookings
+        .filter((b) => b.eventDate === todayStr)
+        .sort((a, b) => b.bookingDate.localeCompare(a.bookingDate)),
+      totalRevenue: bookings
+        .filter((b) => b.status !== 'cancelled')
+        .reduce((s, b) => s + b.amount, 0),
+      completedRevenue: completed.reduce((s, b) => s + b.amount, 0),
+      recentBookings: [...bookings]
+        .sort((a, b) => b.bookingDate.localeCompare(a.bookingDate))
+        .slice(0, 5),
+      nextUpcoming: upcoming[0] ?? null,
+      latestCompleted: [...completed].sort((a, b) => b.eventDate.localeCompare(a.eventDate))[0] ?? null,
     }
   }, [bookings])
 
@@ -405,11 +751,11 @@ export default function HostBookingsPage() {
   }
 
   const statCards = [
-    { label: 'Total Bookings', value: stats.total, icon: CalendarDays, color: 'text-gold-deep', bg: 'bg-gold/10' },
-    { label: "Today's Bookings", value: stats.today, icon: CalendarCheck, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Upcoming', value: stats.upcoming, icon: Clock, color: 'text-sky-600', bg: 'bg-sky-50' },
-    { label: 'Completed', value: stats.completed, icon: CheckCircle2, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { label: 'Cancelled', value: stats.cancelled, icon: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
+    { label: 'Total Bookings', value: stats.total, icon: CalendarDays, color: 'text-gold-deep', bg: 'bg-gold/10', modal: 'total' as const },
+    { label: "Today's Bookings", value: stats.today, icon: CalendarCheck, color: 'text-emerald-600', bg: 'bg-emerald-50', modal: 'today' as const },
+    { label: 'Upcoming', value: stats.upcoming, icon: Clock, color: 'text-sky-600', bg: 'bg-sky-50', modal: 'upcoming' as const },
+    { label: 'Completed', value: stats.completed, icon: CheckCircle2, color: 'text-amber-600', bg: 'bg-amber-50', modal: 'completed' as const },
+    { label: 'Cancelled', value: stats.cancelled, icon: XCircle, color: 'text-red-500', bg: 'bg-red-50', modal: 'cancelled' as const },
   ]
 
   return (
@@ -440,7 +786,17 @@ export default function HostBookingsPage() {
             return (
               <div
                 key={stat.label}
-                className="bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 sm:p-6"
+                role="button"
+                tabIndex={0}
+                onClick={() => setStatModal(stat.modal)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setStatModal(stat.modal)
+                  }
+                }}
+                aria-label={`View ${stat.label} details`}
+                className="group bg-white rounded-2xl border border-gold-deep/10 shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-5 sm:p-6 cursor-pointer hover:shadow-[0_8px_28px_rgba(184,134,11,0.12)] hover:-translate-y-0.5 hover:border-gold-deep/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bg}`}>
@@ -995,6 +1351,42 @@ export default function HostBookingsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Stat Card Detail Modals */}
+      {statModal === 'total' && (
+        <TotalBookingsModal
+          onClose={() => setStatModal(null)}
+          total={stats.total}
+          confirmed={detailStats.confirmed.length}
+          pending={detailStats.pending.length}
+          completed={detailStats.completed.length}
+          cancelled={detailStats.cancelled.length}
+          revenue={detailStats.totalRevenue}
+          recent={detailStats.recentBookings}
+        />
+      )}
+      {statModal === 'today' && (
+        <TodayBookingsModal onClose={() => setStatModal(null)} items={detailStats.todayBookings} />
+      )}
+      {statModal === 'upcoming' && (
+        <UpcomingBookingsModal
+          onClose={() => setStatModal(null)}
+          items={detailStats.upcoming}
+          next={detailStats.nextUpcoming}
+        />
+      )}
+      {statModal === 'completed' && (
+        <CompletedBookingsModal
+          onClose={() => setStatModal(null)}
+          count={detailStats.completed.length}
+          revenue={detailStats.completedRevenue}
+          latest={detailStats.latestCompleted}
+          items={detailStats.completed}
+        />
+      )}
+      {statModal === 'cancelled' && (
+        <CancelledBookingsModal onClose={() => setStatModal(null)} items={detailStats.cancelled} />
       )}
 
       {/* Confirmation Modal */}
