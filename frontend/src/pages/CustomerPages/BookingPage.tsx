@@ -189,7 +189,7 @@ export default function BookingPage() {
           <div className="rounded-2xl overflow-hidden bg-white border border-gold-deep/10 shadow-[0_4px_24px_rgba(184,134,11,0.06)] p-3">
             <div className="flex flex-col lg:flex-row gap-3">
               <div
-                className="relative rounded-[18px] overflow-hidden cursor-pointer group lg:w-[65%] h-[300px] sm:h-[400px] lg:h-[500px]"
+                className="relative rounded-[18px] overflow-hidden cursor-pointer group lg:w-[60%] h-[300px] sm:h-[340px] lg:h-auto lg:min-h-[380px] lg:max-h-[420px]"
                 onClick={() => setLightboxIndex(0)}
               >
                 <img
@@ -199,7 +199,7 @@ export default function BookingPage() {
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
               </div>
-              <div className="lg:w-[35%] grid grid-cols-2 gap-3">
+              <div className="lg:w-[40%] grid grid-cols-2 lg:grid-rows-2 grid-rows-2 gap-3 lg:h-auto">
                 {gallery.slice(1, 5).map((img, i) => {
                   const imageIndex = i + 1
                   const isLastSmallImage = i === 3
@@ -207,7 +207,7 @@ export default function BookingPage() {
                   return (
                     <div
                       key={imageIndex}
-                      className="relative rounded-[18px] overflow-hidden cursor-pointer group aspect-square"
+                      className="relative rounded-[18px] overflow-hidden cursor-pointer group aspect-square lg:aspect-auto lg:h-full"
                       onClick={() => setLightboxIndex(imageIndex)}
                     >
                       <img
