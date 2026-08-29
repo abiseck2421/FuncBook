@@ -379,14 +379,14 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                   <ArrowLeft size={18} />
                 </button>
 
-                <div className="mt-10 text-center">
+                <div className="mt-3 text-center">
                   <h3 className="font-heading text-3xl font-bold text-royal">Tell us about you</h3>
                   <p className="mt-2 text-sm text-secondary-text">
                     A few details to set up your FuncBook account.
                   </p>
                 </div>
 
-                <form className="mt-8 space-y-4" onSubmit={handleDetailsSubmit}>
+                <form className="mt-5 space-y-3" onSubmit={handleDetailsSubmit}>
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60">
                       Your Name
