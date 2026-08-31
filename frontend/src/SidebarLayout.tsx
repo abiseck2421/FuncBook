@@ -17,6 +17,7 @@ export default function SidebarLayout() {
     localStorage.setItem('funcbook_auth_user', JSON.stringify({
       email: info.email ?? '',
       name: info.name,
+      lastName: info.lastName,
       dob: info.dob,
     }))
     navigate(authRedirectPath || '/customer/dashboard')
