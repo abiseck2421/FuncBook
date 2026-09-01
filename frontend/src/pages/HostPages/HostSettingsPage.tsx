@@ -250,8 +250,8 @@ export default function HostSettingsPage() {
   function handleDeactivate() {
     setShowDeactivateConfirm(false)
     setShowDeleteConfirm(false)
+    navigate('/become-host')
     logout()
-    navigate('/')
   }
 
   return (

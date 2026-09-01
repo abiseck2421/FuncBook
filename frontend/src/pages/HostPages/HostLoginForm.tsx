@@ -5,8 +5,6 @@ import {
 } from 'lucide-react'
 import { useHostAuth } from '../../contexts/hostAuth'
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
 export default function HostLoginForm() {
   const { login } = useHostAuth()
   const navigate = useNavigate()
@@ -21,27 +19,9 @@ export default function HostLoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = (): boolean => {
-    let valid = true
-
-    const trimmedEmail = email.trim()
-    if (!trimmedEmail) {
-      setEmailError('Email address is required.')
-      valid = false
-    } else if (!EMAIL_REGEX.test(trimmedEmail)) {
-      setEmailError('Please enter a valid email address.')
-      valid = false
-    } else {
-      setEmailError(null)
-    }
-
-    if (!password) {
-      setPasswordError('Password is required.')
-      valid = false
-    } else {
-      setPasswordError(null)
-    }
-
-    return valid
+    setEmailError(null)
+    setPasswordError(null)
+    return true
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

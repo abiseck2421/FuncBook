@@ -38,8 +38,8 @@ export default function HostLayout() {
   const navigate = useNavigate()
 
   const handleLogout = () => {
+    navigate('/become-host')
     logout()
-    navigate('/')
   }
 
   return (
