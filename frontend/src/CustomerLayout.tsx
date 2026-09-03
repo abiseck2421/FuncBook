@@ -70,7 +70,7 @@ export default function CustomerLayout() {
           userEmail={userEmail}
           userName={userName}
           onLogout={handleLogout}
-          logoHref="/customer/dashboard"
+          logoHref="/"
           dropdownItems={customerDropdownItems}
         />
 
