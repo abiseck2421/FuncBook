@@ -130,13 +130,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-charcoal/55 px-4 py-6 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-charcoal/55 lg:px-4 lg:py-6 backdrop-blur-[2px]"
       style={backdropStyle}
       onClick={onClose}
     >
       <div
         ref={cardRef}
-        className="relative w-full max-w-[min(92vw,980px)] max-lg:max-h-[92vh] max-lg:overflow-y-auto overflow-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
+        className="relative h-full w-full overflow-hidden bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)] lg:h-auto lg:max-w-[min(92vw,980px)] lg:overflow-hidden lg:rounded-[32px]"
         style={cardStyle}
         onClick={(e) => e.stopPropagation()}
       >
@@ -149,7 +149,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           <X size={18} />
         </button>
 
-        <div className="grid lg:h-[560px] lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="grid h-full lg:h-[560px] lg:grid-cols-[0.95fr_1.05fr]">
           <div className="relative hidden flex-col items-center justify-between overflow-hidden bg-[linear-gradient(160deg,rgba(214,169,97,0.16),rgba(248,246,242,0.6))] px-7 pb-8 pt-6 text-center sm:px-10 lg:flex lg:px-12 lg:pb-9 lg:pt-7">
             <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-gold/10 blur-[80px]" />
             <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-gold/10 blur-[90px]" />
@@ -188,7 +188,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
             </div>
           </div>
 
-          <div className="relative flex min-h-0 flex-col py-7 pl-7 pb-14 pt-20 sm:py-10 sm:pl-10 lg:h-[560px] lg:py-12 lg:pl-12 lg:pb-16 lg:pt-24">
+          <div className="relative flex min-h-0 flex-col overflow-y-auto py-6 pl-7 pb-12 pt-12 sm:py-10 sm:pl-10 lg:h-[560px] lg:overflow-visible lg:py-12 lg:pl-12 lg:pb-16 lg:pt-24">
             <button
               type="button"
               onClick={() => { setStep('input'); setOtp(['', '', '', '', '', '']) }}
@@ -210,7 +210,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
               Func<span className="text-gold">Book</span>
             </div>
 
-            <div className={`auth-scroll min-h-0 flex-1 pr-7 sm:pr-10 lg:pr-12 ${step === 'details' ? 'overflow-y-auto' : 'flex flex-col justify-center'}`}>
+            <div className={`auth-scroll min-h-0 flex-1 pr-7 sm:pr-10 lg:pr-12 ${step === 'details' ? 'overflow-y-auto' : 'flex flex-col justify-center max-lg:justify-start max-lg:mt-24'}`}>
               {step === 'input' ? (
                 <>
                   <div className="text-center">
