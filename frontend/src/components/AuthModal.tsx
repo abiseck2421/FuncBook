@@ -136,7 +136,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
     >
       <div
         ref={cardRef}
-        className="relative w-full max-w-[min(92vw,980px)] overflow-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
+        className="relative w-full max-w-[min(92vw,980px)] max-h-[92vh] overflow-y-auto overflow-x-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
         style={cardStyle}
         onClick={(e) => e.stopPropagation()}
       >
@@ -150,7 +150,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
         </button>
 
         <div className="grid lg:h-[560px] lg:grid-cols-[0.95fr_1.05fr]">
-          <div className="relative flex flex-col items-center justify-between overflow-hidden bg-[linear-gradient(160deg,rgba(214,169,97,0.16),rgba(248,246,242,0.6))] px-7 pb-8 pt-6 text-center sm:px-10 lg:px-12 lg:pb-9 lg:pt-7">
+          <div className="relative hidden flex-col items-center justify-between overflow-hidden bg-[linear-gradient(160deg,rgba(214,169,97,0.16),rgba(248,246,242,0.6))] px-7 pb-8 pt-6 text-center sm:px-10 lg:flex lg:px-12 lg:pb-9 lg:pt-7">
             <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-gold/10 blur-[80px]" />
             <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-gold/10 blur-[90px]" />
 
