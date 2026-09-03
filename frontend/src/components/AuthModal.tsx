@@ -311,7 +311,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                 </>
               ) : (
                 <>
-                  <div className="mt-6 text-center">
+                  <div className="mt-20 text-center">
                     <h3 className="font-heading text-3xl font-bold text-royal">Tell us about you</h3>
                     <p className="mt-2 text-sm text-secondary-text">
                       A few details to set up your FuncBook account.
