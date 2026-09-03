@@ -136,7 +136,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
     >
       <div
         ref={cardRef}
-        className="relative w-full max-w-[min(92vw,980px)] max-h-[92vh] overflow-y-auto overflow-x-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
+        className="relative w-full max-w-[min(92vw,980px)] max-lg:max-h-[92vh] max-lg:overflow-y-auto overflow-hidden rounded-[32px] bg-white shadow-[0_24px_70px_rgba(0,0,0,0.24)]"
         style={cardStyle}
         onClick={(e) => e.stopPropagation()}
       >
