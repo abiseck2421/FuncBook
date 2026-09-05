@@ -82,9 +82,10 @@ type NavbarProps = {
   onAuthSuccess: (info: import('./AuthModal').AuthSuccessInfo) => void
   authModalOpen?: boolean
   setAuthModalOpen?: (open: boolean) => void
+  onMenuClick?: () => void
 }
 
-export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen }: NavbarProps) {
+export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen, onMenuClick }: NavbarProps) {
   const location = useLocation()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -150,9 +151,21 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
     <header className="relative z-50 bg-ivory shadow-[0_1px_12px_rgba(0,0,0,0.06)]">
       <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6">
         <div className="flex min-h-[72px] items-center justify-between gap-4 py-4 sm:py-4">
-          <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
-            Func<span className="text-gold">Book</span>
-          </Link>
+          <div className="flex items-center gap-3 shrink-0">
+            {isAuthenticated && onMenuClick && (
+              <button
+                type="button"
+                onClick={onMenuClick}
+                className="p-2 -ml-2 rounded-xl text-charcoal hover:text-royal hover:bg-white/80 transition-colors"
+                aria-label="Open navigation menu"
+              >
+                <Menu size={22} />
+              </button>
+            )}
+            <Link to="/" className="font-heading text-[26px] font-bold tracking-tight text-royal shrink-0">
+              Func<span className="text-gold">Book</span>
+            </Link>
+          </div>
 
           <nav className="hidden lg:flex flex-1 items-center justify-center gap-8 xl:gap-10">
             {location.pathname === '/' && navItems.map((item) => {

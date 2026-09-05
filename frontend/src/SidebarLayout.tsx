@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import {
+  LayoutDashboard, Building2, CalendarCheck, Heart, Star, CreditCard,
+  Settings, HelpCircle,
+} from 'lucide-react'
 import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
 import Footer from './components/Footer'
+import type { SidebarNavItem } from './components/Sidebar'
 import type { AuthSuccessInfo } from './components/AuthModal'
 
 interface UserData {
@@ -11,7 +17,22 @@ interface UserData {
   dob: string
 }
 
+const navItems: SidebarNavItem[] = [
+  { label: 'Dashboard', icon: LayoutDashboard, path: '/customer/dashboard' },
+  { label: 'Services', icon: Building2, path: '/services' },
+  { label: 'My Bookings', icon: CalendarCheck, path: '/customer/bookings' },
+  { label: 'Wishlist', icon: Heart, path: '/customer/wishlist' },
+  { label: 'My Reviews', icon: Star, path: '/customer/reviews' },
+  { label: 'Payments', icon: CreditCard, path: '/customer/payments' },
+]
+
+const secondaryItems: SidebarNavItem[] = [
+  { label: 'Settings', icon: Settings, path: '/customer/settings' },
+  { label: 'Help & Support', icon: HelpCircle, path: '/customer/help' },
+]
+
 export default function SidebarLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authRedirectPath, setAuthRedirectPath] = useState<string | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('funcbook_auth_user'))
@@ -48,11 +69,22 @@ export default function SidebarLayout() {
   const handleLogout = () => {
     localStorage.removeItem('funcbook_auth_user')
     setIsAuthenticated(false)
+    setIsSidebarOpen(false)
     navigate('/')
   }
 
   return (
     <div className="h-screen overflow-hidden bg-ivory">
+      {isAuthenticated && (
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          onLogout={handleLogout}
+          navItems={navItems}
+          secondaryItems={secondaryItems}
+        />
+      )}
+
       <Navbar
         isAuthenticated={isAuthenticated}
         user={user}
@@ -60,6 +92,7 @@ export default function SidebarLayout() {
         onAuthSuccess={handleAuthSuccess}
         authModalOpen={authModalOpen}
         setAuthModalOpen={setAuthModalOpen}
+        onMenuClick={isAuthenticated ? () => setIsSidebarOpen(true) : undefined}
       />
 
         <main className="w-full h-[calc(100vh-72px)] overflow-y-auto pt-4 sm:pt-6">
