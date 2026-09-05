@@ -98,7 +98,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, navItems, secondary
       </div>
 
       {/* Nav items */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1 scrollbar-hide">
         {navItems.map((item) => (
           <SidebarLink key={item.label} item={item} onNavigate={handleNavigate} />
         ))}

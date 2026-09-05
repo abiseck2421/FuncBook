@@ -85,15 +85,13 @@ type NavbarProps = {
   onMenuClick?: () => void
 }
 
-export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen, onMenuClick }: NavbarProps) {
+export default function Navbar({ isAuthenticated, user, onAuthSuccess, authModalOpen: controlledAuthModalOpen, setAuthModalOpen: controlledSetAuthModalOpen, onMenuClick }: NavbarProps) {
   const location = useLocation()
   const [activeMenu, setActiveMenu] = useState<MenuKey | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [internalAuthModalOpen, setInternalAuthModalOpen] = useState(false)
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
 
   const menuRef = useRef<HTMLDivElement>(null)
-  const profileRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!activeMenu) return
@@ -128,22 +126,11 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setAuthModalOpen(false)
-        setProfileDropdownOpen(false)
       }
     }
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [setAuthModalOpen])
-
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
 
   const userInitial = user?.name?.charAt(0)?.toUpperCase() || 'U'
 
@@ -243,57 +230,13 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
               </button>
 
             {isAuthenticated ? (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center justify-center w-9 h-9 rounded-full bg-gold text-white text-sm font-semibold hover:bg-gold-deep transition-colors"
-                  aria-label="Profile"
-                >
-                  {userInitial}
-                </button>
-
-                {profileDropdownOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 overflow-hidden rounded-xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
-                    <div className="p-3 border-b border-black/5">
-                      <p className="text-sm font-semibold text-charcoal truncate">{user?.name} {user?.lastName}</p>
-                      <p className="text-xs text-secondary-text truncate">{user?.email}</p>
-                    </div>
-                    <div className="py-1">
-                      <Link
-                        to="/customer/dashboard"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory hover:text-royal transition-colors"
-                      >
-                        Dashboard
-                      </Link>
-                      <Link
-                        to="/customer/bookings"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory hover:text-royal transition-colors"
-                      >
-                        My Bookings
-                      </Link>
-                      <Link
-                        to="/customer/settings"
-                        onClick={() => setProfileDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory hover:text-royal transition-colors"
-                      >
-                        Settings
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileDropdownOpen(false)
-                          onLogout()
-                        }}
-                        className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <Link
+                to="/customer/dashboard"
+                className="grid h-10 w-10 place-items-center rounded-full bg-gold-deep text-sm font-bold text-white ring-1 ring-black/5 transition hover:ring-gold-deep"
+                aria-label="Profile"
+              >
+                {userInitial}
+              </Link>
             ) : (
               <div className="relative" ref={menuRef}>
                 <button

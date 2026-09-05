@@ -7,7 +7,6 @@ import {
 import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
 import type { SidebarNavItem } from './components/Sidebar'
-import type { NavbarDropdownItem } from './components/AfterLoginNavbar'
 
 const customerNavItems: SidebarNavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/customer/dashboard' },
@@ -21,12 +20,6 @@ const customerNavItems: SidebarNavItem[] = [
 const customerSecondaryItems: SidebarNavItem[] = [
   { label: 'Settings', icon: Settings, path: '/customer/settings' },
   { label: 'Help & Support', icon: HelpCircle, path: '/customer/help' },
-]
-
-const customerDropdownItems: NavbarDropdownItem[] = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/customer/dashboard' },
-  { label: 'Account Settings', icon: Settings, path: '/customer/settings' },
-  { label: 'Become a Host', icon: Building2, path: '/become-host' },
 ]
 
 export default function CustomerLayout() {
@@ -69,9 +62,8 @@ export default function CustomerLayout() {
           onMenuClick={() => setIsSidebarOpen(true)}
           userEmail={userEmail}
           userName={userName}
-          onLogout={handleLogout}
           logoHref="/"
-          dropdownItems={customerDropdownItems}
+          profileHref="/customer/dashboard"
         />
 
         <main className="flex-1 overflow-y-auto pt-4 sm:pt-6">
