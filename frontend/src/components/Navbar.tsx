@@ -292,7 +292,7 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
                 </button>
 
                 {mobileMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-[min(80vw,18rem)] overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
+                  <div className="absolute right-0 top-full mt-2 w-[min(80vw,14rem)] overflow-hidden rounded-2xl bg-white shadow-[0_12px_40px_rgba(0,0,0,0.12)] ring-1 ring-black/5 max-h-[80vh] overflow-y-auto">
                     <div className="divide-y divide-black/5">
                       <div className="lg:hidden">
                         {location.pathname === '/' && navItems.map((item) => {
@@ -303,7 +303,7 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
                               <button
                                 type="button"
                                 onClick={() => setActiveMenu(isOpen ? null : item.key)}
-                                className="flex w-full items-center justify-between px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                                className="flex w-full items-center justify-between px-5 py-4 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
                               >
                                 <span>{item.label}</span>
                                 <ChevronDown size={15} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
@@ -314,7 +314,7 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
                                     <a
                                       key={link.label}
                                       href="#"
-                                      className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
+                                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
                                     >
                                       <link.icon size={14} className="shrink-0 text-gold-deep/60" />
                                       {link.label}
@@ -332,16 +332,16 @@ export default function Navbar({ isAuthenticated, user, onLogout, onAuthSuccess,
                           setAuthModalOpen(true)
                           setMobileMenuOpen(false)
                         }}
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
+                        className="flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal"
                       >
                         <LogIn size={18} />
                         <span>Login / Sign up</span>
                       </button>
-                      <Link to="/become-host" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
+                      <Link to="/become-host" className="flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
                         <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">B</span>
                         <span>Become host</span>
                       </Link>
-                      <a href="#" className="flex w-full items-center gap-3 px-4 py-3 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
+                      <a href="#" className="flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-charcoal transition-colors hover:bg-ivory hover:text-royal" onClick={() => setMobileMenuOpen(false)}>
                         <span className="grid h-[18px] w-[18px] place-items-center rounded-full border border-current text-[10px] leading-none">?</span>
                         <span>Help Center</span>
                       </a>
