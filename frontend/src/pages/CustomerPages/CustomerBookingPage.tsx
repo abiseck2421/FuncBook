@@ -134,7 +134,7 @@ export default function CustomerBookingPage() {
               Log In to Continue
             </button>
             <button
-              onClick={() => navigate(`/booking/${serviceId}`)}
+              onClick={() => navigate(`/service-details/${serviceId}`)}
               className="mt-3 w-full py-3 rounded-xl border border-gold-deep/15 text-charcoal text-sm font-semibold hover:bg-ivory transition-colors"
             >
               Go Back
@@ -191,7 +191,7 @@ export default function CustomerBookingPage() {
 
   function handleBack() {
     if (currentStep === 0) {
-      navigate(`/booking/${serviceId}`)
+      navigate(`/service-details/${serviceId}`)
     } else {
       setCurrentStep((s) => Math.max(s - 1, 0))
       setErrors({})

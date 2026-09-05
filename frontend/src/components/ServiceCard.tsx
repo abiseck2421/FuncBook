@@ -29,7 +29,7 @@ export default function ServiceCard({ service }: ServiceCardProps) {
   return (
     <>
       <div
-        onClick={() => navigate(`/booking/${service.id}`)}
+        onClick={() => navigate(`/service-details/${service.id}`)}
         className="group relative w-full overflow-hidden rounded-[18px] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.12)] cursor-pointer"
       >
         <div className="relative aspect-[16/10] overflow-hidden">

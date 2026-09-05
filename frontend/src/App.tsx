@@ -9,7 +9,7 @@ import ServicesLayout from './ServicesLayout'
 import LandingPage from './pages/CustomerPages/LandingPage'
 import ServicesPage from './pages/CustomerPages/ServicesPage'
 import CategoryPage from './pages/CustomerPages/CategoryPage'
-import BookingPage from './pages/CustomerPages/BookingPage'
+import ServiceDetailsPage from './pages/CustomerPages/ServiceDetailsPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import CustomerDashboardPage from './pages/CustomerPages/CustomerDashboardPage'
 import MyBookingsPage from './pages/CustomerPages/MyBookingsPage'
@@ -38,7 +38,7 @@ function App() {
         <Routes>
         <Route element={<SidebarLayout />}>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/booking/:serviceId" element={<BookingPage />} />
+          <Route path="/service-details/:serviceId" element={<ServiceDetailsPage />} />
           <Route path="/checkout/:serviceId" element={<CustomerBookingPage />} />
           <Route path="/become-host" element={<BecomeHostPage />} />
         </Route>

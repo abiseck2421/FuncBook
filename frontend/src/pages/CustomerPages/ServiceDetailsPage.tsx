@@ -93,7 +93,7 @@ const amenityKeyIcons: Record<string, React.ComponentType<{ size?: number; class
   'Wheelchair Accessible': Users,
 }
 
-export default function BookingPage() {
+export default function ServiceDetailsPage() {
   const { serviceId } = useParams<{ serviceId: string }>()
   const navigate = useNavigate()
   const { setAuthModalOpen, setAuthRedirectPath } = useOutletContext<{
