@@ -62,7 +62,7 @@ export default function SidebarLayout() {
       dob: info.dob,
     }))
     setIsAuthenticated(true)
-    navigate(authRedirectPath || '/')
+    navigate(authRedirectPath || location.pathname)
     setAuthRedirectPath(null)
   }
 
