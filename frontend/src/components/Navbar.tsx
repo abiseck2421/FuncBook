@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ChevronDown, Globe, Menu, LogIn, X, Building2, UtensilsCrossed, Sparkles, Camera, Video, Palette, Lightbulb, LayoutTemplate, Armchair, CalendarDays, Mail, Gift, BookOpen, Target, Star, Users, Briefcase, FileText, Quote, Phone, Headphones, Handshake, UserPlus, MapPin, HelpCircle, MessageCircleQuestion, BookCheck, Ban, Shield, FileCheck, AlertTriangle } from 'lucide-react'
+import { ChevronDown, Globe, Menu, LogIn, X, Building2, UtensilsCrossed, Sparkles, Camera, Palette, Lightbulb, Armchair, CalendarDays, Music, Flower2, BookOpen, Target, Star, Users, Briefcase, FileText, Quote, Phone, Headphones, Handshake, UserPlus, MapPin, HelpCircle, MessageCircleQuestion, BookCheck, Ban, Shield, FileCheck, AlertTriangle } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import AuthModal from './AuthModal'
 
@@ -8,24 +8,22 @@ type MenuKey = 'services' | 'about' | 'contact' | 'help'
 
 const megaMenuItems: Record<
   MenuKey,
-  { title: string; links: { label: string; icon: LucideIcon }[]; contentGridClass: string }
+  { title: string; links: { label: string; icon: LucideIcon; path?: string }[]; contentGridClass: string }
 > = {
   services: {
     title: 'Services',
     contentGridClass: 'lg:grid-cols-4',
     links: [
-      { label: 'Function Halls', icon: Building2 },
-      { label: 'Catering', icon: UtensilsCrossed },
-      { label: 'Decoration', icon: Sparkles },
-      { label: 'Photography', icon: Camera },
-      { label: 'Videography', icon: Video },
-      { label: 'Makeup Artists', icon: Palette },
-      { label: 'Lighting & Sound', icon: Lightbulb },
-      { label: 'Stage Setup', icon: LayoutTemplate },
-      { label: 'Chairs & Tables', icon: Armchair },
-      { label: 'Event Planners', icon: CalendarDays },
-      { label: 'Invitation Cards', icon: Mail },
-      { label: 'Return Gifts', icon: Gift },
+      { label: 'Function Halls', icon: Building2, path: '/services/function-halls' },
+      { label: 'Catering', icon: UtensilsCrossed, path: '/services/catering' },
+      { label: 'Decoration Setups', icon: Sparkles, path: '/services/decoration' },
+      { label: 'Lighting & Sound', icon: Lightbulb, path: '/services/lighting-sound' },
+      { label: 'Makeup Artists', icon: Palette, path: '/services/makeup' },
+      { label: 'Photographers', icon: Camera, path: '/services/photographers' },
+      { label: 'Chairs & Furniture', icon: Armchair, path: '/services/chairs-furniture' },
+      { label: 'Event Planners', icon: CalendarDays, path: '/services/event-planners' },
+      { label: 'DJs', icon: Music, path: '/services/djs' },
+      { label: 'Flower Decorators', icon: Flower2, path: '/services/flower-decorators' },
     ],
   },
   about: {
@@ -205,14 +203,26 @@ export default function Navbar({ isAuthenticated, user, onAuthSuccess, authModal
 
                         <div className={`grid p-0 sm:grid-cols-2 lg:col-span-3 ${menu.contentGridClass}`}>
                           {menu.links.map((link) => (
-                            <a
-                              key={link.label}
-                              href="#"
-                              className="group/item flex items-center gap-3 border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
-                            >
-                              <link.icon size={16} className="shrink-0 text-gold-deep/60 group-hover/item:text-gold-deep transition-colors" />
-                              <span>{link.label}</span>
-                            </a>
+                            link.path ? (
+                              <Link
+                                key={link.label}
+                                to={link.path}
+                                onClick={() => setActiveMenu(null)}
+                                className="group/item flex items-center gap-3 border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
+                              >
+                                <link.icon size={16} className="shrink-0 text-gold-deep/60 group-hover/item:text-gold-deep transition-colors" />
+                                <span>{link.label}</span>
+                              </Link>
+                            ) : (
+                              <a
+                                key={link.label}
+                                href="#"
+                                className="group/item flex items-center gap-3 border-b border-black/[0.04] px-5 py-3.5 text-left text-sm font-medium text-charcoal transition-all duration-200 last:border-b-0 hover:bg-ivory/70 hover:text-royal"
+                              >
+                                <link.icon size={16} className="shrink-0 text-gold-deep/60 group-hover/item:text-gold-deep transition-colors" />
+                                <span>{link.label}</span>
+                              </a>
+                            )
                           ))}
                         </div>
                       </div>
@@ -267,14 +277,26 @@ export default function Navbar({ isAuthenticated, user, onAuthSuccess, authModal
                               {isOpen && (
                                 <div className="bg-ivory/40 px-4 pb-2 pt-1 space-y-0.5">
                                   {menu.links.map((link) => (
-                                    <a
-                                      key={link.label}
-                                      href="#"
-                                      className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
-                                    >
-                                      <link.icon size={14} className="shrink-0 text-gold-deep/60" />
-                                      {link.label}
-                                    </a>
+                                    link.path ? (
+                                      <Link
+                                        key={link.label}
+                                        to={link.path}
+                                        onClick={() => { setActiveMenu(null); setMobileMenuOpen(false) }}
+                                        className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
+                                      >
+                                        <link.icon size={14} className="shrink-0 text-gold-deep/60" />
+                                        {link.label}
+                                      </Link>
+                                    ) : (
+                                      <a
+                                        key={link.label}
+                                        href="#"
+                                        className="flex items-center gap-2.5 rounded-lg px-4 py-2.5 text-sm text-charcoal transition-colors hover:bg-white hover:text-royal"
+                                      >
+                                        <link.icon size={14} className="shrink-0 text-gold-deep/60" />
+                                        {link.label}
+                                      </a>
+                                    )
                                   ))}
                                 </div>
                               )}
