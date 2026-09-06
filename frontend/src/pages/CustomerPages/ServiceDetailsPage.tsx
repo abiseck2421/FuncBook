@@ -135,7 +135,7 @@ export default function ServiceDetailsPage() {
     return (
       <div className="text-center">
         <h1 className="text-2xl font-bold text-royal">Service not found</h1>
-        <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
+        <Link to="/all-services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
     )
   }

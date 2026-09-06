@@ -181,7 +181,7 @@ export default function CustomerDashboardPage() {
                 Browse our services and book your next event.
               </p>
               <Link
-                to="/services"
+                to="/all-services"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gold-deep text-white font-semibold text-sm mt-6 hover:bg-royal transition-colors"
               >
                 Browse Services
@@ -267,7 +267,7 @@ export default function CustomerDashboardPage() {
             Recommended for You
           </h2>
           <Link
-            to="/services"
+            to="/all-services"
             className="text-sm font-semibold text-gold-deep hover:text-royal transition-colors flex items-center gap-1"
           >
             Explore All

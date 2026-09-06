@@ -2,7 +2,7 @@ import ServiceSection from '../../components/ServiceSection'
 import { categories, servicesByCategory } from '../../data/categories'
 import { mergeServices } from '../../data/hostServices'
 
-export default function ServicesPage() {
+export default function AllServices() {
   const allServices = mergeServices(servicesByCategory)
 
   return (

@@ -28,7 +28,7 @@ export default function HeroSection() {
 
             <div className="flex flex-wrap gap-4">
               <Link
-                to="/services"
+                to="/all-services"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-500"
               >
                 Explore Services

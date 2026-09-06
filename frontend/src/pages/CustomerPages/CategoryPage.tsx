@@ -42,7 +42,7 @@ export default function CategoryPage() {
     return (
       <div className="text-center">
         <h1 className="text-2xl font-bold text-royal">Category not found</h1>
-        <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
+        <Link to="/all-services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
     )
   }
@@ -63,7 +63,7 @@ export default function CategoryPage() {
             </p>
           </div>
           <button
-            onClick={() => navigate('/services')}
+            onClick={() => navigate('/all-services')}
             className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold-deep/10 backdrop-blur-sm text-gold-deep text-sm font-semibold hover:bg-gold-deep/20 transition-all duration-300"
           >
             <ArrowLeft size={15} />

@@ -389,7 +389,7 @@ export default function AddServicePage() {
               <Link to="/host/dashboard" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gold-deep text-white font-semibold text-sm shadow-[0_12px_24px_rgba(184,134,11,0.3)] hover:bg-royal hover:shadow-[0_12px_24px_rgba(17,17,17,0.3)] transition-all duration-500">
                 Go to Dashboard <ArrowRight size={18} />
               </Link>
-              <Link to="/services" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-500">
+              <Link to="/all-services" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-royal font-semibold text-sm ring-1 ring-black/10 hover:ring-gold-deep hover:text-gold-deep transition-all duration-500">
                 View All Services
               </Link>
             </div>

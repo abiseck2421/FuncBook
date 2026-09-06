@@ -10,7 +10,7 @@ import type { SidebarNavItem } from './components/Sidebar'
 
 const customerNavItems: SidebarNavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/customer/dashboard' },
-  { label: 'Services', icon: Building2, path: '/services' },
+  { label: 'Services', icon: Building2, path: '/all-services' },
   { label: 'My Bookings', icon: CalendarCheck, path: '/customer/bookings' },
   { label: 'Wishlist', icon: Heart, path: '/customer/wishlist' },
   { label: 'My Reviews', icon: Star, path: '/customer/reviews' },

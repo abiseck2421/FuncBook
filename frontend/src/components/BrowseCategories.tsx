@@ -39,7 +39,7 @@ export default function BrowseCategories() {
           return (
             <button
               key={cat.name}
-              onClick={() => navigate('/services')}
+              onClick={() => navigate('/all-services')}
               className="group relative overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12)] text-left w-full"
             >
               <div className="relative aspect-[4/3] overflow-hidden">

@@ -7,7 +7,7 @@ import CustomerLayout from './CustomerLayout'
 import HostLayout from './HostLayout'
 import ServicesLayout from './ServicesLayout'
 import LandingPage from './pages/CustomerPages/LandingPage'
-import ServicesPage from './pages/CustomerPages/ServicesPage'
+import AllServices from './pages/CustomerPages/AllServices'
 import CategoryPage from './pages/CustomerPages/CategoryPage'
 import ServiceDetailsPage from './pages/CustomerPages/ServiceDetailsPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
@@ -44,7 +44,7 @@ function App() {
         </Route>
 
         <Route element={<ServicesLayout />}>
-          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/all-services" element={<AllServices />} />
           <Route path="/services/:categoryId" element={<CategoryPage />} />
         </Route>
 

@@ -275,7 +275,7 @@ export default function MyBookingsPage() {
                 : `No ${activeFilter} bookings to show. Try a different filter.`}
             </p>
             <Link
-              to="/services"
+              to="/all-services"
               className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-gold-deep text-white font-semibold text-xs sm:text-sm mt-5 sm:mt-6 shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-400"
             >
               Browse Services

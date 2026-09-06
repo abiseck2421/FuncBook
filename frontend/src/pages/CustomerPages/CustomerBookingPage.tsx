@@ -110,7 +110,7 @@ export default function CustomerBookingPage() {
     return (
       <div className="text-center pb-16">
         <h1 className="text-2xl font-bold text-royal">Service not found</h1>
-        <Link to="/services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
+        <Link to="/all-services" className="mt-4 inline-block text-gold-deep hover:underline">Back to Services</Link>
       </div>
     )
   }
@@ -340,7 +340,7 @@ export default function CustomerBookingPage() {
                   Back to Home
                 </button>
                 <button
-                  onClick={() => navigate('/services')}
+                  onClick={() => navigate('/all-services')}
                   className="flex-1 py-3 rounded-xl border border-gold-deep/15 text-charcoal text-sm font-semibold hover:bg-ivory transition-colors flex items-center justify-center gap-2"
                 >
                   <PartyPopper size={16} />
