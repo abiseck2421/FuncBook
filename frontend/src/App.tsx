@@ -8,7 +8,7 @@ import HostLayout from './HostLayout'
 import ServicesLayout from './ServicesLayout'
 import LandingPage from './pages/CustomerPages/LandingPage'
 import AllServices from './pages/CustomerPages/AllServices'
-import CategoryPage from './pages/CustomerPages/CategoryPage'
+import ServiceCategory from './pages/CustomerPages/ServiceCategory'
 import ServiceDetailsPage from './pages/CustomerPages/ServiceDetailsPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import CustomerDashboardPage from './pages/CustomerPages/CustomerDashboardPage'
@@ -45,7 +45,7 @@ function App() {
 
         <Route element={<ServicesLayout />}>
           <Route path="/all-services" element={<AllServices />} />
-          <Route path="/services/:categoryId" element={<CategoryPage />} />
+          <Route path="/services/:categoryId" element={<ServiceCategory />} />
         </Route>
 
         <Route path="/host/login" element={<HostLoginPage />} />

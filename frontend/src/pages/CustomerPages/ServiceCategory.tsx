@@ -13,7 +13,7 @@ const priceRanges = [
   { label: '₹50,000+', min: 50000, max: Infinity },
 ]
 
-export default function CategoryPage() {
+export default function ServiceCategory() {
   const { categoryId } = useParams<{ categoryId: string }>()
   const navigate = useNavigate()
   const category = categories.find((c) => c.id === categoryId)
