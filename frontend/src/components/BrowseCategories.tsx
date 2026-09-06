@@ -5,16 +5,16 @@ import {
 } from 'lucide-react'
 
 const categories = [
-  { name: 'Function Halls', icon: Building2, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop' },
-  { name: 'Catering', icon: UtensilsCrossed, image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop' },
-  { name: 'Decoration Setups', icon: Palette, image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
-  { name: 'Lighting & Sound', icon: Lightbulb, image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop' },
-  { name: 'Makeup Artists', icon: Sparkles, image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=400&h=300&fit=crop' },
-  { name: 'Photographers', icon: Camera, image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
-  { name: 'Chairs & Furniture', icon: ArmchairIcon, image: 'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=400&h=300&fit=crop' },
-  { name: 'Event Planners', icon: CalendarCheck, image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=300&fit=crop' },
-  { name: 'DJs', icon: Music, image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
-  { name: 'Flower Decorators', icon: Flower2, image: 'https://images.unsplash.com/photo-1519379157579-e6c3459be4c4?w=400&h=300&fit=crop' },
+  { id: 'function-halls', name: 'Function Halls', icon: Building2, image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=400&h=300&fit=crop' },
+  { id: 'catering', name: 'Catering', icon: UtensilsCrossed, image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=400&h=300&fit=crop' },
+  { id: 'decoration', name: 'Decoration Setups', icon: Palette, image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=400&h=300&fit=crop' },
+  { id: 'lighting-sound', name: 'Lighting & Sound', icon: Lightbulb, image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=300&fit=crop' },
+  { id: 'makeup', name: 'Makeup Artists', icon: Sparkles, image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=400&h=300&fit=crop' },
+  { id: 'photographers', name: 'Photographers', icon: Camera, image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=400&h=300&fit=crop' },
+  { id: 'chairs-furniture', name: 'Chairs & Furniture', icon: ArmchairIcon, image: 'https://images.unsplash.com/photo-1506439771522-85524d6245a6?w=400&h=300&fit=crop' },
+  { id: 'event-planners', name: 'Event Planners', icon: CalendarCheck, image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=400&h=300&fit=crop' },
+  { id: 'djs', name: 'DJs', icon: Music, image: 'https://images.unsplash.com/photo-1571266028243-3716f02d0e77?w=400&h=300&fit=crop' },
+  { id: 'flower-decorators', name: 'Flower Decorators', icon: Flower2, image: 'https://images.unsplash.com/photo-1519379157579-e6c3459be4c4?w=400&h=300&fit=crop' },
 ]
 
 export default function BrowseCategories() {
@@ -39,7 +39,7 @@ export default function BrowseCategories() {
           return (
             <button
               key={cat.name}
-              onClick={() => navigate('/all-services')}
+              onClick={() => navigate(`/services/${cat.id}`)}
               className="group relative overflow-hidden rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.06)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12)] text-left w-full"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
