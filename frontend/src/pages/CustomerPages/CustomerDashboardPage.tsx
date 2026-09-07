@@ -1,12 +1,11 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { User, CalendarCheck, Heart, Star, ArrowRight, CalendarDays, Camera } from 'lucide-react'
+import { User, CalendarCheck, Heart, ArrowRight, CalendarDays, Camera, Pencil } from 'lucide-react'
 
 const profileNavItems = [
   { label: 'About Me', icon: User, path: '/customer/settings' },
   { label: 'My Bookings', icon: CalendarCheck, path: '/customer/bookings' },
   { label: 'Favorites', icon: Heart, path: '/customer/wishlist' },
-  { label: 'My Reviews', icon: Star, path: '/customer/reviews' },
 ]
 
 export default function CustomerDashboardPage() {
@@ -55,22 +54,22 @@ export default function CustomerDashboardPage() {
           </div>
 
           {/* Nav */}
-          <aside className="bg-white rounded-2xl border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col lg:py-8">
+          <aside className="rounded-2xl overflow-hidden flex flex-col lg:py-4 lg:px-3">
             {profileNavItems.map((item) => {
               const Icon = item.icon
-              const active = location.pathname === item.path
+              const active = location.pathname === item.path || (item.label === 'About Me' && location.pathname === '/customer/dashboard')
               return (
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`flex w-full items-center gap-3 px-6 py-3 text-base font-medium transition-colors ${
+                  className={`flex w-full items-center gap-3 px-5 py-3 text-base font-medium transition-colors ${
                     active
-                      ? 'bg-gold-deep text-white'
-                      : 'text-charcoal hover:bg-ivory hover:text-royal'
+                      ? 'rounded-xl bg-gold-deep/15 text-royal'
+                      : 'rounded-xl text-charcoal hover:bg-ivory hover:text-royal'
                   }`}
                 >
                   <span className="w-5 shrink-0 flex justify-center">
-                    <Icon size={18} className={active ? 'text-white' : 'text-secondary-text'} />
+                    <Icon size={18} className={active ? 'text-gold-deep' : 'text-secondary-text'} />
                   </span>
                   <span>{item.label}</span>
                 </Link>
@@ -84,7 +83,13 @@ export default function CustomerDashboardPage() {
           {/* Profile + Complete Profile */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Profile Card */}
-            <div className="bg-white rounded-2xl border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 sm:p-8 flex flex-col justify-center">
+            <div className="relative bg-white rounded-2xl border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-6 sm:p-8 flex flex-col justify-center">
+              <Link
+                to="/customer/settings"
+                className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold-deep/20 text-gold-deep text-xs font-semibold hover:bg-gold-deep hover:text-white transition-colors"
+              >
+                <Pencil size={12} /> Edit
+              </Link>
               <div className="flex flex-col items-center text-center gap-4">
                 <button
                   type="button"
