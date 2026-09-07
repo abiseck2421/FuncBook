@@ -14,8 +14,6 @@ import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
 import CustomerDashboardPage from './pages/CustomerPages/CustomerDashboardPage'
 import MyBookingsPage from './pages/CustomerPages/MyBookingsPage'
 import WishlistPage from './pages/CustomerPages/WishlistPage'
-import ReviewsPage from './pages/CustomerPages/ReviewsPage'
-import PaymentsPage from './pages/CustomerPages/PaymentsPage'
 import SettingsPage from './pages/CustomerPages/SettingsPage'
 import HelpPage from './pages/CustomerPages/HelpPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
@@ -69,8 +67,6 @@ function App() {
           <Route path="dashboard" element={<CustomerDashboardPage />} />
           <Route path="bookings" element={<MyBookingsPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
-          <Route path="reviews" element={<ReviewsPage />} />
-          <Route path="payments" element={<PaymentsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="help" element={<HelpPage />} />
         </Route>

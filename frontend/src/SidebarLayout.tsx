@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, Building2, CalendarCheck, Heart, Star, CreditCard,
+  LayoutDashboard, Building2, CalendarCheck, Heart,
   Settings, HelpCircle,
 } from 'lucide-react'
 import Navbar from './components/Navbar'
@@ -22,8 +22,6 @@ const navItems: SidebarNavItem[] = [
   { label: 'Services', icon: Building2, path: '/all-services' },
   { label: 'My Bookings', icon: CalendarCheck, path: '/customer/bookings' },
   { label: 'Wishlist', icon: Heart, path: '/customer/wishlist' },
-  { label: 'My Reviews', icon: Star, path: '/customer/reviews' },
-  { label: 'Payments', icon: CreditCard, path: '/customer/payments' },
 ]
 
 const secondaryItems: SidebarNavItem[] = [
