@@ -40,43 +40,44 @@ export default function CustomerDashboardPage() {
 
   return (
     <div className="w-[90%] mx-auto px-4 sm:px-6 pb-10 sm:pb-14">
-      {/* Page Header */}
-      <div className="mb-4 sm:mb-5 -mx-4 sm:-mx-6 px-4 sm:px-6 lg:sticky lg:top-0 lg:z-30 bg-ivory pb-2">
-        <div className="ml-4">
-          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
-            Dashboard
-          </p>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-royal">
-            Profile
-          </h1>
-        </div>
-      </div>
-
       {/* Body: Left Nav + Right Content */}
       <div className="lg:flex lg:items-start lg:gap-8">
-        {/* Left: Nav */}
-        <aside className="bg-white rounded-2xl border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col mb-6 lg:mb-0 lg:w-[280px] lg:shrink-0 lg:self-start lg:sticky lg:top-[100px] lg:z-10 lg:py-8">
-          {profileNavItems.map((item) => {
-            const Icon = item.icon
-            const active = location.pathname === item.path
-            return (
-              <Link
-                key={item.label}
-                to={item.path}
-                className={`flex w-full items-center gap-3 px-6 py-3 text-base font-medium transition-colors ${
-                  active
-                    ? 'bg-gold-deep text-white'
-                    : 'text-charcoal hover:bg-ivory hover:text-royal'
-                }`}
-              >
-                <span className="w-5 shrink-0 flex justify-center">
-                  <Icon size={18} className={active ? 'text-white' : 'text-secondary-text'} />
-                </span>
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </aside>
+        {/* Left: Sticky Page Header + Nav */}
+        <div className="mb-6 lg:mb-0 lg:w-[280px] lg:shrink-0 lg:self-start lg:sticky lg:top-0 lg:z-30">
+          {/* Page Header (left-aligned only) */}
+          <div className="bg-ivory pb-4 mb-2 lg:pl-4">
+            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
+              Dashboard
+            </p>
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-royal">
+              Profile
+            </h1>
+          </div>
+
+          {/* Nav */}
+          <aside className="bg-white rounded-2xl border border-black/[0.04] shadow-[0_2px_12px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col lg:py-8">
+            {profileNavItems.map((item) => {
+              const Icon = item.icon
+              const active = location.pathname === item.path
+              return (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className={`flex w-full items-center gap-3 px-6 py-3 text-base font-medium transition-colors ${
+                    active
+                      ? 'bg-gold-deep text-white'
+                      : 'text-charcoal hover:bg-ivory hover:text-royal'
+                  }`}
+                >
+                  <span className="w-5 shrink-0 flex justify-center">
+                    <Icon size={18} className={active ? 'text-white' : 'text-secondary-text'} />
+                  </span>
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+          </aside>
+        </div>
 
         {/* Right: Content */}
         <div className="space-y-6 lg:flex-1 lg:min-w-0">
