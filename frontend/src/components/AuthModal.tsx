@@ -311,7 +311,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                 </>
               ) : (
                 <>
-                  <div className="mt-20 text-center">
+                  <div className="mt-4 max-lg:mt-20 text-center">
                     <h3 className="font-heading text-3xl font-bold text-royal">Tell us about you</h3>
                     <p className="mt-2 text-sm text-secondary-text">
                       A few details to set up your FuncBook account.
@@ -393,7 +393,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                     <button
                       type="submit"
                       disabled={!name.trim() || !lastName.trim() || !dob || !password || !agree}
-                      className="w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal disabled:cursor-not-allowed disabled:opacity-50"
+                      className="mb-6 w-full rounded-2xl bg-gold-deep px-5 py-3.5 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(214,169,97,0.26)] transition hover:bg-royal disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Agree and Continue
                     </button>
