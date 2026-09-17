@@ -38,13 +38,13 @@ export default function CustomerDashboardPage() {
   }
 
   return (
-    <div className="w-[90%] mx-auto px-4 sm:px-6 pb-10 sm:pb-14">
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-10 sm:pb-14">
       {/* Body: Left Nav + Right Content */}
       <div className="lg:flex lg:items-start lg:gap-8">
         {/* Left: Sticky Page Header + Nav */}
         <div className="mb-6 lg:mb-0 lg:w-[280px] lg:shrink-0 lg:self-start lg:sticky lg:top-0 lg:z-30">
           {/* Page Header (left-aligned only) */}
-          <div className="bg-ivory pb-4 mb-2 lg:pl-4">
+          <div className="bg-ivory pb-4 mb-2">
             <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
               Dashboard
             </p>
@@ -54,7 +54,7 @@ export default function CustomerDashboardPage() {
           </div>
 
           {/* Nav */}
-          <aside className="rounded-2xl overflow-hidden flex flex-col lg:py-4 lg:px-3">
+          <aside className="rounded-2xl overflow-hidden flex flex-col lg:py-4">
             {profileNavItems.map((item) => {
               const Icon = item.icon
               const active = location.pathname === item.path || (item.label === 'About Me' && location.pathname === '/customer/dashboard')
