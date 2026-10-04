@@ -11,9 +11,9 @@ import AllServices from './pages/CustomerPages/AllServices'
 import ServiceCategory from './pages/CustomerPages/ServiceCategory'
 import ServiceDetailsPage from './pages/CustomerPages/ServiceDetailsPage'
 import CustomerBookingPage from './pages/CustomerPages/CustomerBookingPage'
-import CustomerDashboardPage from './pages/CustomerPages/CustomerDashboardPage'
-import MyBookingsPage from './pages/CustomerPages/MyBookingsPage'
-import WishlistPage from './pages/CustomerPages/WishlistPage'
+import CustomerDashboardPage, { DashboardAboutMe } from './pages/CustomerPages/CustomerDashboardPage'
+import MyBookingsPage, { MyBookingsContent } from './pages/CustomerPages/MyBookingsPage'
+import WishlistPage, { WishlistContent } from './pages/CustomerPages/WishlistPage'
 import SettingsPage from './pages/CustomerPages/SettingsPage'
 import HelpPage from './pages/CustomerPages/HelpPage'
 import BecomeHostPage from './pages/HostPages/BecomeHostPage'
@@ -64,11 +64,16 @@ function App() {
 
         <Route path="/customer" element={<CustomerLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<CustomerDashboardPage />} />
           <Route path="bookings" element={<MyBookingsPage />} />
           <Route path="wishlist" element={<WishlistPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="help" element={<HelpPage />} />
+
+          <Route path="dashboard" element={<CustomerDashboardPage />}>
+            <Route index element={<DashboardAboutMe />} />
+            <Route path="bookings" element={<MyBookingsContent />} />
+            <Route path="favorites" element={<WishlistContent />} />
+          </Route>
         </Route>
         </Routes>
       </WishlistProvider>

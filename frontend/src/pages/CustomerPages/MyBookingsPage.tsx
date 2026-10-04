@@ -100,7 +100,7 @@ function formatDate(dateStr: string) {
   })
 }
 
-export default function MyBookingsPage() {
+export function MyBookingsContent() {
   const [activeFilter, setActiveFilter] = useState<'all' | BookingStatus>('all')
   const [cancelledIds, setCancelledIds] = useState<Set<string>>(new Set())
 
@@ -124,20 +124,7 @@ export default function MyBookingsPage() {
   }
 
   return (
-    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-12 sm:pb-10">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
-            My Bookings
-          </p>
-          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-royal">
-            My Bookings
-          </h1>
-          <p className="mt-2 sm:mt-3 text-sm sm:text-base text-secondary-text max-w-lg">
-            View and manage all your service bookings
-          </p>
-        </div>
-
+    <div>
         {/* Filter Tabs */}
         <div className="flex items-center gap-1.5 sm:gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-none">
           {filterTabs.map((tab) => {
@@ -145,6 +132,7 @@ export default function MyBookingsPage() {
             return (
               <button
                 key={tab.key}
+                type="button"
                 onClick={() => setActiveFilter(tab.key)}
                 className={`inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all duration-300 ${
                   isActive
@@ -284,5 +272,26 @@ export default function MyBookingsPage() {
           </div>
         )}
       </div>
+  )
+}
+
+export default function MyBookingsPage() {
+  return (
+    <div className="w-full max-w-[min(95%,1400px)] mx-auto px-4 sm:px-6 pb-12 sm:pb-10">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.24em] text-gold-deep mb-2 sm:mb-3">
+            My Bookings
+          </p>
+          <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-royal">
+            My Bookings
+          </h1>
+          <p className="mt-2 sm:mt-3 text-sm sm:text-base text-secondary-text max-w-lg">
+            View and manage all your service bookings
+          </p>
+        </div>
+
+        <MyBookingsContent />
+    </div>
   )
 }
