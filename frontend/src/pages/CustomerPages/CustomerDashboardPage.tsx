@@ -1,6 +1,15 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { User, CalendarCheck, Heart, ArrowRight, CalendarDays, Camera, Pencil } from 'lucide-react'
+import {
+  User, CalendarCheck, Heart, ArrowRight, CalendarDays, Camera, Pencil, IndianRupee,
+} from 'lucide-react'
+import { getBookings } from '../../data/bookings'
+
+function formatDate(dateStr: string) {
+  return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'short', year: 'numeric',
+  })
+}
 
 const profileNavItems = [
   { label: 'About Me', icon: User, path: '/customer/dashboard' },
@@ -77,6 +86,11 @@ export function DashboardAboutMe() {
   const email = user?.email || ''
   const initial = name.charAt(0).toUpperCase()
 
+  const upcomingBookings = useMemo(
+    () => getBookings().filter((b) => b.status === 'upcoming').slice(0, 2),
+    []
+  )
+
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -147,16 +161,47 @@ export function DashboardAboutMe() {
             View All <ArrowRight size={14} />
           </Link>
         </div>
-        <div className="text-center py-6 sm:py-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold-deep/[0.06] mb-3">
-            <CalendarDays size={20} className="text-gold-deep" />
+        {upcomingBookings.length > 0 ? (
+          <div className="space-y-2.5">
+            {upcomingBookings.map((booking) => (
+              <Link
+                key={booking.id}
+                to="/customer/dashboard/bookings"
+                className="flex items-center gap-3 p-2.5 rounded-xl border border-black/[0.04] hover:border-gold-deep/30 hover:bg-gold/[0.03] transition-colors"
+              >
+                <img
+                  src={booking.image}
+                  alt={booking.serviceName}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover shrink-0"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-royal truncate">{booking.serviceName}</p>
+                  <p className="text-xs text-secondary-text truncate mt-0.5">
+                    {formatDate(booking.date)} &bull; {booking.guestCount} guests
+                  </p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gold-deep mt-0.5 truncate">
+                    {booking.category}
+                  </p>
+                </div>
+                <span className="flex items-center gap-1 text-sm font-bold text-royal shrink-0">
+                  <IndianRupee size={13} />
+                  {booking.price.toLocaleString('en-IN')}
+                </span>
+              </Link>
+            ))}
           </div>
-          <h4 className="font-heading text-lg font-bold text-royal mt-2">You don&apos;t have any bookings yet.</h4>
-          <p className="text-sm text-secondary-text mt-1.5 max-w-sm mx-auto">Explore services and make your first booking.</p>
-          <Link to="/all-services" className="inline-flex items-center gap-2 px-6 py-3 mt-5 rounded-xl bg-gold-deep text-white text-sm font-semibold hover:bg-royal transition-colors">
-            Explore Services <ArrowRight size={15} />
-          </Link>
-        </div>
+        ) : (
+          <div className="text-center py-6 sm:py-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gold-deep/[0.06] mb-3">
+              <CalendarDays size={20} className="text-gold-deep" />
+            </div>
+            <h4 className="font-heading text-lg font-bold text-royal mt-2">You don&apos;t have any bookings yet.</h4>
+            <p className="text-sm text-secondary-text mt-1.5 max-w-sm mx-auto">Explore services and make your first booking.</p>
+            <Link to="/all-services" className="inline-flex items-center gap-2 px-6 py-3 mt-5 rounded-xl bg-gold-deep text-white text-sm font-semibold hover:bg-royal transition-colors">
+              Explore Services <ArrowRight size={15} />
+            </Link>
+          </div>
+        )}
       </div>
     </>
   )

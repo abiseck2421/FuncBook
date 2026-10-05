@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CalendarDays, MapPin, IndianRupee, ChevronRight,
@@ -28,11 +28,7 @@ function formatDate(dateStr: string) {
 
 export function MyBookingsContent() {
   const [activeFilter, setActiveFilter] = useState<'all' | BookingStatus>('all')
-  const [bookings, setBookings] = useState<Booking[]>([])
-
-  useEffect(() => {
-    setBookings(getBookings())
-  }, [])
+  const [bookings, setBookings] = useState<Booking[]>(() => getBookings())
 
   const filteredBookings = activeFilter === 'all'
     ? bookings
