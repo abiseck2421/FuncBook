@@ -8,6 +8,7 @@ import {
 import { servicesByCategory, categories } from '../../data/categories'
 import type { Service } from '../../data/categories'
 import { getHostServices } from '../../data/hostServices'
+import { saveBooking } from '../../data/bookings'
 import BookingDatePicker from '../../components/BookingDatePicker'
 
 const STEPS = ['Service', 'Details', 'Review', 'Payment', 'Confirmed']
@@ -39,14 +40,6 @@ function findService(serviceId: string): (Service & { categoryId: string }) | nu
   const hostFound = hostServices.find((s) => s.id === serviceId)
   if (hostFound) return { ...hostFound, categoryId: hostFound.categoryId || 'event-planners' }
   return null
-}
-
-function generateBookingId(): string {
-  const year = new Date().getFullYear()
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let id = ''
-  for (let i = 0; i < 5; i++) id += chars.charAt(Math.floor(Math.random() * chars.length))
-  return `FB-${year}-${id}`
 }
 
 function formatDate(dateStr: string): string {
@@ -179,8 +172,28 @@ export default function CustomerBookingPage() {
     if (currentStep === 1 && !validateDetails()) return
     if (currentStep === 3) {
       setIsProcessing(true)
-      setBookingId(generateBookingId())
       setTimeout(() => {
+        if (service && priceBreakdown) {
+          const booking = saveBooking({
+            serviceId: service.id,
+            serviceName: service.name,
+            category: categoryLabel(service.categoryId),
+            image: service.image,
+            location: service.location,
+            venue: formData.venue,
+            date: formData.eventDate,
+            startTime: formData.startTime,
+            endTime: formData.endTime,
+            guestCount: formData.guestCount,
+            eventType: formData.eventType,
+            specialRequirements: formData.specialRequirements,
+            customerName: formData.customerName,
+            phone: formData.phone,
+            email: formData.email,
+            price: priceBreakdown.total,
+          })
+          setBookingId(booking.id)
+        }
         setIsProcessing(false)
         setCurrentStep(4)
       }, 2200)
@@ -340,7 +353,7 @@ export default function CustomerBookingPage() {
                   Back to Home
                 </button>
                 <button
-                  onClick={() => navigate('/all-services')}
+                  onClick={() => navigate('/customer/bookings')}
                   className="flex-1 py-3 rounded-xl border border-gold-deep/15 text-charcoal text-sm font-semibold hover:bg-ivory transition-colors flex items-center justify-center gap-2"
                 >
                   <PartyPopper size={16} />

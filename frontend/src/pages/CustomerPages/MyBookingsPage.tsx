@@ -1,85 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CalendarDays, MapPin, IndianRupee, ChevronRight,
   CalendarCheck, CheckCircle2, XCircle, ArrowRight,
 } from 'lucide-react'
-
-type BookingStatus = 'upcoming' | 'completed' | 'cancelled'
-
-interface Booking {
-  id: string
-  serviceName: string
-  category: string
-  image: string
-  date: string
-  location: string
-  price: number
-  status: BookingStatus
-}
-
-const sampleBookings: Booking[] = [
-  {
-    id: 'BK-2026-001',
-    serviceName: 'The Grand Ballroom',
-    category: 'Function Halls',
-    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=400&fit=crop',
-    date: '2026-08-15',
-    location: 'Downtown, City Center',
-    price: 50000,
-    status: 'upcoming',
-  },
-  {
-    id: 'BK-2026-002',
-    serviceName: 'Spice Symphony Catering',
-    category: 'Catering',
-    image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=400&fit=crop',
-    date: '2026-08-15',
-    location: 'City Center',
-    price: 12000,
-    status: 'upcoming',
-  },
-  {
-    id: 'BK-2026-003',
-    serviceName: 'Elegance Decor Studio',
-    category: 'Decoration Setups',
-    image: 'https://images.unsplash.com/photo-1510076857177-7470076d4098?w=600&h=400&fit=crop',
-    date: '2026-06-20',
-    location: 'City Center',
-    price: 25000,
-    status: 'completed',
-  },
-  {
-    id: 'BK-2026-004',
-    serviceName: 'Captured Moments',
-    category: 'Photographers',
-    image: 'https://images.unsplash.com/photo-1452587925148-f5447730fcb8?w=600&h=400&fit=crop',
-    date: '2026-05-10',
-    location: 'Studio Lane',
-    price: 15000,
-    status: 'completed',
-  },
-  {
-    id: 'BK-2026-005',
-    serviceName: 'Starlight Productions',
-    category: 'Lighting & Sound',
-    image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop',
-    date: '2026-04-05',
-    location: 'City Wide',
-    price: 22000,
-    status: 'cancelled',
-  },
-  {
-    id: 'BK-2026-006',
-    serviceName: 'Glam Studio by Priya',
-    category: 'Makeup Artists',
-    image: 'https://images.unsplash.com/photo-1487412949247-f83f1225f4b4?w=600&h=400&fit=crop',
-    date: '2026-03-18',
-    location: 'Beauty Plaza',
-    price: 8000,
-    status: 'completed',
-  },
-]
+import { cancelBooking, getBookings } from '../../data/bookings'
+import type { Booking, BookingStatus } from '../../data/bookings'
 
 const statusConfig: Record<BookingStatus, { label: string; style: string; icon: typeof CalendarDays }> = {
   upcoming: { label: 'Upcoming', style: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CalendarDays },
@@ -102,11 +28,11 @@ function formatDate(dateStr: string) {
 
 export function MyBookingsContent() {
   const [activeFilter, setActiveFilter] = useState<'all' | BookingStatus>('all')
-  const [cancelledIds, setCancelledIds] = useState<Set<string>>(new Set())
+  const [bookings, setBookings] = useState<Booking[]>([])
 
-  const bookings = sampleBookings.map((b) =>
-    cancelledIds.has(b.id) ? { ...b, status: 'cancelled' as const } : b
-  )
+  useEffect(() => {
+    setBookings(getBookings())
+  }, [])
 
   const filteredBookings = activeFilter === 'all'
     ? bookings
@@ -120,7 +46,8 @@ export function MyBookingsContent() {
   }
 
   function handleCancel(id: string) {
-    setCancelledIds((prev) => new Set(prev).add(id))
+    cancelBooking(id)
+    setBookings(getBookings())
   }
 
   return (
@@ -222,7 +149,7 @@ export function MyBookingsContent() {
                       {/* Actions */}
                       <div className="flex items-center gap-2.5 sm:gap-3 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-black/5">
                         <Link
-                          to={`/checkout/${booking.id}`}
+                          to={`/service-details/${booking.serviceId}`}
                           className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl bg-gold-deep text-white font-semibold text-xs sm:text-sm shadow-[0_8px_20px_rgba(184,134,11,0.25)] hover:bg-royal hover:shadow-[0_8px_20px_rgba(17,17,17,0.25)] transition-all duration-400"
                         >
                           View Details
