@@ -2,10 +2,10 @@ import { useState } from 'react'
 import {
   HelpCircle, ChevronDown, Search, MessageCircle, CreditCard,
   Phone, Mail, Building2, CalendarCheck,
-  BarChart3, Shield, ArrowRight, Send, CheckCircle2, XCircle,
+  Shield, ArrowRight, Send, CheckCircle2, XCircle,
 } from 'lucide-react'
 
-type FaqCategory = 'Services' | 'Bookings' | 'Payouts' | 'Account' | 'Analytics'
+type FaqCategory = 'Services' | 'Bookings' | 'Payouts' | 'Account'
 
 interface FAQ {
   question: string
@@ -60,11 +60,6 @@ const faqs: FAQ[] = [
     category: 'Payouts',
   },
   {
-    question: 'How do I view my earnings and performance?',
-    answer: 'Visit the Analytics page from the sidebar to view your earnings, booking trends, customer ratings, and performance metrics over time.',
-    category: 'Analytics',
-  },
-  {
     question: 'How can I improve my rating?',
     answer: 'Respond promptly to booking requests, provide accurate service descriptions, deliver high-quality service, and communicate clearly with customers throughout the process.',
     category: 'Account',
@@ -80,11 +75,10 @@ const categoryConfig: Record<FaqCategory, { icon: typeof HelpCircle; color: stri
   Services: { icon: Building2, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   Bookings: { icon: CalendarCheck, color: 'bg-blue-50 text-blue-700 border-blue-200' },
   Payouts: { icon: CreditCard, color: 'bg-amber-50 text-amber-700 border-amber-200' },
-  Analytics: { icon: BarChart3, color: 'bg-purple-50 text-purple-700 border-purple-200' },
   Account: { icon: Shield, color: 'bg-gold/10 text-gold-deep border-gold/20' },
 }
 
-const faqCategories: FaqCategory[] = ['Services', 'Bookings', 'Payouts', 'Analytics', 'Account']
+const faqCategories: FaqCategory[] = ['Services', 'Bookings', 'Payouts', 'Account']
 
 const inputClass = 'w-full rounded-xl border border-gold-deep/15 bg-ivory/50 px-4 py-2.5 text-sm text-royal focus:outline-none focus:ring-2 focus:ring-gold/40 transition-colors'
 const labelClass = 'block text-xs font-semibold uppercase tracking-[0.15em] text-charcoal/60 mb-2'
