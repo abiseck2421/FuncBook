@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   Plus, ArrowRight, Eye, CalendarDays, IndianRupee,
   Star, Package, Clock, MapPin,
-  Building2, UtensilsCrossed, Palette, BarChart3, Settings,
+  Building2, UtensilsCrossed, Palette, Settings,
 } from 'lucide-react'
 
 const mockServices = [
@@ -169,19 +169,6 @@ export default function HostDashboardPage() {
                   <div>
                     <h3 className="font-heading text-base font-bold text-royal">Add New Service</h3>
                     <p className="text-xs text-secondary-text mt-0.5">List a new service on FuncBook</p>
-                  </div>
-                  <ArrowRight size={16} className="ml-auto text-secondary-text group-hover:text-gold-deep transition-colors" />
-                </Link>
-                <Link
-                  to="/host/services"
-                  className="group flex items-center gap-4 p-5 rounded-2xl bg-ivory/60 border border-gold-deep/10 hover:border-gold-deep/30 hover:bg-gold/5 transition-all duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <BarChart3 size={22} className="text-gold-deep" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading text-base font-bold text-royal">View Analytics</h3>
-                    <p className="text-xs text-secondary-text mt-0.5">Track views, bookings, and revenue</p>
                   </div>
                   <ArrowRight size={16} className="ml-auto text-secondary-text group-hover:text-gold-deep transition-colors" />
                 </Link>
