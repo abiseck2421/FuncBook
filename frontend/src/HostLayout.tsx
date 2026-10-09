@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, Building2, CalendarCheck, BarChart3,
-  Star, CreditCard, Settings, HelpCircle,
+  LayoutDashboard, Building2, CalendarCheck,
+  CreditCard, Settings, HelpCircle,
 } from 'lucide-react'
 import AfterLoginNavbar from './components/AfterLoginNavbar'
 import Sidebar from './components/Sidebar'
@@ -14,8 +14,6 @@ const hostNavItems: SidebarNavItem[] = [
   { label: 'My Services', icon: Building2, path: '/host/services' },
   { label: 'Bookings', icon: CalendarCheck, path: '/host/bookings' },
   { label: 'Add New Service', icon: Building2, path: '/host/add-service' },
-  { label: 'Analytics', icon: BarChart3, path: '/host/analytics' },
-  { label: 'Reviews', icon: Star, path: '/host/reviews' },
   { label: 'Payments', icon: CreditCard, path: '/host/payments' },
 ]
 
